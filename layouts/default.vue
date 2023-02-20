@@ -2,22 +2,38 @@
   <v-app dark>
     <v-navigation-drawer
       v-model="drawer"
-      :mini-variant="miniVariant"
       :clipped="clipped"
-      fixed
       app
+      :mini-variant.sync="mini"
+      permanent
     >
-      <v-list>
-        <v-list-item
-          v-for="(item, i) in items"
-          :key="i"
-          :to="item.to"
-          router
-          exact
+      <v-list-item class="px-2">
+        <v-list-item-avatar>
+          <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
+        </v-list-item-avatar>
+
+        <v-list-item-title>John Leider</v-list-item-title>
+
+        <v-btn
+          icon
+          @click.stop="mini = !mini"
         >
-          <v-list-item-action>
+          <v-icon>mdi-chevron-left</v-icon>
+        </v-btn>
+      </v-list-item>
+
+      <v-divider></v-divider>
+
+      <v-list dense>
+        <v-list-item
+          v-for="item in items"
+          :key="item.title"
+          link
+        >
+          <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-action>
+          </v-list-item-icon>
+
           <v-list-item-content>
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item-content>
@@ -28,91 +44,87 @@
       :clipped-left="clipped"
       fixed
       app
+      class="header"
     >
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-btn
-        icon
-        @click.stop="miniVariant = !miniVariant"
-      >
-        <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
-      </v-btn>
-      <v-btn
-        icon
-        @click.stop="clipped = !clipped"
-      >
-        <v-icon>mdi-application</v-icon>
-      </v-btn>
-      <v-btn
-        icon
-        @click.stop="fixed = !fixed"
-      >
-        <v-icon>mdi-minus</v-icon>
-      </v-btn>
       <v-toolbar-title>{{ title }}</v-toolbar-title>
-      <v-spacer />
-      <v-btn
-        icon
-        @click.stop="rightDrawer = !rightDrawer"
-      >
-        <v-icon>mdi-menu</v-icon>
-      </v-btn>
+      <div class="d-flex align-center ml-auto">
+        <v-text-field
+          dense
+          label="Search"
+          v-model="search"
+          solo
+          hide-details
+          append-icon="mdi-magnify"
+          class="mr-16"
+        ></v-text-field>
+        <v-switch
+          v-model="darkTheme"
+          label="Dark theme"
+          color="indigo darken-3"
+          class="pr-12"
+          hide-details
+        ></v-switch>
+        <Auth :showDialog="showAuth" @closeDialog="showAuth = false"/>
+        <v-btn text @click="showAuth = true" class="mr-7">
+          Log in
+        </v-btn>
+        {{ showSignUp }}
+        <SignUp :showDialog="showSignUp" @closeDialog="showSignUp = false"/>
+        <v-btn text @click="showSignUp = true">
+          Sign up
+        </v-btn>
+      </div>
     </v-app-bar>
     <v-main>
       <v-container>
         <Nuxt />
       </v-container>
     </v-main>
-    <v-navigation-drawer
-      v-model="rightDrawer"
-      :right="right"
-      temporary
-      fixed
-    >
-      <v-list>
-        <v-list-item @click.native="right = !right">
-          <v-list-item-action>
-            <v-icon light>
-              mdi-repeat
-            </v-icon>
-          </v-list-item-action>
-          <v-list-item-title>Switch drawer (click me)</v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-    <v-footer
-      :absolute="!fixed"
-      app
-    >
-      <span>&copy; {{ new Date().getFullYear() }}</span>
-    </v-footer>
   </v-app>
 </template>
 
 <script>
+import Auth from '~/components/Auth.vue';
+import SignUp from '~/components/SignUp.vue';
 export default {
+  components: {
+    Auth,
+    SignUp
+  },
   name: 'DefaultLayout',
   data () {
     return {
       clipped: false,
       drawer: false,
       fixed: false,
+      darkTheme: true,
+      showAuth: false,
+      showSignUp: false,
+      title: 'Scihub',
+      search: '',
       items: [
-        {
-          icon: 'mdi-apps',
-          title: 'Welcome',
-          to: '/'
-        },
-        {
-          icon: 'mdi-chart-bubble',
-          title: 'Inspire',
-          to: '/inspire'
-        }
-      ],
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
-      title: 'Vuetify.js'
+          { title: 'Bookmarks', icon: 'mdi-bookmark' },
+          { title: 'My Articles', icon: 'mdi-text-box-multiple' },
+          { title: 'Settings', icon: 'mdi-cog' },
+        ],
+      mini: true
+    }
+  },
+  watch: {
+    darkTheme(val) {
+      this.$vuetify.theme.dark = val;
+    }
+  },
+}
+</script>
+
+<style lang="less" scoped>
+.header {
+  height: 56px!important;
+  ::v-deep {
+    .v-toolbar__content {
+      height: 56px!important;
     }
   }
 }
-</script>
+</style>
