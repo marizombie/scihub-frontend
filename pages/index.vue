@@ -13,14 +13,16 @@
       <div class="d-flex flex-column">
         <h3>Recommendations:</h3>
         <a v-for="item in recomendations"
-          :key="item.title">
+          :key="item.title"
+          class="text-subtitle-1">
             {{ item.title }}
         </a>
       </div>
       <div class="d-flex flex-column">
-        Recently added:
+        <h3>Recently added:</h3>
         <a v-for="item in recentlyWritten"
-          :key="item.title">
+          :key="item.title"
+          class="text-subtitle-1">
             {{ item.title }}
         </a>
       </div>
@@ -76,5 +78,7 @@ export default {
   position: sticky;
   top: 100px;
   align-self: flex-start;
+  background: inherit;
+  box-shadow: none!important;
 }
 </style>

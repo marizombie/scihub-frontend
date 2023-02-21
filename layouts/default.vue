@@ -6,8 +6,9 @@
       app
       :mini-variant.sync="mini"
       permanent
+      v-if="isUserLogin"
     >
-      <v-list-item class="px-2">
+      <v-list-item class="px-2" link to="/profile">
         <v-list-item-avatar>
           <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
         </v-list-item-avatar>
@@ -46,7 +47,9 @@
       app
       class="header"
     >
-      <v-toolbar-title>{{ title }}</v-toolbar-title>
+      <v-toolbar-title>
+        <NuxtLink to="/">{{ title }}</NuxtLink>
+      </v-toolbar-title>
       <div class="d-flex align-center ml-auto">
         <v-text-field
           dense
@@ -65,10 +68,9 @@
           hide-details
         ></v-switch>
         <Auth :showDialog="showAuth" @closeDialog="showAuth = false"/>
-        <v-btn text @click="showAuth = true" class="mr-7">
-          Log in
+        <v-btn text @click="showAuth = true" class="mr-4">
+          Sign in
         </v-btn>
-        {{ showSignUp }}
         <SignUp :showDialog="showSignUp" @closeDialog="showSignUp = false"/>
         <v-btn text @click="showSignUp = true">
           Sign up
@@ -100,6 +102,7 @@ export default {
       darkTheme: true,
       showAuth: false,
       showSignUp: false,
+      isUserLogin: true,
       title: 'Scihub',
       search: '',
       items: [
@@ -125,6 +128,11 @@ export default {
     .v-toolbar__content {
       height: 56px!important;
     }
+  }
+  a.nuxt-link-active {
+    font-weight: bold;
+    color: inherit;
+    text-decoration: none;
   }
 }
 </style>

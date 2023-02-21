@@ -41,14 +41,14 @@
             text
             @click="dialog = false"
           >
-            Close
+            Cancel
           </v-btn>
           <v-btn
             color="blue darken-1"
             text
             @click="dialog = false"
           >
-            Save
+            Sign up
           </v-btn>
         </v-card-actions>
       </v-card>
