@@ -46,7 +46,7 @@
           <v-btn
             color="blue darken-1"
             text
-            @click="dialog = false"
+            @click="register"
           >
             Sign up
           </v-btn>
@@ -74,5 +74,11 @@
         this.dialog = val;
       }
     },
+    methods: {
+      async register() {
+        await this.$store.dispatch("register", {user: this.login, pass: this.password})
+        this.dialog = false
+      }
+    }
   }
 </script>
