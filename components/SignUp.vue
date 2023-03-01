@@ -14,6 +14,7 @@
               <v-col cols="12">
                 <v-text-field
                   label="Email*"
+                  v-model="login"
                   required
                 ></v-text-field>
               </v-col>
@@ -21,6 +22,7 @@
                 <v-text-field
                   label="Password*"
                   type="password"
+                  v-model="password"
                   required
                 ></v-text-field>
               </v-col>
@@ -28,6 +30,7 @@
                 <v-text-field
                   label="Confirm password*"
                   type="password"
+                  v-model="confirmPassword"
                   required
                 ></v-text-field>
               </v-col>
@@ -62,7 +65,8 @@
     data: () => ({
       dialog: false,
       login: "",
-      password: ""
+      password: "",
+      confirmPassword: ""
     }),
     watch: {
       dialog(val) {
@@ -76,7 +80,7 @@
     },
     methods: {
       async register() {
-        await this.$store.dispatch("register", {user: this.login, pass: this.password})
+        await this.$store.dispatch("register", {username: this.login, password: this.password})
         this.dialog = false
       }
     }

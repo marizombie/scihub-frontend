@@ -15,6 +15,7 @@
                 <v-text-field
                   label="Username*"
                   required
+                  v-model="login"
                 ></v-text-field>
               </v-col>
               <v-col cols="12">
@@ -22,6 +23,7 @@
                   label="Password*"
                   type="password"
                   required
+                  v-model="password"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -39,7 +41,7 @@
           <v-btn
             color="blue darken-1"
             text
-            @click="dialog = false"
+            @click="loginSend"
           >
             Log in
           </v-btn>
@@ -67,5 +69,12 @@
         this.dialog = val;
       }
     },
+    methods: {
+      async loginSend() {
+        console.log({username: this.login, password: this.password})
+        await this.$store.dispatch("login", {username: this.login, password: this.password})
+        this.dialog = false
+      }
+    }
   }
 </script>

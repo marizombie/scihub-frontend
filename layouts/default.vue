@@ -60,12 +60,15 @@
           hide-details
         ></v-switch>
         <Auth :showDialog="showAuth" @closeDialog="showAuth = false"/>
-        <v-btn text @click="showAuth = true" class="mr-4">
+        <v-btn text @click="showAuth = true" class="mr-4" v-if="!$store.getters.userInfo">
           Sign in
         </v-btn>
         <SignUp :showDialog="showSignUp" @closeDialog="showSignUp = false"/>
-        <v-btn text @click="showSignUp = true">
+        <v-btn text @click="showSignUp = true" v-if="!$store.getters.userInfo">
           Sign up
+        </v-btn>
+        <v-btn text @click="logout" v-if="$store.getters.userInfo">
+          Log out
         </v-btn>
       </div>
     </v-app-bar>
@@ -91,7 +94,7 @@ export default {
       clipped: false,
       drawer: false,
       fixed: false,
-      darkTheme: true,
+      darkTheme: false,
       showAuth: false,
       showSignUp: false,
       isUserLogin: true,
@@ -110,6 +113,11 @@ export default {
       this.$vuetify.theme.dark = val;
     }
   },
+  methods: {
+    async logout() {
+      await this.$store.commit("logout")
+    }
+  }
 }
 </script>
 
