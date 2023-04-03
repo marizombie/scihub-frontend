@@ -4,72 +4,85 @@
       :clipped-left="clipped"
       fixed
       app
-      class="header"
+      class="header d-flex flex-column"
     >
-      <v-menu>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            dark
-            icon
-            v-bind="attrs"
-            v-on="on"
-          >
-            <v-icon>mdi-menu</v-icon>
+      <div class="main-content">
+        <v-menu>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              icon
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>mdi-menu</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item
+              v-for="item in items"
+              :key="item.title"
+              link
+            >
+              <v-list-item-icon>
+                <v-icon>{{ item.icon }}</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-divider></v-divider>
+            <v-list-item class="px-2" link to="/profile">
+            <v-list-item-avatar>
+              <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
+            </v-list-item-avatar>
+            <v-list-item-title>John Leider</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+        <v-toolbar-title>
+          <NuxtLink to="/">{{ title }}</NuxtLink>
+        </v-toolbar-title>
+        <div class="d-flex align-center ml-auto">
+          <v-text-field
+            v-if="$vuetify.breakpoint.mdAndUp"
+            dense
+            label="Search"
+            v-model="search"
+            solo
+            hide-details
+            append-icon="mdi-magnify"
+            class="mr-md-16"
+          />
+          <v-switch
+            v-model="darkTheme"
+            :label="$vuetify.breakpoint.mdAndUp ?  'Dark theme' : ''"
+            color="indigo darken-3"
+            class="mr-8"
+            hide-details
+          ></v-switch>
+          <Auth :showDialog="showAuth" @closeDialog="showAuth = false"/>
+          <v-btn text @click="showAuth = true" class="mr-md-4" v-if="!$store.getters.userInfo">
+            Sign in
           </v-btn>
-        </template>
-        <v-list>
-          <v-list-item
-            v-for="item in items"
-            :key="item.title"
-            link
-          >
-            <v-list-item-icon>
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-divider></v-divider>
-          <v-list-item class="px-2" link to="/profile">
-          <v-list-item-avatar>
-            <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
-          </v-list-item-avatar>
-          <v-list-item-title>John Leider</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-      <v-toolbar-title>
-        <NuxtLink to="/">{{ title }}</NuxtLink>
-      </v-toolbar-title>
-      <div class="d-flex align-center ml-auto">
+          <SignUp :showDialog="showSignUp" @closeDialog="showSignUp = false"/>
+          <v-btn text @click="showSignUp = true" v-if="!$store.getters.userInfo">
+            Sign up
+          </v-btn>
+          <v-btn text @click="logout" v-if="$store.getters.userInfo">
+            Log out
+          </v-btn>
+        </div>
+      </div>
+      
+      <div v-if="!$vuetify.breakpoint.mdAndUp" class="additional-search">
         <v-text-field
-          dense
-          label="Search"
-          v-model="search"
-          solo
-          hide-details
-          append-icon="mdi-magnify"
-          class="mr-16"
-        ></v-text-field>
-        <v-switch
-          v-model="darkTheme"
-          label="Dark theme"
-          color="indigo darken-3"
-          class="pr-12"
-          hide-details
-        ></v-switch>
-        <Auth :showDialog="showAuth" @closeDialog="showAuth = false"/>
-        <v-btn text @click="showAuth = true" class="mr-4" v-if="!$store.getters.userInfo">
-          Sign in
-        </v-btn>
-        <SignUp :showDialog="showSignUp" @closeDialog="showSignUp = false"/>
-        <v-btn text @click="showSignUp = true" v-if="!$store.getters.userInfo">
-          Sign up
-        </v-btn>
-        <v-btn text @click="logout" v-if="$store.getters.userInfo">
-          Log out
-        </v-btn>
+           dense
+           label="Search"
+           v-model="search"
+           solo
+           hide-details
+           append-icon="mdi-magnify"
+        />
       </div>
     </v-app-bar>
     <v-main>
@@ -122,17 +135,44 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import '../assets/breakpoints.less';
+
 .header {
   height: 56px!important;
+  @media (max-width: @sm-min) {
+    height: 106px!important;
+  }
   ::v-deep {
     .v-toolbar__content {
       height: 56px!important;
+      @media (max-width: @sm-min) {
+        display: flex;
+        flex-direction: column;
+        padding: 4px;
+      }
+      .main-content {
+          display: flex;
+          align-items: center;
+          width: 100%;
+        }
+      
     }
   }
   a.nuxt-link-active {
     font-weight: bold;
     color: inherit;
     text-decoration: none;
+  }
+  .additional-search {
+    width: 94%;
+  }
+}
+
+::v-deep {
+  .v-main {
+     @media (max-width: @sm-min) {
+      padding-top: 106px!important;
+     }
   }
 }
 </style>

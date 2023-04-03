@@ -1,9 +1,9 @@
 <template>
-  <v-row justify="center" align="center">
-    <v-col cols="7">
+  <v-row justify-md="center" align-md="center">
+    <v-col md="7">
       <v-card v-for="(article, index) in articles" :key="index" class="article mb-4">
         <v-card-title>{{ article.title }}</v-card-title>
-        <div class="d-flex pa-4">
+        <div class="pa-4 d-flex flex-column flex-md-row">
           <img :src="article.image" alt="demo picture">
           <div>
             <v-card-text>
@@ -33,7 +33,7 @@
         </div>
       </v-card>
     </v-col>
-    <v-card class="recomendation-block ml-8">
+    <v-card class="recomendation-block ml-8 d-sm-none d-none d-md-block">
       <div class="d-flex flex-column">
         <h3>Recommendations:</h3>
         <a v-for="(item, index) in recomendations"
@@ -143,6 +143,7 @@ export default {
   }
   .v-card__title {
     font-size: 32px;
+    word-break: break-word;
   }
   .tags .tag{
     padding: 4px;

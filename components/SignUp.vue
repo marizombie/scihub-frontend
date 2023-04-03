@@ -80,7 +80,7 @@
     },
     methods: {
       async register() {
-        await this.$store.dispatch("register", {username: this.login, password: this.password})
+        await this.$store.dispatch("register", {email: this.login, username: this.login, password: this.password})
         this.dialog = false
       }
     }
