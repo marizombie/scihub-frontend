@@ -122,16 +122,18 @@ export default {
         { title: "Dwarves -- are they all so loyal to the Crown?", author: "Jeremy Hokey", authorImg: "" },
         { title: "Should we just look or act? Kids wrestling with crocodiles", author: "Samantha Ames", authorImg: "" }
       ],
-      recentlyWritten: [
-        { title: "Should we really eat dinosaurs? Health advice", author: "Adam Spanker", authorImg: "" },
-        { title: "Common language for all, even for tiny people   ", author: "Didi Nocks", authorImg: "" },
-        { title: "Why clown is a good career choice -- interview with Joshua", author: "Uma Illya", authorImg: "" }
-      ]
+      recentlyWritten: [],
     }
   },
   async beforeMount() {
     const data = await this.$axios.$get("/api/posts/");
     this.articles = data.results;
+    const recentlyWritten = await this.$axios.$get("/api/last-posts/");
+    // TODO: Remove slice aftr API start return only 3 items
+    this.recentlyWritten = recentlyWritten.slice(0, 3);
+  },
+  computed: {
+
   }
 }
 </script>
