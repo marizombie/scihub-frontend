@@ -86,7 +86,7 @@
       </div>
     </v-app-bar>
     <v-main>
-      <v-container>
+      <v-container class="custom-container">
         <Nuxt />
       </v-container>
     </v-main>
@@ -169,6 +169,11 @@ export default {
 }
 
 ::v-deep {
+  .custom-container {
+    @media (max-width: @md-max) {
+      max-width:100%;
+    }
+  }
   .v-main {
      @media (max-width: @sm-min) {
       padding-top: 106px!important;
