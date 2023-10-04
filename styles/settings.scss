@@ -1,0 +1,6 @@
+$custom-family-lucas: "Custom Font Name", sans-serif;
+
+@use "vuetify/settings" with (
+    $body-font-family: $custom-family-lucas,
+    $heading-font-family: $custom-family-lucas
+);

@@ -1,8 +1,7 @@
-version: '3'
+version: '3.3'
+
 services:
   scihub-frontend:
-    image: scihub-frontend:latest
-    environment:
-      PORT: 3000
+    build: .
     ports:
       - 3000:3000

@@ -1,9 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-dialog
-      v-model="dialog"
-      max-width="600px"
-    >
+    <v-dialog v-model="dialog" max-width="600px">
       <v-card>
         <v-card-title>
           <span class="text-h5">Sign up</span>
@@ -14,7 +11,8 @@
               <v-col cols="12">
                 <v-text-field
                   label="Email*"
-                  v-model="login"
+                  variant="outlined"
+                  v-model="registerData.email"
                   required
                 ></v-text-field>
               </v-col>
@@ -22,7 +20,8 @@
                 <v-text-field
                   label="Password*"
                   type="password"
-                  v-model="password"
+                  variant="outlined"
+                  v-model="registerData.password"
                   required
                 ></v-text-field>
               </v-col>
@@ -30,7 +29,8 @@
                 <v-text-field
                   label="Confirm password*"
                   type="password"
-                  v-model="confirmPassword"
+                  variant="outlined"
+                  v-model="registerData.password_verifier"
                   required
                 ></v-text-field>
               </v-col>
@@ -39,18 +39,10 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            color="blue darken-1"
-            text
-            @click="dialog = false"
-          >
+          <v-btn color="blue darken-1" variant="text" @click="dialog = false">
             Cancel
           </v-btn>
-          <v-btn
-            color="blue darken-1"
-            text
-            @click="register"
-          >
+          <v-btn color="blue darken-1" variant="text" @click="register">
             Sign up
           </v-btn>
         </v-card-actions>
@@ -59,30 +51,45 @@
   </v-row>
 </template>
 
-<script>
-  export default {
-    props: ['showDialog'],
-    data: () => ({
-      dialog: false,
-      login: "",
-      password: "",
-      confirmPassword: ""
-    }),
-    watch: {
-      dialog(val) {
-        if (!val) {
-          this.$emit('closeDialog');
-        }
-      },
-      showDialog(val) {
-        this.dialog = val;
-      }
-    },
-    methods: {
-      async register() {
-        await this.$store.dispatch("register", {email: this.login, username: this.login, password: this.password})
-        this.dialog = false
-      }
-    }
+<script setup lang="ts">
+import { useUserStore } from "../store/index";
+
+interface RegisterInfo {
+  email: string;
+  password: string;
+  password_verifier: string;
+}
+
+const emit = defineEmits(["closeDialog"]);
+const props = defineProps({
+  showDialog: {
+    type: Boolean,
+  },
+});
+let { showDialog } = props;
+const userStore = useUserStore();
+let dialog = ref(false);
+let registerData: Ref<RegisterInfo> = ref({
+  email: "",
+  password: "",
+  password_verifier: "",
+});
+
+watch(dialog, (val) => {
+  if (!val) {
+    emit("closeDialog");
   }
+});
+
+watch(
+  () => props.showDialog,
+  (val) => {
+    dialog.value = val;
+  },
+);
+
+async function register() {
+  await userStore.register(registerData.value);
+  dialog.value = false;
+}
 </script>

@@ -1,34 +1,12 @@
-# We don't want to start from scratch.
-# That is why we tell node here to use the current node image as base.
-FROM node:alpine3.11
+FROM node:17-alpine3.14
 
-# Create an application directory
-RUN mkdir -p /app
+ADD .output /webapp/.output
 
-# The /app directory should act as the main application directory
-WORKDIR /app
+EXPOSE 3000
 
-# Copy the app package and package-lock.json file
-COPY package*.json ./
+WORKDIR /webapp/.output
 
-# Install node packages
-RUN npm install
-
-# Copy or project directory (locally) in the current directory of our docker image (/app)
-COPY . .
-
-# Build the app
-RUN npm run build
-
-# Expose $PORT on container.
-# We use a varibale here as the port is something that can differ on the environment.
-EXPOSE $PORT
-
-# Set host to localhost / the docker image
 ENV NUXT_HOST=0.0.0.0
+ENV NUXT_PORT=3000
 
-# Set app port
-ENV NUXT_PORT=$PORT
-
-# Start the app
-CMD [ "npm", "start" ]
+CMD ["node", "/webapp/.output/server/index.mjs"]

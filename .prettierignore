@@ -1,0 +1,5 @@
+**/dist/
+**/.nuxt/
+/_*
+**/lib/**
+**/*-lock.json
