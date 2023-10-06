@@ -107,7 +107,6 @@ let articles: Ref<Article[] | null> = ref(null);
 watch(
   () => posts.value,
   (val) => {
-    console.log("watch");
     articles.value = val!.results;
   },
   {

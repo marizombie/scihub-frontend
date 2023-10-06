@@ -86,6 +86,7 @@
       </div>
     </v-app-bar>
     <v-main>
+      <Notification />
       <v-container class="custom-container">
         <slot />
       </v-container>
@@ -95,7 +96,7 @@
 
 <script setup lang="ts">
 import { useDisplay, useTheme } from "vuetify";
-import { useUserStore } from "~/store";
+import { useNotificationStore, useUserStore } from "~/store";
 
 const userStore = useUserStore();
 const title: string = "Scihub";
@@ -126,26 +127,32 @@ function toggleTheme() {
 
 .header {
   height: 56px !important;
+
   @media (max-width: @sm-min) {
     height: 114px !important;
   }
+
   :deep(.v-toolbar__content) {
     height: 56px !important;
+
     @media (max-width: @sm-min) {
       display: flex;
       flex-direction: column;
       padding: 4px;
     }
+
     .main-content {
       display: flex;
       align-items: center;
       width: 100%;
     }
+
     a.router-link-active {
       font-weight: bold;
       color: inherit;
       text-decoration: none;
     }
+
     .additional-search {
       width: 94%;
     }
@@ -157,17 +164,21 @@ function toggleTheme() {
     max-width: 100%;
   }
 }
+
 :deep(.v-main) {
   @media (max-width: @sm-min) {
     padding-top: 106px !important;
   }
 }
+
 :deep(.v-toolbar-title) {
   flex: unset;
 }
+
 .search {
   width: 220px;
 }
+
 .header-button {
   font-weight: 700;
 }

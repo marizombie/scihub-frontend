@@ -14,6 +14,10 @@ interface TokenInfo {
   access: string;
   refresh: string;
 }
+export interface Notification {
+  id: number;
+  error: Error;
+}
 
 export const useUserStore = defineStore("user", {
   state: () => {
@@ -52,6 +56,30 @@ export const useUserStore = defineStore("user", {
     },
     logout() {
       this.userData = null;
+    },
+  },
+});
+
+export const useNotificationStore = defineStore("notification", {
+  state: () => {
+    return {
+      notifications: [] as Notification[],
+    };
+  },
+  getters: {
+    notificationsArray: (state) => state.notifications,
+  },
+  actions: {
+    setNotification(data: Error) {
+      this.notifications.push({
+        error: data,
+        id: this.notifications.length
+          ? this.notifications[this.notifications.length - 1].id + 1
+          : 0,
+      });
+    },
+    removeNotification(id: number) {
+      this.notifications = this.notifications.filter((item) => item.id !== id);
     },
   },
 });
