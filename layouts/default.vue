@@ -2,7 +2,7 @@
   <v-app>
     <v-app-bar fixed app class="header d-flex flex-column">
       <div class="main-content">
-        <v-menu>
+        <v-menu v-if="userStore.userInfo">
           <template v-slot:activator="{ props }">
             <v-btn icon="mdi-menu" v-bind="props"></v-btn>
           </template>
@@ -19,7 +19,7 @@
             </v-list-item>
           </v-list>
         </v-menu>
-        <v-app-bar-title>
+        <v-app-bar-title class="ml-4">
           <NuxtLink to="/">{{ title }}</NuxtLink>
         </v-app-bar-title>
         <div class="d-flex align-center ml-auto">
@@ -58,6 +58,11 @@
 import { useDisplay, useTheme } from "vuetify";
 import { useNotificationStore, useUserStore } from "~/store";
 
+interface MenuItem {
+  title: string;
+  icon: string;
+}
+
 const userStore = useUserStore();
 const title: string = "Scihub";
 const display = ref(useDisplay() || null);
@@ -65,10 +70,10 @@ let search: Ref<string> = ref("");
 let darkTheme: Ref<boolean> = ref(false);
 let showAuth: Ref<boolean> = ref(false);
 let showSignUp: Ref<boolean> = ref(false);
-const items = [
+const items: MenuItem[] = [
   { title: "Bookmarks", icon: "mdi-bookmark" },
   { title: "My Articles", icon: "mdi-text-box-multiple" },
-  { title: "Settings", icon: "mdi-cog" },
+  // { title: "Settings", icon: "mdi-cog" },
 ];
 
 const theme = useTheme();
