@@ -1,7 +1,12 @@
 <template>
   <v-row justify-md="center" align-md="center">
     <v-col md="7" v-if="articles?.length">
-      <v-card v-for="(article, index) in articles" :key="index" class="article mb-4" :to="`/posts/${article.slug}`">
+      <v-card
+        v-for="(article, index) in articles"
+        :key="index"
+        class="article mb-4"
+        :to="`/posts/${article.slug}`"
+      >
         <v-card-title>{{ article.title }}</v-card-title>
         <div class="pa-4 d-flex flex-column flex-md-row">
           <img :src="article.image" alt="demo picture" />
@@ -10,7 +15,12 @@
               {{ article.description }}
             </v-card-text>
             <div class="pl-4 pr-4 pb-4 tags d-flex flex-wrap">
-              <v-card variant="elevated" v-for="(tag, index) in article.tags" :key="index" class="tag ma-1">
+              <v-card
+                variant="elevated"
+                v-for="(tag, index) in article.tags"
+                :key="index"
+                class="tag ma-1"
+              >
                 <span>{{ tag }}</span>
               </v-card>
             </div>
@@ -18,7 +28,11 @@
             <div class="pl-4 pr-4 pt-2">
               <span class="mr-1">by</span>
               <v-avatar size="20" class="mr-1">
-                <img v-if="article.authorImg" :src="article.authorImg" alt="John" />
+                <img
+                  v-if="article.authorImg"
+                  :src="article.authorImg"
+                  alt="John"
+                />
                 <v-icon v-else> mdi-account-circle </v-icon>
               </v-avatar>
               <span>{{ article.author }}</span>
@@ -30,7 +44,12 @@
     <v-card class="recomendation-block ml-8 d-sm-none d-none d-md-block">
       <div class="d-flex flex-column">
         <h3>Recommendations:</h3>
-        <NuxtLink v-for="(item, index) in recomendations" :key="index" class="text-subtitle" :to="`/posts/${item.slug}`">
+        <NuxtLink
+          v-for="(item, index) in recomendations"
+          :key="index"
+          class="text-subtitle"
+          :to="`/posts/${item.slug}`"
+        >
           <span class="title">{{ item.title }}</span>
           <div class="author-info">
             <span class="mr-1">by</span>
@@ -44,8 +63,12 @@
       </div>
       <div class="d-flex flex-column mt-6">
         <h3>Recently written:</h3>
-        <NuxtLink v-for="(item, index) in recentlyWrittenPosts" :key="index" class="text-subtitle"
-          :to="`/posts/${item.slug}`">
+        <NuxtLink
+          v-for="(item, index) in recentlyWrittenPosts"
+          :key="index"
+          class="text-subtitle"
+          :to="`/posts/${item.slug}`"
+        >
           <span class="title">{{ item.title }}</span>
           <div class="author-info">
             <span class="mr-1">by</span>
@@ -97,19 +120,19 @@ let recomendations = [
   {
     title: "Terrifying truth about garden gnomes",
     author: "Emilia Boston",
-    slug: '',
+    slug: "",
     authorImg: "",
   },
   {
     title: "Dwarves -- are they all so loyal to the Crown?",
     author: "Jeremy Hokey",
-    slug: '',
+    slug: "",
     authorImg: "",
   },
   {
     title: "Should we just look or act? Kids wrestling with crocodiles",
     author: "Samantha Ames",
-    slug: '',
+    slug: "",
     authorImg: "",
   },
 ];

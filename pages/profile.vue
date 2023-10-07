@@ -54,7 +54,12 @@
       />
       <div class="subtitle">Following</div>
       <v-chip-group>
-        <v-chip v-for="tag in tags" :key="tag" close>
+        <v-chip
+          v-for="tag in tags"
+          :key="tag"
+          closable
+          @click:close="removeTag(tag)"
+        >
           {{ tag }}
         </v-chip>
       </v-chip-group>
@@ -98,7 +103,6 @@ const tags = ref(["ml", "technologies", "biology", "mathematics"]);
 function setFile(file: File[]) {
   profileImage.value = file;
 }
-// TODO: Handle errors from all requests
 const { data } = await useAPIFetch<ProfileCRUD>("/api/profile/");
 profile.value = data.value!.user;
 
@@ -106,6 +110,9 @@ async function redirectToHomePage() {
   await navigateTo("/");
 }
 async function profileSend() {}
+function removeTag(tag: string) {
+  tags.value = tags.value.filter((item) => item !== tag);
+}
 </script>
 
 <style lang="less" scoped>
