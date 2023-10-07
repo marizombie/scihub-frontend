@@ -83,9 +83,7 @@
           </v-card>
         </div>
         <div class="pa-4 pt-0">
-          <v-icon @click="handleClick" :color="liked ? '#F05654' : 'inherit'">
-            {{ "mdi-heart" }}
-          </v-icon>
+          <LikeButton />
           <span> 190 like(s)</span>
         </div>
       </v-card>
@@ -136,6 +134,7 @@
       </v-card>
     </v-col>
   </v-row>
+  <Comments />
 </template>
 
 <script setup lang="ts">
@@ -205,9 +204,6 @@ recentlyWritten.value = recentlyWrittenData.value!.slice(0, 3);
 
 async function redirectToHomePage() {
   await navigateTo("/");
-}
-function handleClick() {
-  liked.value = !liked.value;
 }
 </script>
 
