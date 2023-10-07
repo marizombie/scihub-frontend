@@ -1,96 +1,106 @@
 <template>
   <v-app>
-    <v-app-bar fixed app class="header d-flex flex-column">
-      <div class="main-content">
-        <v-menu v-if="userStore.userInfo">
-          <template v-slot:activator="{ props }">
-            <v-btn icon="mdi-menu" v-bind="props"></v-btn>
-          </template>
-          <v-list>
-            <v-list-item v-for="item in items" :key="item.title" link>
-              <template v-slot:prepend>
-                <v-icon :icon="item.icon"></v-icon>
-              </template>
-              <v-list-item-title v-text="item.title" />
-            </v-list-item>
-            <v-divider></v-divider>
-            <v-list-item
-              class="px-2"
-              link
-              to="/profile"
-              prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg"
+    <v-theme-provider :theme="theme.global.name.value">
+      <!-- Test
+      <v-btn @click="showAuth = true" class="header-button mr-md-4" v-if="!userStore.userInfo">
+        Sign in
+      </v-btn> -->
+
+      <v-app-bar fixed app class="header d-flex flex-column">
+        <div class="main-content">
+          <v-menu v-if="userStore.userInfo">
+            <template v-slot:activator="{ props }">
+              <v-btn icon="mdi-menu" v-bind="props"></v-btn>
+            </template>
+            <v-list>
+              <v-list-item v-for="item in items" :key="item.title" link>
+                <template v-slot:prepend>
+                  <v-icon :icon="item.icon"></v-icon>
+                </template>
+                <v-list-item-title v-text="item.title" />
+              </v-list-item>
+              <v-divider></v-divider>
+              <v-list-item
+                class="px-2"
+                link
+                to="/profile"
+                prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg"
+              >
+                <v-list-item-title>John Leider</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+          <v-app-bar-title class="ml-4">
+            <NuxtLink to="/">{{ title }}</NuxtLink>
+          </v-app-bar-title>
+          <div class="d-flex align-center ml-auto">
+            <v-text-field
+              density="compact"
+              variant="solo"
+              v-if="display.mdAndUp"
+              label="Search"
+              v-model="search"
+              single-line
+              hide-details
+              append-inner-icon="mdi-magnify"
+              class="search mr-md-4"
+            />
+            <v-switch
+              v-model="darkTheme"
+              hide-details
+              class="mr-8"
+              :label="` ${display.mdAndUp ? 'Dark theme' : ''}`"
+            />
+            <Auth :showDialog="showAuth" @closeDialog="showAuth = false" />
+            <v-btn
+              @click="showAuth = true"
+              class="header-button mr-md-4"
+              v-if="!userStore.userInfo"
             >
-              <v-list-item-title>John Leider</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-        <v-app-bar-title class="ml-4">
-          <NuxtLink to="/">{{ title }}</NuxtLink>
-        </v-app-bar-title>
-        <div class="d-flex align-center ml-auto">
+              Sign in
+            </v-btn>
+            <SignUp
+              :showDialog="showSignUp"
+              @closeDialog="showSignUp = false"
+            />
+            <v-btn
+              class="header-button"
+              variant="text"
+              @click="showSignUp = true"
+              v-if="!userStore.userInfo"
+            >
+              Sign up
+            </v-btn>
+            <v-btn
+              class="ml-5 header-button"
+              variant="text"
+              @click="userStore.logout()"
+              v-if="userStore.userInfo"
+            >
+              Log out
+            </v-btn>
+          </div>
+        </div>
+
+        <div v-if="!display.mdAndUp" class="additional-search mb-2">
           <v-text-field
             density="compact"
             variant="solo"
-            v-if="display.mdAndUp"
             label="Search"
             v-model="search"
             single-line
             hide-details
             append-inner-icon="mdi-magnify"
-            class="search mr-md-4"
           />
-          <v-switch
-            v-model="darkTheme"
-            hide-details
-            class="mr-8"
-            :label="` ${display.mdAndUp ? 'Dark theme' : ''}`"
-          />
-          <Auth :showDialog="showAuth" @closeDialog="showAuth = false" />
-          <v-btn
-            @click="showAuth = true"
-            class="header-button mr-md-4"
-            v-if="!userStore.userInfo"
-          >
-            Sign in
-          </v-btn>
-          <SignUp :showDialog="showSignUp" @closeDialog="showSignUp = false" />
-          <v-btn
-            class="header-button"
-            variant="text"
-            @click="showSignUp = true"
-            v-if="!userStore.userInfo"
-          >
-            Sign up
-          </v-btn>
-          <v-btn
-            class="ml-5 header-button"
-            variant="text"
-            @click="userStore.logout()"
-            v-if="userStore.userInfo"
-          >
-            Log out
-          </v-btn>
         </div>
-      </div>
-
-      <div v-if="!display.mdAndUp" class="additional-search mb-2">
-        <v-text-field
-          density="compact"
-          variant="solo"
-          label="Search"
-          v-model="search"
-          single-line
-          hide-details
-          append-inner-icon="mdi-magnify"
-        />
-      </div>
-    </v-app-bar>
-    <v-main>
-      <Notification />
-      <v-container class="custom-container">
-        <slot />
-      </v-container>
-    </v-main>
+      </v-app-bar>
+      <v-main>
+        <Notification />
+        <v-container class="custom-container">
+          <slot />
+        </v-container>
+      </v-main>
+    </v-theme-provider>
   </v-app>
 </template>
 

@@ -82,7 +82,7 @@
             <span>{{ tag }}</span>
           </v-card>
         </div>
-        <div class="pa-4 pt-0">
+        <div class="pa-4 pt-0 d-flex align-center">
           <LikeButton />
           <span> 190 like(s)</span>
         </div>
@@ -110,7 +110,7 @@
           {{ authorInfo.description }}
         </span>
         <div class="mt-4">
-          <v-btn class="primary"> Follow </v-btn>
+          <v-btn color="primary"> Follow </v-btn>
         </div>
 
         <div class="d-flex flex-column mt-16">
