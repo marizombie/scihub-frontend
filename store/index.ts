@@ -1,22 +1,16 @@
-interface UserInfo {
-  password: string;
-  username: string;
-}
-
-interface RegisterInfo {
-  email: string;
-  username?: string;
-  password: string;
-  password_verifier: string;
-}
-
-interface TokenInfo {
+export interface TokenInfo {
   access: string;
   refresh: string;
 }
+export interface NotificationWOID {
+  type: "error" | "info";
+  message: string;
+}
+
 export interface Notification {
   id: number;
-  error: Error;
+  type: "error" | "info";
+  message: string;
 }
 
 export const useUserStore = defineStore("user", {
@@ -29,30 +23,8 @@ export const useUserStore = defineStore("user", {
     userInfo: (state) => state.userData,
   },
   actions: {
-    async register(userData: RegisterInfo) {
-      userData.username = userData.email;
-      try {
-        const { data } = await useAPIFetch("/api/register/", {
-          method: "post",
-          body: userData,
-        });
-        this.userData = data.value as TokenInfo;
-      } catch (e) {
-        console.error(e);
-        return e;
-      }
-    },
-    async login(userData: UserInfo) {
-      try {
-        const { data } = await useAPIFetch("/api/token/", {
-          method: "post",
-          body: userData,
-        });
-        this.userData = data.value as TokenInfo;
-      } catch (e) {
-        console.error(e);
-        return e;
-      }
+    async setUserInfo(token: TokenInfo) {
+      this.userData = token;
     },
     logout() {
       this.userData = null;
@@ -70,9 +42,10 @@ export const useNotificationStore = defineStore("notification", {
     notificationsArray: (state) => state.notifications,
   },
   actions: {
-    setNotification(data: Error) {
+    setNotification(data: NotificationWOID) {
       this.notifications.push({
-        error: data,
+        type: data.type,
+        message: data.message,
         id: this.notifications.length
           ? this.notifications[this.notifications.length - 1].id + 1
           : 0,

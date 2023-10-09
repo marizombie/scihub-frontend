@@ -8,7 +8,8 @@ export const useAPIFetch: typeof useFetch = (request, opts?) => {
   const options = {
     ...opts,
     suspense: true,
-    onError: (error: Error) => notifyStore.setNotification(error),
+    onError: (error: Error) =>
+      notifyStore.setNotification({ type: "error", message: error.message }),
   };
   const headers = {
     ...opts?.headers,

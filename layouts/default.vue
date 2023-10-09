@@ -1,11 +1,6 @@
 <template>
   <v-app>
     <v-theme-provider :theme="theme.global.name.value">
-      <!-- Test
-      <v-btn @click="showAuth = true" class="header-button mr-md-4" v-if="!userStore.userInfo">
-        Sign in
-      </v-btn> -->
-
       <v-app-bar fixed app class="header d-flex flex-column">
         <div class="main-content">
           <v-menu v-if="userStore.userInfo">
@@ -106,7 +101,7 @@
 
 <script setup lang="ts">
 import { useDisplay, useTheme } from "vuetify";
-import { useNotificationStore, useUserStore } from "~/store";
+import { useUserStore } from "~/store";
 
 interface MenuItem {
   title: string;

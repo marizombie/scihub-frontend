@@ -1,7 +1,12 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   ssr: false,
-  modules: ["@invictus.codes/nuxt-vuetify", "@pinia/nuxt", "@nuxtjs/i18n"],
+  modules: [
+    "@invictus.codes/nuxt-vuetify",
+    "@pinia/nuxt",
+    "@nuxtjs/i18n",
+    "@vee-validate/nuxt",
+  ],
   runtimeConfig: {
     public: {
       baseURL: process.env.BASE_URL || "http://127.0.0.1:8000/",
