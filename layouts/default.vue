@@ -15,12 +15,8 @@
                 <v-list-item-title v-text="item.title" />
               </v-list-item>
               <v-divider></v-divider>
-              <v-list-item
-                class="px-2"
-                link
-                to="/profile"
-                prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg"
-              >
+              <v-list-item class="px-2" link to="/profile"
+                prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg">
                 <v-list-item-title>John Leider</v-list-item-title>
               </v-list-item>
             </v-list>
@@ -29,64 +25,30 @@
             <NuxtLink to="/">{{ title }}</NuxtLink>
           </v-app-bar-title>
           <div class="d-flex align-center ml-auto">
-            <v-text-field
-              density="compact"
-              variant="solo"
-              v-if="display.mdAndUp"
-              label="Search"
-              v-model="search"
-              single-line
-              hide-details
-              append-inner-icon="mdi-magnify"
-              class="search mr-md-4"
-            />
-            <v-switch
-              v-model="darkTheme"
-              hide-details
-              class="mr-8"
-              :label="` ${display.mdAndUp ? 'Dark theme' : ''}`"
-            />
+            <v-text-field density="compact" variant="solo" v-if="display.mdAndUp" label="Search" v-model="search"
+              single-line hide-details append-inner-icon="mdi-magnify" class="search mr-md-4" />
+            <v-switch v-model="darkTheme" hide-details class="mr-8" :label="` ${display.mdAndUp ? 'Dark theme' : ''}`" />
             <Auth :showDialog="showAuth" @closeDialog="showAuth = false" />
-            <v-btn
-              @click="showAuth = true"
-              class="header-button mr-md-4"
-              v-if="!userStore.userInfo"
-            >
+            <v-btn @click="showAuth = true" class="header-button mr-md-4" v-if="!userStore.userInfo">
               Sign in
             </v-btn>
-            <SignUp
-              :showDialog="showSignUp"
-              @closeDialog="showSignUp = false"
-            />
-            <v-btn
-              class="header-button"
-              variant="text"
-              @click="showSignUp = true"
-              v-if="!userStore.userInfo"
-            >
+            <SignUp :showDialog="showSignUp" @closeDialog="showSignUp = false" />
+            <v-btn class="header-button" variant="text" @click="showSignUp = true" v-if="!userStore.userInfo">
               Sign up
             </v-btn>
-            <v-btn
-              class="ml-5 header-button"
-              variant="text"
-              @click="userStore.logout()"
-              v-if="userStore.userInfo"
-            >
+            <v-btn prepend-icon="mdi-pencil" class="ml-5 header-button" variant="text" @click="openCreatePage()"
+              v-if="userStore.userInfo">
+              Write
+            </v-btn>
+            <v-btn class="header-button" variant="text" @click="userStore.logout()" v-if="userStore.userInfo">
               Log out
             </v-btn>
           </div>
         </div>
 
         <div v-if="!display.mdAndUp" class="additional-search mb-2">
-          <v-text-field
-            density="compact"
-            variant="solo"
-            label="Search"
-            v-model="search"
-            single-line
-            hide-details
-            append-inner-icon="mdi-magnify"
-          />
+          <v-text-field density="compact" variant="solo" label="Search" v-model="search" single-line hide-details
+            append-inner-icon="mdi-magnify" />
         </div>
       </v-app-bar>
       <v-main>
@@ -118,7 +80,6 @@ let showSignUp: Ref<boolean> = ref(false);
 const items: MenuItem[] = [
   { title: "Bookmarks", icon: "mdi-bookmark" },
   { title: "My Articles", icon: "mdi-text-box-multiple" },
-  // { title: "Settings", icon: "mdi-cog" },
 ];
 
 const theme = useTheme();
@@ -129,6 +90,10 @@ watch(darkTheme, () => {
 
 function toggleTheme() {
   theme.global.name.value = theme.global.current.value.dark ? "light" : "dark";
+}
+
+async function openCreatePage() {
+  navigateTo("/posts/create")
 }
 </script>
 
