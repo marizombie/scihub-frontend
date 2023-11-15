@@ -1,13 +1,8 @@
 <template>
   <v-row justify-md="center" align-md="center">
     <v-col md="7" v-if="articles?.length">
-      <v-card
-        v-for="(article, index) in articles"
-        :key="index"
-        class="article mb-4"
-        :to="`/posts/${article.slug}`"
-      >
-        <v-card-title>{{ article.title }}</v-card-title>
+      <v-card v-for="(article, index) in articles" :key="index" class="article mb-4" :to="`/posts/${article.slug}`">
+        <v-card-title class="text-wrap">{{ article.title }}</v-card-title>
         <div class="pa-4 d-flex flex-column flex-md-row">
           <img :src="article.image" alt="demo picture" />
           <div>
@@ -15,12 +10,7 @@
               {{ article.description }}
             </v-card-text>
             <div class="pl-4 pr-4 pb-4 tags d-flex flex-wrap">
-              <v-card
-                variant="elevated"
-                v-for="(tag, index) in article.tags"
-                :key="index"
-                class="tag ma-1"
-              >
+              <v-card variant="elevated" v-for="(tag, index) in article.tags" :key="index" class="tag ma-1">
                 <span>{{ tag }}</span>
               </v-card>
             </div>
@@ -28,14 +18,10 @@
             <div class="pl-4 pr-4 pt-2">
               <span class="mr-1">by</span>
               <v-avatar size="20" class="mr-1">
-                <img
-                  v-if="article.authorImg"
-                  :src="article.authorImg"
-                  alt="John"
-                />
+                <img v-if="article.author_image" :src="article.author_image" :alt="article.author_name" />
                 <v-icon v-else> mdi-account-circle </v-icon>
               </v-avatar>
-              <span>{{ article.author }}</span>
+              <span>{{ article.author_name ? article.author_name : 'Anonymous' }}</span>
             </div>
           </div>
         </div>
@@ -44,39 +30,31 @@
     <v-card class="recomendation-block ml-8 d-sm-none d-none d-md-block">
       <div class="d-flex flex-column">
         <h3>Recommendations:</h3>
-        <NuxtLink
-          v-for="(item, index) in recomendations"
-          :key="index"
-          class="text-subtitle"
-          :to="`/posts/${item.slug}`"
-        >
+        <NuxtLink v-for="(item, index) in recommendedPosts" :key="index" class="text-subtitle"
+          :to="`/posts/${item.slug}`">
           <span class="title">{{ item.title }}</span>
           <div class="author-info">
             <span class="mr-1">by</span>
             <v-avatar size="20" class="mr-1">
-              <img v-if="item.authorImg" :src="item.authorImg" alt="John" />
+              <img v-if="item.author_image" :src="item.author_image" alt="John" />
               <v-icon v-else> mdi-account-circle </v-icon>
             </v-avatar>
-            <span>{{ item.author }}</span>
+            <span>{{ item.author_name ? item.author_name : 'Anonymous' }}</span>
           </div>
         </NuxtLink>
       </div>
       <div class="d-flex flex-column mt-6">
         <h3>Recently written:</h3>
-        <NuxtLink
-          v-for="(item, index) in recentlyWrittenPosts"
-          :key="index"
-          class="text-subtitle"
-          :to="`/posts/${item.slug}`"
-        >
+        <NuxtLink v-for="(item, index) in recentlyWrittenPosts" :key="index" class="text-subtitle"
+          :to="`/posts/${item.slug}`">
           <span class="title">{{ item.title }}</span>
           <div class="author-info">
             <span class="mr-1">by</span>
             <v-avatar size="20" class="mr-1">
-              <img v-if="item.authorImg" :src="item.authorImg" alt="John" />
+              <img v-if="item.author_image" :src="item.author_image" alt="John" />
               <v-icon v-else> mdi-account-circle </v-icon>
             </v-avatar>
-            <span>{{ item.author }}</span>
+            <span>{{ item.author_name ? item.author_name : 'Anonymous' }}</span>
           </div>
         </NuxtLink>
       </div>
@@ -86,7 +64,6 @@
 
 <script setup lang="ts">
 interface Article {
-  author: string;
   content: string;
   created_at: string;
   description: string;
@@ -95,7 +72,8 @@ interface Article {
   slug: string;
   tags: string[];
   title: string;
-  authorImg: string;
+  author_name: string;
+  author_image: string;
 }
 
 interface CRUDResponse {
@@ -105,6 +83,8 @@ interface CRUDResponse {
 const { data: posts } = await useAPIFetch<CRUDResponse>("/api/posts/");
 const { data: recentlyWritten } =
   await useAPIFetch<Article[]>("/api/last-posts/");
+const { data: recomendations } =
+  await useAPIFetch<Article[]>("api/popular-posts/");
 let articles: Ref<Article[] | null> = ref(null);
 watch(
   () => posts.value,
@@ -116,27 +96,9 @@ watch(
     immediate: true,
   },
 );
-let recomendations = [
-  {
-    title: "Terrifying truth about garden gnomes",
-    author: "Emilia Boston",
-    slug: "",
-    authorImg: "",
-  },
-  {
-    title: "Dwarves -- are they all so loyal to the Crown?",
-    author: "Jeremy Hokey",
-    slug: "",
-    authorImg: "",
-  },
-  {
-    title: "Should we just look or act? Kids wrestling with crocodiles",
-    author: "Samantha Ames",
-    slug: "",
-    authorImg: "",
-  },
-];
+
 let recentlyWrittenPosts = recentlyWritten.value;
+let recommendedPosts = recomendations.value;
 </script>
 
 <style lang="less" scoped>
@@ -146,12 +108,14 @@ let recentlyWrittenPosts = recentlyWritten.value;
 
 .article {
   img {
+    min-width: 300px;
     max-width: 300px;
   }
 
   .v-card-title {
     font-size: 32px;
     word-break: break-word;
+    line-height: 38px;
   }
 
   .tags .tag {

@@ -1,18 +1,17 @@
 <template>
-  <v-row>
+  <v-row v-if="article">
     <v-col md="8">
-      <v-card class="pa-3" v-if="article">
+      <v-card class="pa-3">
         <v-row>
           <v-col>
             <span class="ma-2">{{ article.created_at }}</span>
-            <div class="pl-2 pr-2">
+            <div class="pl-2 pr-2 author-block" @click="goToAuthorProfile(article.author_name)">
               <span class="mr-1">by</span>
               <v-avatar size="20" class="mr-1">
-                <img v-if="authorInfo.img" :src="authorInfo.img"
-                  :alt="authorInfo.firstName + ' ' + authorInfo.lastName" />
+                <img v-if="article.author_image" :src="article.author_image" :alt="article.author_name" />
                 <v-icon v-else> mdi-account-circle </v-icon>
               </v-avatar>
-              <span>{{ article.author }}</span>
+              <span>{{ article.author_name ? article.author_name : 'Anonymous' }}</span>
             </div>
           </v-col>
           <v-col cols="2" class="d-flex justify-end align-center">
@@ -20,7 +19,7 @@
           </v-col>
         </v-row>
 
-        <v-card-title>{{ article.title }}</v-card-title>
+        <v-card-title class="text-wrap">{{ article.title }}</v-card-title>
 
         <v-img :src="article.image" />
 
@@ -40,20 +39,20 @@
     </v-col>
     <v-col>
       <v-card class="recomendation-block ml-md-8 pa-4 d-md-block">
-        <div class="d-flex align-center mb-3">
+        <div class="d-flex align-center mb-3 author-block" @click="goToAuthorProfile(article.author_name)">
           <v-avatar size="48" class="mr-1">
-            <img v-if="authorInfo.img" :src="authorInfo.img" :alt="authorInfo.firstName + ' ' + authorInfo.lastName" />
-            <v-icon v-else> mdi-account-circle </v-icon>
+            <img v-if="article.author_image" :src="article.author_image" :alt="article.author_name" />
+            <v-icon size="48" v-else> mdi-account-circle </v-icon>
           </v-avatar>
           <div class="d-flex flex-column">
             <span class="title">{{
-              authorInfo.firstName + " " + authorInfo.lastName
+              article.author_name ? article.author_name : 'Anonymous'
             }}</span>
             <span class="subtitle">500 followers</span>
           </div>
         </div>
         <span class="subtitle mt-3">
-          {{ authorInfo.description }}
+          <!-- {{ article.author_description }} -->
         </span>
         <div class="mt-4">
           <v-btn color="primary"> Follow </v-btn>
@@ -67,10 +66,10 @@
             <div class="author-info">
               <span class="mr-1">by</span>
               <v-avatar size="20" class="mr-1">
-                <img v-if="item.authorImg" :src="item.authorImg" alt="John" />
+                <img v-if="item.author_image" :src="item.author_image" :alt="item.author_name" />
                 <v-icon v-else> mdi-account-circle </v-icon>
               </v-avatar>
-              <span>{{ item.author }}</span>
+              <span>{{ article.author_name ? article.author_name : 'Anonymous' }}</span>
             </div>
           </NuxtLink>
         </div>
@@ -85,7 +84,6 @@ import { useDisplay } from "vuetify";
 import SocialShare from '@/components/SocialShare.vue'
 
 interface Article {
-  author: string;
   content: string;
   created_at: string;
   description: string;
@@ -94,7 +92,8 @@ interface Article {
   slug: string;
   tags: string[];
   title: string;
-  authorImg: string;
+  author_name: string;
+  author_image: string;
 }
 
 interface Author {
@@ -123,12 +122,12 @@ interface Network {
 const route = useRoute();
 const display = ref(useDisplay() || null);
 const liked = ref(false);
-const authorInfo: Ref<Author> = ref({
-  firstName: "Maryna",
-  lastName: "Klokova",
-  img: "https://i.pinimg.com/736x/f3/6f/a9/f36fa99538b13d768802e697074f5873.jpg",
-  description: "I am writing to be popular",
-});
+// const authorInfo: Ref<Author> = ref({
+//   firstName: "Maryna",
+//   lastName: "Klokova",
+//   img: "https://i.pinimg.com/736x/f3/6f/a9/f36fa99538b13d768802e697074f5873.jpg",
+//   description: "I am writing to be popular",
+// });
 const networks: Ref<Network[]> = ref([
   { type: "copy", name: "Copy link", icon: "content-copy" },
   { type: "email", name: "Email", icon: "email" },
@@ -165,6 +164,12 @@ async function redirectToHomePage() {
   await navigateTo("/");
 }
 
+async function goToAuthorProfile(username: string) {
+  if (username) {
+    await navigateTo(`/profile/${username}`);
+  }
+}
+
 // TODO: Check meta data after deployment. https://nuxt.com/docs/getting-started/seo-meta
 useSeoMeta({
   title: article.value ? article.value.title : '',
@@ -194,12 +199,17 @@ useSeoMeta({
   color: #c2bbbb;
 }
 
-.v-card__title {
+.v-card-title {
   @media (min-width: @md-min) {
     font-size: 32px;
     word-break: break-word;
     padding: 24px;
+    line-height: 38px;
   }
+}
+
+.author-block {
+  cursor: pointer;
 }
 
 .recomendation-block {

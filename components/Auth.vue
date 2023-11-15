@@ -22,36 +22,21 @@
             <v-container>
               <v-row>
                 <v-col cols="12">
-                  <v-text-field
-                    variant="outlined"
-                    :label="t('username')"
-                    required
-                    v-model="username.value.value"
-                    :error-messages="username.errorMessage.value"
-                  ></v-text-field>
+                  <v-text-field variant="outlined" :label="t('username')" required v-model="username.value.value"
+                    :error-messages="username.errorMessage.value"></v-text-field>
                 </v-col>
                 <v-col cols="12">
-                  <v-text-field
-                    variant="outlined"
-                    :label="t('password')"
-                    type="password"
-                    required
-                    v-model="password.value.value"
-                    :error-messages="password.errorMessage.value"
-                  ></v-text-field>
+                  <v-text-field variant="outlined" :label="t('password')" type="password" required
+                    v-model="password.value.value" :error-messages="password.errorMessage.value"></v-text-field>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col class="pt-0 pb-0">
-                  <p
-                    class="errorField"
-                    v-for="(errorItem, index) in errorsArray"
-                    :key="index"
-                  >
+                  <p class="errorField" v-for="(errorItem, index) in errorsArray" :key="index">
                     {{
                       errorItem.name !== "detail"
-                        ? t(errorItem.name) + ": " + errorItem.data
-                        : errorItem.data
+                      ? t(errorItem.name) + ": " + errorItem.data
+                      : errorItem.data
                     }}
                   </p>
                 </v-col>
@@ -63,12 +48,7 @@
             <v-btn color="blue darken-1" variant="text" @click="dialog = false">
               {{ t("cancel") }}
             </v-btn>
-            <v-btn
-              color="blue darken-1"
-              variant="text"
-              :loading="isLoading"
-              @click="onSubmit"
-            >
+            <v-btn color="blue darken-1" variant="text" :loading="isLoading" @click="onSubmit">
               {{ t("log_in") }}
             </v-btn>
           </v-card-actions>
@@ -144,9 +124,9 @@ const password = useField("password", validationSchema);
 const onSubmit = handleSubmit(async (values) => {
   errorsArray.value = [];
   isLoading.value = true;
-  const { data, error } = await useAPIFetch("/api/token/", {
+  const { data, error } = await useAPIFetch("/api/login/", {
     method: "post",
-    body: values,
+    body: { ...values, email: values.username },
   });
   if (error.value?.data) {
     for (const key in error.value.data) {
