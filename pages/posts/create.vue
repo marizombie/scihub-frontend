@@ -23,7 +23,7 @@
       { title: 'Some class', value: 'class-name' }
     ],
     importcss_append: true,
-    file_picker_callback: function (callback, value, meta) {
+    file_picker_callback: function (callback: Function, value: string, meta: any) {
       /* Provide file and text for the link dialog */
       if (meta.filetype === 'file') {
         callback('https://www.google.com/logos/google.jpg', { text: 'My text' });
