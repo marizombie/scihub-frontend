@@ -25,8 +25,21 @@
             <NuxtLink to="/">{{ title }}</NuxtLink>
           </v-app-bar-title>
           <div class="d-flex align-center ml-auto">
-            <v-text-field density="compact" variant="solo" v-if="display.mdAndUp" label="Search" v-model="search"
-              single-line hide-details append-inner-icon="mdi-magnify" class="search mr-md-4" />
+            <v-menu>
+              <template v-slot:activator="{ props }">
+                <v-text-field v-bind="props" density="compact" variant="solo" v-if="display.mdAndUp" label="Search"
+                  v-model="search" single-line hide-details append-inner-icon="mdi-magnify" @click="expandedSearch = true"
+                  v-click-outside="{
+                    handler: (e: MouseEvent) => expandedSearch = false
+                  }" :class="[expandedSearch ? 'expand_search' : '', 'search mr-md-4']" />
+              </template>
+              <v-list v-if="searchedPosts.length">
+                <v-list-item v-for="(item, index) in searchedPosts" :key="index" :value="index"
+                  @click="handleChange(item.slug)">
+                  <v-list-item-title>{{ item.title }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
             <v-switch v-model="darkTheme" hide-details class="mr-8" :label="` ${display.mdAndUp ? 'Dark theme' : ''}`" />
             <Auth :showDialog="showAuth" @closeDialog="showAuth = false" />
             <v-btn @click="showAuth = true" class="header-button mr-md-4" v-if="!userStore.userInfo">
@@ -47,8 +60,18 @@
         </div>
 
         <div v-if="!display.mdAndUp" class="additional-search mb-2">
-          <v-text-field density="compact" variant="solo" label="Search" v-model="search" single-line hide-details
-            append-inner-icon="mdi-magnify" />
+          <v-menu>
+            <template v-slot:activator="{ props }">
+              <v-text-field v-bind="props" density="compact" variant="solo" label="Search" v-model="search" single-line
+                hide-details append-inner-icon="mdi-magnify" />
+            </template>
+            <v-list v-if="searchedPosts.length">
+              <v-list-item v-for="(item, index) in searchedPosts" :key="index" :value="index"
+                @click="handleChange(item.slug)">
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
         </div>
       </v-app-bar>
       <v-main>
@@ -70,14 +93,34 @@ interface MenuItem {
   icon: string;
 }
 
+interface Article {
+  content: string;
+  created_at: string;
+  description: string;
+  id: number;
+  image: string;
+  slug: string;
+  tags: string[];
+  title: string;
+  author_name: string;
+  author_image: string;
+}
+
+interface SearchResult {
+  count: number;
+  results: Article[];
+}
+
 const userStore = useUserStore();
 userStore.getUserInfoFromLS();
 const title: string = "Scihub";
 const display = ref(useDisplay() || null);
-let search: Ref<string> = ref("");
+let search: Ref<string> = ref('');
 let darkTheme: Ref<boolean> = ref(false);
 let showAuth: Ref<boolean> = ref(false);
 let showSignUp: Ref<boolean> = ref(false);
+let expandedSearch: Ref<boolean> = ref(false);
+let searchedPosts: Ref<Article[]> = ref([]);
 const items: MenuItem[] = [
   { title: "Bookmarks", icon: "mdi-bookmark" },
   { title: "My Articles", icon: "mdi-text-box-multiple" },
@@ -89,13 +132,32 @@ watch(darkTheme, () => {
   toggleTheme();
 });
 
+const fetchItems = async () => {
+  const { data, error } = await useAPIFetch<SearchResult>(`/api/posts/?search=${search.value}`);
+  if (data.value) {
+    searchedPosts.value = data.value.results;
+  }
+};
+
+const debouncedFetchItems = useDebounce(fetchItems, 300);
+
+watch(search, () => {
+  debouncedFetchItems();
+});
+
 function toggleTheme() {
   theme.global.name.value = theme.global.current.value.dark ? "light" : "dark";
 }
 
 async function openCreatePage() {
-  navigateTo("/posts/create")
+  await navigateTo("/posts/create");
 }
+
+function handleChange(item: string | null) {
+  search.value = '';
+  navigateTo(`/posts/${item}`);
+}
+
 </script>
 
 <style lang="less" scoped>
@@ -153,7 +215,17 @@ async function openCreatePage() {
 
 .search {
   width: 220px;
+  transition: width ease-out 0.5s;
+
+  :deep(.mdi-menu-down) {
+    display: none;
+  }
 }
+
+.expand_search {
+  width: 440px;
+}
+
 
 .header-button {
   font-weight: 700;
