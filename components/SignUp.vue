@@ -16,68 +16,45 @@
     <v-dialog v-model="dialog" max-width="600px">
       <v-card>
         <form @submit.prevent="onSubmit">
-          <v-card-title>
-            <span class="text-h5">{{ t("signup_title") }}</span>
+          <v-card-title class="mt-4">
+            <span class="text-h5 pl-6">{{ t("signup_title") }}</span>
           </v-card-title>
-          <v-card-text>
+          <v-card-text class="pb-0">
             <v-container>
               <v-row>
                 <v-col cols="12">
-                  <v-text-field
-                    :label="t('email')"
-                    variant="outlined"
-                    v-model="email.value.value"
-                    :error-messages="email.errorMessage.value"
-                  ></v-text-field>
+                  <v-text-field :label="t('email')" variant="outlined" v-model="email.value.value"
+                    :error-messages="email.errorMessage.value"></v-text-field>
                 </v-col>
                 <v-col cols="12">
-                  <v-text-field
-                    :label="t('password')"
-                    type="password"
-                    variant="outlined"
-                    v-model="password.value.value"
-                    :error-messages="password.errorMessage.value"
-                  ></v-text-field>
+                  <v-text-field :label="t('password')" type="password" variant="outlined" v-model="password.value.value"
+                    :error-messages="password.errorMessage.value"></v-text-field>
                 </v-col>
                 <v-col cols="12">
-                  <v-text-field
-                    :label="t('confirm_password')"
-                    type="password"
-                    variant="outlined"
+                  <v-text-field :label="t('confirm_password')" type="password" variant="outlined"
                     v-model="password_verifier.value.value"
-                    :error-messages="password_verifier.errorMessage.value"
-                  ></v-text-field>
+                    :error-messages="password_verifier.errorMessage.value"></v-text-field>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col class="pt-0 pb-0">
-                  <p
-                    class="errorField"
-                    v-for="(errorItem, index) in errorsArray"
-                    :key="index"
-                  >
+                  <p class="errorField" v-for="(errorItem, index) in errorsArray" :key="index">
                     {{
                       errorItem.name !== "detail"
-                        ? t(errorItem.name) + ": " + errorItem.data
-                        : errorItem.data
+                      ? t(errorItem.name) + ": " + errorItem.data
+                      : errorItem.data
                     }}
                   </p>
                 </v-col>
               </v-row>
             </v-container>
           </v-card-text>
-          <v-card-actions>
+          <v-card-actions class="mb-4">
             <v-spacer></v-spacer>
             <v-btn color="blue darken-1" variant="text" @click="dialog = false">
               {{ t("cancel") }}
             </v-btn>
-            <v-btn
-              color="blue darken-1"
-              :loading="isLoading"
-              variant="text"
-              @click="onSubmit"
-              type="submit"
-            >
+            <v-btn color="blue darken-1" :loading="isLoading" variant="text" class="pr-6" @click="onSubmit" type="submit">
               {{ t("signup_title") }}
             </v-btn>
           </v-card-actions>
@@ -168,7 +145,7 @@ const onSubmit = handleSubmit(async (values) => {
   isLoading.value = true;
   const { data, error } = await useAPIFetch("/api/register/", {
     method: "post",
-    body: { ...values, username: values.email },
+    body: values,
   });
   if (error.value?.data) {
     for (const key in error.value.data) {

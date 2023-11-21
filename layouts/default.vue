@@ -25,6 +25,7 @@
             <NuxtLink to="/">{{ title }}</NuxtLink>
           </v-app-bar-title>
           <div class="d-flex align-center ml-auto">
+            <ForgotPassword :showDialog="showForgetPassword" @closeDialog="showForgetPassword = false" />
             <v-menu>
               <template v-slot:activator="{ props }">
                 <v-text-field v-bind="props" density="compact" variant="solo" v-if="display.mdAndUp" label="Search"
@@ -41,7 +42,8 @@
               </v-list>
             </v-menu>
             <v-switch v-model="darkTheme" hide-details class="mr-8" :label="` ${display.mdAndUp ? 'Dark theme' : ''}`" />
-            <Auth :showDialog="showAuth" @closeDialog="showAuth = false" />
+            <Auth :showDialog="showAuth" @closeDialog="showAuth = false"
+              @showForgetPasswordDialog="showForgetPassword = true" />
             <v-btn @click="showAuth = true" class="header-button mr-md-4" v-if="!userStore.userInfo">
               Sign in
             </v-btn>
@@ -123,6 +125,7 @@ let search: Ref<string> = ref('');
 let darkTheme: Ref<boolean> = ref(false);
 let showAuth: Ref<boolean> = ref(false);
 let showSignUp: Ref<boolean> = ref(false);
+let showForgetPassword: Ref<boolean> = ref(false);
 let expandedSearch: Ref<boolean> = ref(false);
 let searchedPosts: Ref<Article[]> = ref([]);
 const items: MenuItem[] = [
@@ -163,7 +166,7 @@ function handleChange(item: string | null) {
 }
 
 const route = useRoute()
-if (route.query.token) {
+if (route.query.token && route.name !== 'confirm-password') {
   const { data, error } = await useAPIFetch<SuccessResponse>(`/api/register/email-confirm/?activate=${route.query.token}`);
   if (data.value) {
     if (data.value.success) {
@@ -222,6 +225,9 @@ if (route.query.token) {
   @media (max-width: @md-max) {
     max-width: 100%;
   }
+
+  display: flex;
+  justify-content: center;
 }
 
 :deep(.v-main) {
