@@ -86,7 +86,7 @@
 
 <script setup lang="ts">
 import { useDisplay, useTheme } from "vuetify";
-import { useUserStore } from "~/store";
+import { useNotificationStore, useUserStore } from "~/store";
 
 interface MenuItem {
   title: string;
@@ -109,6 +109,10 @@ interface Article {
 interface SearchResult {
   count: number;
   results: Article[];
+}
+
+interface SuccessResponse {
+  success: string;
 }
 
 const userStore = useUserStore();
@@ -156,6 +160,23 @@ async function openCreatePage() {
 function handleChange(item: string | null) {
   search.value = '';
   navigateTo(`/posts/${item}`);
+}
+
+const route = useRoute()
+if (route.query.token) {
+  const { data, error } = await useAPIFetch<SuccessResponse>(`/api/register/email-confirm/?activate=${route.query.token}`);
+  if (data.value) {
+    if (data.value.success) {
+      const notifyStore = useNotificationStore();
+      await notifyStore.setNotification({
+        type: "success",
+        message: data.value.success,
+      });
+    }
+  }
+  if (error.value) {
+    console.error(error.value)
+  }
 }
 
 </script>

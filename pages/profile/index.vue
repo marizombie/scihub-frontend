@@ -57,10 +57,6 @@ interface ProfileInfo {
   country: string;
 }
 
-interface ProfileCRUD {
-  user: ProfileInfo;
-}
-
 const display = ref(useDisplay() || null);
 const profileImage: Ref<File[] | undefined> = ref(undefined);
 const profile: Ref<ProfileInfo> = ref({

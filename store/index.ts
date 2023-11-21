@@ -9,13 +9,13 @@ export interface TokenInfo {
   last_name: string;
 }
 export interface NotificationWOID {
-  type: "error" | "info";
+  type: "error" | "info" | "success";
   message: string;
 }
 
 export interface Notification {
   id: number;
-  type: "error" | "info";
+  type: "error" | "info" | "success";
   message: string;
 }
 
