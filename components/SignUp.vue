@@ -6,7 +6,8 @@
     "confirm_password": "Password confirmation",
     "username": "Username",
     "signup_title": "Sign Up",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "resendLink": "Resend link?"
   }
 }
 </i18n>
@@ -50,11 +51,15 @@
             </v-container>
           </v-card-text>
           <v-card-actions class="mb-4">
+            <v-btn color="blue darken-1" class="ml-6" variant="text"
+              @click="emit('showResendLinkDialog'); dialog = false">
+              {{ t("resendLink") }}
+            </v-btn>
             <v-spacer></v-spacer>
             <v-btn color="blue darken-1" variant="text" @click="dialog = false">
               {{ t("cancel") }}
             </v-btn>
-            <v-btn color="blue darken-1" :loading="isLoading" variant="text" class="pr-6" @click="onSubmit" type="submit">
+            <v-btn color="blue darken-1" :loading="isLoading" variant="text" class="mr-6" @click="onSubmit" type="submit">
               {{ t("signup_title") }}
             </v-btn>
           </v-card-actions>
@@ -87,7 +92,7 @@ interface apiAnswer {
   success: string;
 }
 
-const emit = defineEmits(["closeDialog"]);
+const emit = defineEmits(["closeDialog", "showResendLinkDialog"]);
 const props = defineProps({
   showDialog: {
     type: Boolean,

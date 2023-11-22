@@ -8,13 +8,9 @@ export interface TokenInfo {
   first_name: string;
   last_name: string;
 }
-export interface NotificationWOID {
-  type: "error" | "info" | "success";
-  message: string;
-}
 
 export interface Notification {
-  id: number;
+  id?: number;
   type: "error" | "info" | "success";
   message: string;
 }
@@ -104,12 +100,12 @@ export const useNotificationStore = defineStore("notification", {
     notificationsArray: (state) => state.notifications,
   },
   actions: {
-    setNotification(data: NotificationWOID) {
+    setNotification(data: Notification) {
       this.notifications.push({
         type: data.type,
         message: data.message,
-        id: this.notifications.length
-          ? this.notifications[this.notifications.length - 1].id + 1
+        id: this.notifications.length && this.notifications[this.notifications.length - 1].id
+          ? this.notifications[this.notifications.length - 1].id! + 1
           : 0,
       });
     },

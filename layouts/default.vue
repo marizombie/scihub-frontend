@@ -26,6 +26,7 @@
           </v-app-bar-title>
           <div class="d-flex align-center ml-auto">
             <ForgotPassword :showDialog="showForgetPassword" @closeDialog="showForgetPassword = false" />
+            <ResendLink :showDialog="showResendLink" @closeDialog="showResendLink = false" />
             <v-menu>
               <template v-slot:activator="{ props }">
                 <v-text-field v-bind="props" density="compact" variant="solo" v-if="display.mdAndUp" label="Search"
@@ -47,7 +48,8 @@
             <v-btn @click="showAuth = true" class="header-button mr-md-4" v-if="!userStore.userInfo">
               Sign in
             </v-btn>
-            <SignUp :showDialog="showSignUp" @closeDialog="showSignUp = false" />
+            <SignUp :showDialog="showSignUp" @closeDialog="showSignUp = false"
+              @showResendLinkDialog="showResendLink = true" />
             <v-btn class="header-button" variant="text" @click="showSignUp = true" v-if="!userStore.userInfo">
               Sign up
             </v-btn>
@@ -126,6 +128,7 @@ let darkTheme: Ref<boolean> = ref(false);
 let showAuth: Ref<boolean> = ref(false);
 let showSignUp: Ref<boolean> = ref(false);
 let showForgetPassword: Ref<boolean> = ref(false);
+let showResendLink: Ref<boolean> = ref(false);
 let expandedSearch: Ref<boolean> = ref(false);
 let searchedPosts: Ref<Article[]> = ref([]);
 const items: MenuItem[] = [

@@ -2,7 +2,7 @@
   <div class="notification">
     <div v-for="item in notifications" :key="item.id">
       <v-alert class="mb-4" eager :text="item.message" closable :type="item.type" density="compact"
-        @click:close="notificationStore.removeNotification(item.id)" icon="false"></v-alert>
+        @click:close="notificationStore.removeNotification(item.id!)" icon="false"></v-alert>
     </div>
   </div>
 </template>
