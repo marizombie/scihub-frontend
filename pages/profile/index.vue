@@ -1,25 +1,24 @@
 <template>
-  <v-card :class="display.mdAndUp ? 'pa-12' : 'pa-2'">
+  <v-card :class="[display.mdAndUp ? 'pa-12' : 'pa-2', 'profile-card']">
     <v-card-title>Profile</v-card-title>
     <v-row :class="!display.mdAndUp ? 'flex-column' : ''">
-      <v-col :class="!display.mdAndUp ? 'flex-unset' : ''">
+      <v-col cols="4" :class="!display.mdAndUp ? 'flex-unset' : ''">
         <v-avatar color="grey" class="avatar-preview" :size="display.mdAndUp ? '290' : '100%'"
           image="https://cdn.vuetifyjs.com/images/profiles/marcus.jpg">
         </v-avatar>
         <v-file-input class="file-input mt-3" label="Change Image" variant="underlined" clearable accept="jpeg, png, bmp"
           :model-value="profileImage" @change="setFile($event)"></v-file-input>
       </v-col>
-      <v-spacer />
-      <v-col>
-        <v-text-field label="Name" v-model="profile.first_name" outlined hide-details class="pb-4" />
-        <v-text-field label="Last name" v-model="profile.last_name" outlined hide-details class="pb-4" />
+      <v-col cols="4">
+        <v-text-field label="Name" v-model="profile.first_name" variant="outlined" hide-details class="pb-4" />
+        <v-text-field label="Last name" v-model="profile.last_name" variant="outlined" hide-details class="pb-4" />
         <!-- <v-text-field
           label="Email"
           v-model="profile.email"
           outlined
           hide-details
         /> -->
-        <v-text-field label="Username" v-model="profile.username" outlined hide-details class="pb-4" />
+        <v-text-field label="Username" v-model="profile.username" variant="outlined" hide-details class="pb-4" />
       </v-col>
     </v-row>
 
@@ -90,9 +89,13 @@ function removeTag(tag: string) {
 <style lang="less" scoped>
 @import "../assets/breakpoints.less";
 
+.profile-card {
+  width: 100%;
+}
+
 .file-input {
   @media (min-width: @sm-min) {
-    width: 55%;
+    width: 90%;
   }
 }
 

@@ -32,8 +32,8 @@
           </v-card>
         </div>
         <div class="pa-4 pt-0 d-flex align-center">
-          <LikeButton />
-          <span> 190 like(s)</span>
+          <LikeButton @click="sendUpvote()" />
+          <span> {{ article.upvotes_count }} like(s)</span>
         </div>
       </v-card>
     </v-col>
@@ -76,12 +76,13 @@
       </v-card>
     </v-col>
   </v-row>
-  <Comments />
+  <!-- <Comments /> -->
 </template>
 
 <script setup lang="ts">
 import { useDisplay } from "vuetify";
 import SocialShare from '@/components/SocialShare.vue'
+import { useNotificationStore, useUserStore } from "~/store";
 
 interface Article {
   content: string;
@@ -94,6 +95,7 @@ interface Article {
   title: string;
   author_name: string;
   author_image: string;
+  upvotes_count: number;
 }
 
 interface Author {
@@ -121,13 +123,6 @@ interface Network {
 
 const route = useRoute();
 const display = ref(useDisplay() || null);
-const liked = ref(false);
-// const authorInfo: Ref<Author> = ref({
-//   firstName: "Maryna",
-//   lastName: "Klokova",
-//   img: "https://i.pinimg.com/736x/f3/6f/a9/f36fa99538b13d768802e697074f5873.jpg",
-//   description: "I am writing to be popular",
-// });
 const networks: Ref<Network[]> = ref([
   { type: "copy", name: "Copy link", icon: "content-copy" },
   { type: "email", name: "Email", icon: "email" },
@@ -169,6 +164,37 @@ async function goToAuthorProfile(username: string) {
     await navigateTo(`/profile/${username}`);
   }
 }
+
+const userStore = useUserStore();
+
+async function sendUpvote() {
+  if (userStore.userInfo?.access) {
+    const { data, error } = await useAPIFetch("/api/upvote/", {
+      method: "post",
+      body: {
+        "content_type": "post",
+        "object_id": article.value!.id
+      },
+    });
+    if (error.value?.data) {
+      if (error.value?.data.error === 'Already upvoted') {
+        return;
+      }
+      if (error.value) {
+        const notifyStore = useNotificationStore();
+        await notifyStore.setNotification({
+          type: "error",
+          message: error.value.data.detail,
+        });
+      }
+    }
+  }
+}
+
+// TODO: Check upvoted data and show active if user already voted
+// const { data, error } = await useAPIFetch(`/api/upvotes/post/${article.value!.id}`, {
+//   method: "get",
+// });
 
 // TODO: Check meta data after deployment. https://nuxt.com/docs/getting-started/seo-meta
 useSeoMeta({
