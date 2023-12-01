@@ -229,8 +229,10 @@ if (route.query.token && route.name !== 'confirm-password') {
     max-width: 100%;
   }
 
-  display: flex;
-  justify-content: center;
+  @media (min-width: @md-min) {
+    display: flex;
+    justify-content: center;
+  }
 }
 
 :deep(.v-main) {

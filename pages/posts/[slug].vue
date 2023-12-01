@@ -34,6 +34,9 @@
         <div class="pa-4 pt-0 d-flex align-center">
           <LikeButton @click="sendUpvote()" />
           <span> {{ article.upvotes_count }} like(s)</span>
+          <v-btn class="ml-3" icon dark variant="text" @click="showCommentsDialog = true">
+            <v-icon>mdi-comment-multiple</v-icon>
+          </v-btn>
         </div>
       </v-card>
     </v-col>
@@ -76,7 +79,40 @@
       </v-card>
     </v-col>
   </v-row>
-  <!-- <Comments /> -->
+  <v-dialog v-model="showCommentsDialog" :fullscreen="!display.mdAndUp"
+    :transition="!display.mdAndUp ? 'dialog-bottom-transition' : 'slide-x-reverse-transition'" class="comments-dialog"
+    scrollable>
+    <v-card :loading="commentsDialog.loading">
+      <v-toolbar dark color="primary">
+        <v-btn icon dark @click="showCommentsDialog = false">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+        <v-toolbar-title>Comments</v-toolbar-title>
+        <v-spacer></v-spacer>
+      </v-toolbar>
+      <div class="ma-4" v-for="(item, index) in commentsDialog.comments" :key="index">
+        <div class="author-info d-flex">
+          <v-avatar size="48" class="mr-1">
+            <img v-if="item.author_image" :src="item.author_image" :alt="item.author_name" />
+            <v-icon v-else class="font-size-48"> mdi-account-circle </v-icon>
+          </v-avatar>
+          <div class="d-flex flex-column">
+            <span>{{ item.author_name || "Anonymous" }}</span>
+            <span>{{ formatTimeDifference(item.created_date) }}</span>
+          </div>
+        </div>
+        <div class="ml-2 mt-2">
+          {{ item.text }}
+        </div>
+
+        <div class="ml-2 mt-3 d-flex align-center">
+          <LikeButton @click="sendUpvote()" />
+          <span> {{ item.upvotes_count }} like(s)</span>
+        </div>
+        <v-divider class="my-4" />
+      </div>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup lang="ts">
@@ -121,8 +157,24 @@ interface Network {
   icon: string;
 }
 
+interface Comment {
+  author_image: string;
+  author_name: string;
+  created_date: string;
+  id: number;
+  parent_comment: number;
+  post: string;
+  text: string;
+  upvotes_count: number;
+}
+
 const route = useRoute();
 const display = ref(useDisplay() || null);
+const showCommentsDialog = ref(false);
+const commentsDialog = ref({
+  loading: false,
+  comments: [] as Comment[]
+});
 const networks: Ref<Network[]> = ref([
   { type: "copy", name: "Copy link", icon: "content-copy" },
   { type: "email", name: "Email", icon: "email" },
@@ -188,6 +240,60 @@ async function sendUpvote() {
         });
       }
     }
+  }
+}
+
+watch(showCommentsDialog, async (val) => {
+  if (val) {
+    commentsDialog.value.loading = true;
+    const { data, error } = await useAPIFetch<Comment[]>(`/api/comments/${article.value!.slug}`, {
+      method: "get",
+    });
+    if (error.value?.data) {
+      if (error.value) {
+        const notifyStore = useNotificationStore();
+        await notifyStore.setNotification({
+          type: "error",
+          message: error.value.data.detail,
+        });
+      }
+    }
+    if (data.value) {
+      commentsDialog.value.comments = data.value.filter((item) => !item.parent_comment);
+    }
+    commentsDialog.value.loading = false;
+  }
+}, { deep: true })
+
+function formatTimeDifference(dateString: string): string {
+  const currentDate = new Date();
+  const targetDate = new Date(dateString);
+
+  const timeDifference = currentDate.getTime() - targetDate.getTime();
+  const seconds = Math.floor(timeDifference / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  if (seconds < 60) {
+    return `${seconds} seconds ago`;
+  } else if (minutes < 60) {
+    return `${minutes} minutes ago`;
+  } else if (hours < 24) {
+    return `${hours} hours ago`;
+  } else if (days < 30) {
+    return `${days} days ago`;
+  } else {
+    // More than 1 month, return the formatted date
+    const formattedDate = targetDate.toLocaleString('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
+    return formattedDate;
   }
 }
 
@@ -266,6 +372,23 @@ useSeoMeta({
 
   a {
     color: inherit !important;
+  }
+}
+
+.font-size-48 {
+  font-size: 48px;
+}
+
+.comments-dialog {
+  @media (min-width: @md-min) {
+    width: 550px;
+    left: auto;
+
+    :deep(.v-overlay__content) {
+      max-height: 100%;
+      width: 100%;
+      max-width: 100%;
+    }
   }
 }
 </style>
