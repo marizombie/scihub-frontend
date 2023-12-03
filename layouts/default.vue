@@ -43,13 +43,14 @@
               </v-list>
             </v-menu>
             <v-switch v-model="darkTheme" hide-details class="mr-8" :label="` ${display.mdAndUp ? 'Dark theme' : ''}`" />
-            <Auth :showDialog="showAuth" @closeDialog="showAuth = false"
+            <Auth :showDialog="showAuth" @closeDialog="showAuth = false; modalStore.removeModal()"
               @showForgetPasswordDialog="showForgetPassword = true" />
             <v-btn @click="showAuth = true" class="header-button mr-md-4" v-if="!userStore.userInfo">
               Sign in
             </v-btn>
-            <SignUp :showDialog="showSignUp" @closeDialog="showSignUp = false"
-              @showResendLinkDialog="showResendLink = true" />
+            <SignUp :showDialog="showSignUp" @closeDialog="showSignUp = false; modalStore.removeModal()"
+              :title="signUpTitle" @showResendLinkDialog="showResendLink = true"
+              @showAuthDialog="showSignUp = false; showAuth = true" />
             <v-btn class="header-button" variant="text" @click="showSignUp = true" v-if="!userStore.userInfo">
               Sign up
             </v-btn>
@@ -90,7 +91,7 @@
 
 <script setup lang="ts">
 import { useDisplay, useTheme } from "vuetify";
-import { useNotificationStore, useUserStore } from "~/store";
+import { useModalsStore, useNotificationStore, useUserStore } from "~/store";
 
 interface MenuItem {
   title: string;
@@ -126,6 +127,7 @@ const display = ref(useDisplay() || null);
 let search: Ref<string> = ref('');
 let darkTheme: Ref<boolean> = ref(false);
 let showAuth: Ref<boolean> = ref(false);
+let signUpTitle: Ref<string> = ref('');
 let showSignUp: Ref<boolean> = ref(false);
 let showForgetPassword: Ref<boolean> = ref(false);
 let showResendLink: Ref<boolean> = ref(false);
@@ -148,6 +150,20 @@ const fetchItems = async () => {
     searchedPosts.value = data.value.results;
   }
 };
+
+const modalStore = useModalsStore();
+
+watch(() => modalStore.currentModal, (val) => {
+  if (val) {
+    if (val.name === 'SignUp') {
+      signUpTitle.value = val.title;
+      showSignUp.value = true;
+    }
+    if (val.name === 'Auth') {
+      showAuth.value = true;
+    }
+  }
+})
 
 const debouncedFetchItems = useDebounce(fetchItems, 300);
 

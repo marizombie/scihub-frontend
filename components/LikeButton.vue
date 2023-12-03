@@ -1,26 +1,16 @@
 <template>
-  <svg
-    class="button"
-    @click="clickHeart()"
-    viewBox="0 0 35 35"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      class="Heart"
+  <svg class="button" @click="clickHeart()" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path class="Heart"
       d="M17.5 27L15.9775 25.6332C10.57 20.7978 7 17.6087 7 13.6948C7 10.5057 9.541 8 12.775 8C14.602 8 16.3555 8.83869 17.5 10.164C18.6445 8.83869 20.398 8 22.225 8C25.459 8 28 10.5057 28 13.6948C28 17.6087 24.43 20.7978 19.0225 25.6436L17.5 27Z"
       :class="{
         unfilledHeart: !clicked,
         heartAnimation: startAnimation,
         filledHeart: clicked,
         heartUnfillAnimation: startUnfillAnimation,
-      }"
-    />
+      }" />
     <path
       d="M34.5 17.5C34.5 26.8888 26.8888 34.5 17.5 34.5C8.11116 34.5 0.5 26.8888 0.5 17.5C0.5 8.11116 8.11116 0.5 17.5 0.5C26.8888 0.5 34.5 8.11116 34.5 17.5Z"
-      v-show="startRippleAnimation"
-      :class="{ ripple: true, rippleAnimation: startRippleAnimation }"
-    />
+      v-show="startRippleAnimation" :class="{ ripple: true, rippleAnimation: startRippleAnimation }" />
   </svg>
 </template>
 
@@ -29,24 +19,31 @@ const startAnimation = ref(false);
 const startUnfillAnimation = ref(false);
 const startRippleAnimation = ref(false);
 const clicked = ref(false);
+const props = defineProps({
+  toggable: {
+    type: Boolean,
+  },
+});
 
 function clickHeart() {
-  if (!clicked.value) {
-    startAnimation.value = true;
-    setTimeout(() => {
-      startRippleAnimation.value = true;
-    }, 300);
-    setTimeout(() => {
-      startAnimation.value = false;
-      startRippleAnimation.value = false;
-      clicked.value = !clicked.value;
-    }, 600);
-  } else {
-    startUnfillAnimation.value = true;
-    setTimeout(() => {
-      startUnfillAnimation.value = false;
-      clicked.value = !clicked.value;
-    }, 600);
+  if (props.toggable) {
+    if (!clicked.value) {
+      startAnimation.value = true;
+      setTimeout(() => {
+        startRippleAnimation.value = true;
+      }, 300);
+      setTimeout(() => {
+        startAnimation.value = false;
+        startRippleAnimation.value = false;
+        clicked.value = !clicked.value;
+      }, 600);
+    } else {
+      startUnfillAnimation.value = true;
+      setTimeout(() => {
+        startUnfillAnimation.value = false;
+        clicked.value = !clicked.value;
+      }, 600);
+    }
   }
 }
 </script>

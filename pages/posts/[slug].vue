@@ -1,3 +1,13 @@
+<i18n lang="json">
+{
+  "en": {
+    "upvoteTitle": "Create an account to like this story",
+    "responseTitle": "Create an account to comment this story.",
+    "followTitle": "Create an account to follow the author."
+  }
+}
+</i18n>
+
 <template>
   <v-row v-if="article">
     <v-col md="8">
@@ -32,7 +42,7 @@
           </v-card>
         </div>
         <div class="pa-4 pt-0 d-flex align-center">
-          <LikeButton @click="sendUpvote()" />
+          <LikeButton @click="sendUpvote()" :toggable="!!userStore.userInfo?.access" />
           <span> {{ article.upvotes_count }} like(s)</span>
           <v-btn class="ml-3" icon dark variant="text" @click="showCommentsDialog = true">
             <v-icon>mdi-comment-multiple</v-icon>
@@ -58,7 +68,7 @@
           <!-- {{ article.author_description }} -->
         </span>
         <div class="mt-4">
-          <v-btn color="primary"> Follow </v-btn>
+          <v-btn @click="followAuthor(article.author_name)" color="primary"> Follow </v-btn>
         </div>
 
         <div class="d-flex flex-column mt-16">
@@ -106,7 +116,7 @@
         </div>
 
         <div class="ml-2 mt-3 d-flex align-center">
-          <LikeButton @click="sendUpvote()" />
+          <LikeButton @click="sendUpvote()" :toggable="!!userStore.userInfo?.access" />
           <span> {{ item.upvotes_count }} like(s)</span>
         </div>
         <v-divider class="my-4" />
@@ -118,7 +128,7 @@
 <script setup lang="ts">
 import { useDisplay } from "vuetify";
 import SocialShare from '@/components/SocialShare.vue'
-import { useNotificationStore, useUserStore } from "~/store";
+import { useModalsStore, useNotificationStore, useUserStore } from "~/store";
 
 interface Article {
   content: string;
@@ -218,8 +228,15 @@ async function goToAuthorProfile(username: string) {
 }
 
 const userStore = useUserStore();
+const { t } = useI18n({
+  useScope: 'local'
+})
 
 async function sendUpvote() {
+  if (!userStore.userInfo?.access) {
+    const modalStore = useModalsStore();
+    await modalStore.setModal("SignUp", t('upvoteTitle'),);
+  }
   if (userStore.userInfo?.access) {
     const { data, error } = await useAPIFetch("/api/upvote/", {
       method: "post",
@@ -228,6 +245,9 @@ async function sendUpvote() {
         "object_id": article.value!.id
       },
     });
+    if (article.value?.upvotes_count !== undefined) {
+      article.value.upvotes_count += 1;
+    }
     if (error.value?.data) {
       if (error.value?.data.error === 'Already upvoted') {
         return;
@@ -240,6 +260,13 @@ async function sendUpvote() {
         });
       }
     }
+  }
+}
+
+async function followAuthor(name: string) {
+  if (!userStore.userInfo?.access) {
+    const modalStore = useModalsStore();
+    await modalStore.setModal("SignUp", t('followTitle'),);
   }
 }
 

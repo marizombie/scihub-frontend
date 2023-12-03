@@ -18,7 +18,7 @@
       <v-card>
         <form @submit.prevent="onSubmit">
           <v-card-title class="mt-4">
-            <span class="text-h5 pl-6">{{ t("signup_title") }}</span>
+            <span class="text-h5 pl-6">{{ props.title ? props.title : t("signup_title") }}</span>
           </v-card-title>
           <v-card-text class="pb-0">
             <v-container>
@@ -48,6 +48,11 @@
                   </p>
                 </v-col>
               </v-row>
+              <div class="ml-1 d-flex align-center">
+                <span>Already have an account?</span><v-btn variant="plain" flat class="pl-1 pr-1 sign-in" :ripple="false"
+                  color="primary" text="Sign in" @click="emit('showAuthDialog')">
+                </v-btn>
+              </div>
             </v-container>
           </v-card-text>
           <v-card-actions class="mb-4">
@@ -92,11 +97,15 @@ interface apiAnswer {
   success: string;
 }
 
-const emit = defineEmits(["closeDialog", "showResendLinkDialog"]);
+const emit = defineEmits(["closeDialog", "showResendLinkDialog", "showAuthDialog"]);
 const props = defineProps({
   showDialog: {
     type: Boolean,
   },
+  title: {
+    type: String,
+    default: ''
+  }
 });
 let dialog = ref(false);
 let registerData: Ref<RegisterInfo> = ref({
@@ -176,5 +185,10 @@ const onSubmit = handleSubmit(async (values) => {
 <style lang="less" scoped>
 .errorField {
   color: rgb(var(--v-theme-error));
+}
+
+.sign-in {
+  opacity: 1;
+  text-transform: unset;
 }
 </style>

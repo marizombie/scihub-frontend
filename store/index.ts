@@ -15,6 +15,11 @@ export interface Notification {
   message: string;
 }
 
+export interface Modal {
+  name: string;
+  title: string;
+}
+
 function parseJwt (token: string | undefined) {
   if (!token) {
     return;
@@ -111,6 +116,28 @@ export const useNotificationStore = defineStore("notification", {
     },
     removeNotification(id: number) {
       this.notifications = this.notifications.filter((item) => item.id !== id);
+    },
+  },
+});
+
+export const useModalsStore = defineStore("modal", {
+  state: () => {
+    return {
+      currentModal: null as null | Modal,
+    };
+  },
+  getters: {
+    curModal: (state) => state.currentModal,
+  },
+  actions: {
+    setModal(modalName: string, additionalData: any) {
+      this.currentModal = {
+        name: modalName,
+        title: additionalData || ''
+      }
+    },
+    removeModal() {
+      this.currentModal = null;
     },
   },
 });
