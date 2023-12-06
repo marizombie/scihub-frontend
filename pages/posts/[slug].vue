@@ -37,7 +37,7 @@
           <span>{{ article.content }}</span>
         </v-card-text>
         <div class="pl-4 pr-4 pb-4 tags d-flex flex-wrap">
-          <v-card outlined v-for="(tag, index) in article.tags" :key="index" class="tag ma-1">
+          <v-card outlined v-for="(tag, index) in article.tags" :key="index" class="tag ma-1" @click="searchByTag(tag)">
             <span>{{ tag }}</span>
           </v-card>
         </div>
@@ -61,14 +61,22 @@
             <span class="title">{{
               article.author_name ? article.author_name : 'Anonymous'
             }}</span>
-            <span class="subtitle">500 followers</span>
+            <span class="subtitle">{{ article.author_followers_count }} follower(s)</span>
           </div>
         </div>
         <span class="subtitle mt-3">
-          <!-- {{ article.author_description }} -->
         </span>
         <div class="mt-4">
-          <v-btn @click="followAuthor(article.author_name)" color="primary"> Follow </v-btn>
+          <v-btn v-if="!article.is_author_followed" :loading="followLoading" @click="followAuthor(article.author_name)"
+            color="primary">
+            Follow </v-btn>
+          <v-btn variant="outlined" @click="followAuthor(article.author_name)" rounded color="success" v-else
+            prepend-icon="mdi-check-circle">
+            <template v-slot:prepend>
+              <v-icon color="success"></v-icon>
+            </template>
+            Following
+          </v-btn>
         </div>
 
         <div class="d-flex flex-column mt-16">
@@ -142,6 +150,8 @@ interface Article {
   author_name: string;
   author_image: string;
   upvotes_count: number;
+  author_followers_count: number;
+  is_author_followed: boolean;
 }
 
 interface Author {
@@ -185,6 +195,7 @@ const commentsDialog = ref({
   loading: false,
   comments: [] as Comment[]
 });
+const followLoading = ref(false);
 const networks: Ref<Network[]> = ref([
   { type: "copy", name: "Copy link", icon: "content-copy" },
   { type: "email", name: "Email", icon: "email" },
@@ -263,11 +274,31 @@ async function sendUpvote() {
   }
 }
 
+async function searchByTag(tag: string) {
+  await navigateTo(`/?tag=${tag}`);
+}
+
 async function followAuthor(name: string) {
   if (!userStore.userInfo?.access) {
     const modalStore = useModalsStore();
     await modalStore.setModal("SignUp", t('followTitle'),);
+    return;
   }
+  followLoading.value = true;
+  const { data, error } = await useAPIFetch<Comment[]>(`api/toggle-follow/user/${name}/`, {
+    method: "post"
+  });
+  if (error.value?.data) {
+    if (error.value) {
+      const notifyStore = useNotificationStore();
+      await notifyStore.setNotification({
+        type: "error",
+        message: error.value.data.detail,
+      });
+    }
+  }
+  followLoading.value = false;
+  article.value!.is_author_followed = !article.value!.is_author_followed;
 }
 
 watch(showCommentsDialog, async (val) => {

@@ -110,7 +110,6 @@ const new_password = useField("new_password", validationSchema);
 const password_verifier = useField("password_verifier", validationSchema);
 
 const onSubmit = handleSubmit(async (values) => {
-  console.log("onSubmit")
   errorsArray.value = [];
   isLoading.value = true;
   const { data, error } = await useAPIFetch(`/api/confirm-password/?token=${token.value}`, {

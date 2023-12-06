@@ -25,7 +25,7 @@
       <v-textarea label="About" readonly v-model="profile.about" outlined counter="250" />
       <div class="subtitle">Following</div>
       <v-chip-group readonly>
-        <v-chip v-for="tag in tags" :key="tag">
+        <v-chip v-for="tag in tags" :key="tag" @click="searchByTag(tag)">
           {{ tag }}
         </v-chip>
       </v-chip-group>
@@ -34,9 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { DisplayInstance, useDisplay } from "vuetify";
-
-console.log("[username]")
+import { useDisplay } from "vuetify";
 
 interface ProfileInfo {
   first_name: string;
@@ -65,6 +63,9 @@ const route = useRoute()
 const { data } = await useAPIFetch<ProfileInfo>(`/api/profile/${route.params.username}`);
 if (data.value) {
   profile.value = data.value;
+}
+async function searchByTag(tag: string) {
+  await navigateTo(`/?tag=${tag}`);
 }
 </script>
 

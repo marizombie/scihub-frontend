@@ -26,7 +26,7 @@
       <v-textarea label="About" v-model="profile.about" outlined counter="250" />
       <div class="subtitle">Following</div>
       <v-chip-group>
-        <v-chip v-for="tag in tags" :key="tag" closable @click:close="removeTag(tag)">
+        <v-chip v-for="tag in tags" :key="tag" closable @click:close="removeTag(tag)" @click="searchByTag(tag)">
           {{ tag }}
         </v-chip>
       </v-chip-group>
@@ -83,6 +83,9 @@ async function redirectToHomePage() {
 async function profileSend() { }
 function removeTag(tag: string) {
   tags.value = tags.value.filter((item) => item !== tag);
+}
+async function searchByTag(tag: string) {
+  await navigateTo(`/?tag=${tag}`);
 }
 </script>
 

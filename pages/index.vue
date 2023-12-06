@@ -1,31 +1,44 @@
 <template>
   <v-row justify-md="center" align-md="center">
-    <v-col md="7" v-if="articles?.length">
-      <v-card v-for="(article, index) in articles" :key="index" class="article mb-4" :to="`/posts/${article.slug}`">
-        <v-card-title class="text-wrap">{{ article.title }}</v-card-title>
-        <div class="pa-4 d-flex flex-column flex-md-row">
-          <img :src="article.image" alt="demo picture" />
+    <v-col :class="[filterByTags.length ? 'mt-6' : '']" md="7" v-if="articles?.length">
+      <div>
+        <div v-if="filterByTags.length" class="ml-4 mr-4 tags d-flex flex-wrap align-center">
+          <v-chip-group>
+            <v-chip v-for="tag in filterByTags" :key="tag" closable @click:close="removeTag(tag)">
+              {{ tag }}
+            </v-chip>
+          </v-chip-group>
           <div>
-            <v-card-text>
-              {{ article.description }}
-            </v-card-text>
-            <div class="pl-4 pr-4 pb-4 tags d-flex flex-wrap">
-              <v-card variant="elevated" v-for="(tag, index) in article.tags" :key="index" class="tag ma-1">
-                <span>{{ tag }}</span>
-              </v-card>
-            </div>
-            <span class="ma-4">Published on {{ article.created_at }}</span>
-            <div class="pl-4 pr-4 pt-2">
-              <span class="mr-1">by</span>
-              <v-avatar size="20" class="mr-1">
-                <img v-if="article.author_image" :src="article.author_image" :alt="article.author_name" />
-                <v-icon v-else> mdi-account-circle </v-icon>
-              </v-avatar>
-              <span>{{ article.author_name ? article.author_name : 'Anonymous' }}</span>
-            </div>
+            <v-btn @click="followTag(filterByTags)" :loading="followLoading" color="primary">Follow chosen tag(s)</v-btn>
           </div>
         </div>
-      </v-card>
+        <v-card v-for="(article, index) in articles" :key="index" class="article mb-4" :to="`/posts/${article.slug}`">
+          <v-card-title class="text-wrap">{{ article.title }}</v-card-title>
+          <div class="pa-4 d-flex flex-column flex-md-row">
+            <img :src="article.image" alt="demo picture" />
+            <div>
+              <v-card-text>
+                {{ article.description }}
+              </v-card-text>
+              <div class="pl-4 pr-4 pb-4 tags d-flex flex-wrap">
+                <v-card variant="elevated" v-for="(tag, index) in article.tags" :key="index" class="tag ma-1">
+                  <span>{{ tag }}</span>
+                </v-card>
+              </div>
+              <span class="ma-4">Published on {{ article.created_at }}</span>
+              <div class="pl-4 pr-4 pt-2">
+                <span class="mr-1">by</span>
+                <v-avatar size="20" class="mr-1">
+                  <img v-if="article.author_image" :src="article.author_image" :alt="article.author_name" />
+                  <v-icon v-else> mdi-account-circle </v-icon>
+                </v-avatar>
+                <span>{{ article.author_name ? article.author_name : 'Anonymous' }}</span>
+              </div>
+            </div>
+          </div>
+        </v-card>
+      </div>
+
     </v-col>
     <v-card class="recomendation-block ml-8 d-sm-none d-none d-md-block">
       <div class="d-flex flex-column">
@@ -63,6 +76,8 @@
 </template>
 
 <script setup lang="ts">
+import { useNotificationStore } from '~/store';
+
 interface Article {
   content: string;
   created_at: string;
@@ -80,16 +95,56 @@ interface CRUDResponse {
   results: Article[];
 }
 
+const route = useRoute();
+const filterByTags: Ref<string[]> = ref([]);
 const { data: posts } = await useAPIFetch<CRUDResponse>("/api/posts/");
 const { data: recentlyWritten } =
   await useAPIFetch<Article[]>("/api/last-posts/");
 const { data: recomendations } =
   await useAPIFetch<Article[]>("api/popular-posts/");
 let articles: Ref<Article[] | null> = ref(null);
+const followLoading = ref(false);
+
+if (route.query.tag) {
+  filterByTags.value = Array.isArray(route.query.tag) ? route.query.tag as string[] : [route.query.tag];
+  const { data: tagPosts } = await useAPIFetch<CRUDResponse>(`/api/tags/${filterByTags.value}/?limit=5&offset=5`);
+  if (tagPosts.value?.results.length) {
+    articles.value = tagPosts.value?.results;
+  }
+}
+
+function removeTag(tag: string) {
+  filterByTags.value = filterByTags.value.filter((item) => item !== tag);
+  if (posts.value?.results) {
+    articles.value = posts.value?.results;
+  }
+  navigateTo('/');
+}
+
+async function followTag(tags: string[]) {
+  followLoading.value = true;
+  for (const tag in tags) {
+    const { data, error } = await useAPIFetch<Comment[]>(`api/toggle-follow/tag/${tag}/`, {
+      method: "post"
+    });
+    if (error.value?.data) {
+      if (error.value) {
+        const notifyStore = useNotificationStore();
+        await notifyStore.setNotification({
+          type: "error",
+          message: error.value.data.detail,
+        });
+      }
+    }
+  }
+  followLoading.value = false;
+}
+
 watch(
   () => posts.value,
   (val) => {
-    articles.value = val!.results;
+    if (!filterByTags.value.length || !articles.value)
+      articles.value = val!.results;
   },
   {
     deep: true,
