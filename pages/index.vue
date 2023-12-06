@@ -107,7 +107,7 @@ const followLoading = ref(false);
 
 if (route.query.tag) {
   filterByTags.value = Array.isArray(route.query.tag) ? route.query.tag as string[] : [route.query.tag];
-  const { data: tagPosts } = await useAPIFetch<CRUDResponse>(`/api/tags/${filterByTags.value}/?limit=5&offset=5`);
+  const { data: tagPosts } = await useAPIFetch<CRUDResponse>(`/api/tags/${filterByTags.value}/?limit=10&offset=0`);
   if (tagPosts.value?.results.length) {
     articles.value = tagPosts.value?.results;
   }
