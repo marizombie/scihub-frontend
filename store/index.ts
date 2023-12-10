@@ -74,6 +74,8 @@ export const useUserStore = defineStore("user", {
       if ( tokenInfo ) {
         const expiredTime = tokenInfo.exp * 1000;
         if (expiredTime < new Date().getTime()) {
+          this.logout()
+        } else {
           const { data, error } = await useAPIFetch<RefreshInfo>("/api/refresh_token/", {
             method: "post",
             body: { refresh: localStorage.getItem("refreshToken") || this.userData?.refresh},
