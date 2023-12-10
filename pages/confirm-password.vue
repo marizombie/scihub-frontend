@@ -26,8 +26,8 @@
             </v-col>
             <v-col cols="12">
               <v-text-field autocomplete="none" :label="t('confirm_password')" type="password" variant="outlined"
-                v-model="password_verifier.value.value"
-                :error-messages="password_verifier.errorMessage.value"></v-text-field>
+                v-model="confirm_password.value.value"
+                :error-messages="confirm_password.errorMessage.value"></v-text-field>
             </v-col>
           </v-row>
           <v-row>
@@ -66,7 +66,7 @@ const { t } = useI18n({
 
 interface ConfirmPassswordInfo {
   new_password: string;
-  password_verifier: string;
+  confirm_password: string;
 }
 
 interface errorKeyValue {
@@ -80,7 +80,7 @@ interface apiAnswer {
 
 let registerData: Ref<ConfirmPassswordInfo> = ref({
   new_password: "",
-  password_verifier: "",
+  confirm_password: "",
 });
 const isLoading = ref(false);
 const errorsArray: Ref<errorKeyValue[]> = ref([]);
@@ -91,7 +91,7 @@ const validationSchema = markRaw(
   yup
     .object({
       new_password: yup.string().required().min(6).label("Password"),
-      password_verifier: yup
+      confirm_password: yup
         .string()
         .oneOf([yup.ref("new_password")], "Passwords must match")
         .required()
@@ -107,7 +107,7 @@ const { handleSubmit, errors } = useForm({
 });
 
 const new_password = useField("new_password", validationSchema);
-const password_verifier = useField("password_verifier", validationSchema);
+const confirm_password = useField("confirm_password", validationSchema);
 
 const onSubmit = handleSubmit(async (values) => {
   errorsArray.value = [];

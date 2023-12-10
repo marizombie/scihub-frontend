@@ -2,7 +2,7 @@
   <v-row justify-md="center">
     <v-col :class="[filterByTags.length ? 'mt-6' : '']" md="7">
       <div>
-        <v-tabs v-model="tab" color="deep-purple-accent-4">
+        <v-tabs v-model="tab" color="deep-purple-accent-4" v-if="userStore.userData?.access">
           <v-tab :value="1">For you</v-tab>
           <v-tab :value="2">Bookmarks</v-tab>
           <v-tab :value="3">My articles</v-tab>
@@ -83,7 +83,7 @@
 </template>
 
 <script setup lang="ts">
-import { useNotificationStore } from '~/store';
+import { useNotificationStore, useUserStore } from '~/store';
 
 interface Article {
   content: string;
@@ -103,6 +103,7 @@ interface CRUDResponse {
 }
 
 const route = useRoute();
+const userStore = useUserStore();
 const filterByTags: Ref<string[]> = ref([]);
 const { data: recentlyWritten } =
   await useAPIFetch<Article[]>("/api/last-posts/");
