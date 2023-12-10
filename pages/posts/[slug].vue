@@ -25,6 +25,11 @@
             </div>
           </v-col>
           <v-col cols="2" class="d-flex justify-end align-center">
+            <v-btn variant="plain" :ripple="false" class="plain-custom-style" v-if="userStore.userInfo?.access"
+              @click="addBookmark()">
+              <v-icon v-if="!bookmarked"> mdi-bookmark </v-icon>
+              <v-icon v-else color="primary"> mdi-bookmark-check </v-icon>
+            </v-btn>
             <SocialShare :share-object="(sharing as Share)" :networks="networks" />
           </v-col>
         </v-row>
@@ -152,6 +157,11 @@ interface Article {
   upvotes_count: number;
   author_followers_count: number;
   is_author_followed: boolean;
+  bookmarked_by_current_user: boolean;
+}
+
+interface SuccessRespons {
+  success: string;
 }
 
 interface Author {
@@ -217,6 +227,7 @@ article.value = articleData.value;
 const { data: recentlyWrittenData } =
   await useAPIFetch<Article[]>("/api/last-posts/");
 recentlyWrittenPosts.value = recentlyWrittenData.value!.slice(0, 3);
+const bookmarked = ref(article.value?.bookmarked_by_current_user);
 
 const sharing = computed(() => {
   return {
@@ -355,6 +366,30 @@ function formatTimeDifference(dateString: string): string {
   }
 }
 
+async function addBookmark() {
+  if (article.value) {
+    const { data, error } = await useAPIFetch<SuccessRespons>(`http://localhost:8000/api/posts/${article.value.slug}/toggle-bookmark/`, {
+      method: "post",
+    });
+    if (error.value?.data) {
+      if (error.value) {
+        const notifyStore = useNotificationStore();
+        await notifyStore.setNotification({
+          type: "error",
+          message: error.value.data.detail,
+        });
+      }
+    }
+    if (data.value) {
+      if (data.value.success) {
+        bookmarked.value = false;
+      }
+    } else {
+      bookmarked.value = true;
+    }
+  }
+}
+
 // TODO: Check upvoted data and show active if user already voted
 // const { data, error } = await useAPIFetch(`/api/upvotes/post/${article.value!.id}`, {
 //   method: "get",
@@ -448,5 +483,10 @@ useSeoMeta({
       max-width: 100%;
     }
   }
+}
+
+.plain-custom-style {
+  opacity: 1;
+  text-transform: unset;
 }
 </style>

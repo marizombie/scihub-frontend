@@ -3,24 +3,6 @@
     <v-theme-provider :theme="theme.global.name.value">
       <v-app-bar fixed app class="header d-flex flex-column">
         <div class="main-content">
-          <v-menu v-if="userStore.userInfo">
-            <template v-slot:activator="{ props }">
-              <v-btn icon="mdi-menu" v-bind="props"></v-btn>
-            </template>
-            <v-list>
-              <v-list-item v-for="item in items" :key="item.title" link>
-                <template v-slot:prepend>
-                  <v-icon :icon="item.icon"></v-icon>
-                </template>
-                <v-list-item-title v-text="item.title" />
-              </v-list-item>
-              <v-divider></v-divider>
-              <v-list-item class="px-2" link to="/profile"
-                prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg">
-                <v-list-item-title>John Leider</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
           <v-app-bar-title class="ml-4">
             <NuxtLink to="/">{{ title }}</NuxtLink>
           </v-app-bar-title>
@@ -58,9 +40,27 @@
               v-if="userStore.userInfo">
               Write
             </v-btn>
-            <v-btn class="header-button" variant="text" @click="userStore.logout()" v-if="userStore.userInfo">
-              Log out
-            </v-btn>
+            <v-menu v-if="userStore.userInfo">
+              <template v-slot:activator="{ props }">
+                <v-btn size="48" rounded variant="outlined" :ripple="false" class="mr-3 plain-custom-style"
+                  v-bind="props">
+                  <v-avatar>
+                    <v-img v-if="userStore.userInfo.avatar" :src="userStore.userInfo.avatar"
+                      :alt="userStore.userInfo.first_name + ' ' + userStore.userInfo.last_name" />
+                    <span v-else>{{ userStore.userInfo.first_name[0] + userStore.userInfo.last_name[0] }}</span>
+                  </v-avatar>
+                </v-btn>
+              </template>
+              <v-list class="mx-auto" min-width="200px">
+                <v-list-item link to="/profile">
+                  <v-list-item-title>Profile</v-list-item-title>
+                </v-list-item>
+                <v-divider />
+                <v-list-item @click="userStore.logout()">
+                  <v-list-item-title>Logout</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </div>
         </div>
 
@@ -133,10 +133,6 @@ let showForgetPassword: Ref<boolean> = ref(false);
 let showResendLink: Ref<boolean> = ref(false);
 let expandedSearch: Ref<boolean> = ref(false);
 let searchedPosts: Ref<Article[]> = ref([]);
-const items: MenuItem[] = [
-  { title: "Bookmarks", icon: "mdi-bookmark" },
-  { title: "My Articles", icon: "mdi-text-box-multiple" },
-];
 
 const theme = useTheme();
 
@@ -145,9 +141,9 @@ watch(darkTheme, () => {
 });
 
 const fetchItems = async () => {
-  const { data, error } = await useAPIFetch<SearchResult>(`/api/posts/?search=${search.value}`);
+  const { data, error } = await useAPIFetch<Article[]>(`/api/posts/?search=${search.value}`);
   if (data.value) {
-    searchedPosts.value = data.value.results;
+    searchedPosts.value = data.value;
   }
 };
 
@@ -277,5 +273,10 @@ if (route.query.token && route.name !== 'confirm-password') {
 
 .header-button {
   font-weight: 700;
+}
+
+.plain-custom-style {
+  opacity: 1;
+  text-transform: unset;
 }
 </style>
