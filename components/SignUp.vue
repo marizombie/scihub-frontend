@@ -28,12 +28,14 @@
                     :error-messages="email.errorMessage.value"></v-text-field>
                 </v-col>
                 <v-col cols="12">
-                  <v-text-field :label="t('password')" type="password" variant="outlined" v-model="password.value.value"
-                    :error-messages="password.errorMessage.value"></v-text-field>
+                  <v-text-field :label="t('password')" variant="outlined" v-model="password.value.value"
+                    :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" :type="show1 ? 'text' : 'password'"
+                    @click:append="show1 = !show1" :error-messages="password.errorMessage.value"></v-text-field>
                 </v-col>
                 <v-col cols="12">
-                  <v-text-field :label="t('confirm_password')" type="password" variant="outlined"
-                    v-model="password_verifier.value.value"
+                  <v-text-field :label="t('confirm_password')" :type="show2 ? 'text' : 'password'"
+                    :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'" variant="outlined"
+                    v-model="password_verifier.value.value" @click:append="show2 = !show2"
                     :error-messages="password_verifier.errorMessage.value"></v-text-field>
                 </v-col>
               </v-row>
@@ -116,6 +118,8 @@ let registerData: Ref<RegisterInfo> = ref({
 const isLoading = ref(false);
 const errorsArray: Ref<errorKeyValue[]> = ref([]);
 const notifyStore = useNotificationStore();
+const show1 = ref(false);
+const show2 = ref(false);
 
 watch(dialog, (val) => {
   if (!val) {
