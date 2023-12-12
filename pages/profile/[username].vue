@@ -35,16 +35,7 @@
 
 <script setup lang="ts">
 import { useDisplay } from "vuetify";
-
-interface ProfileInfo {
-  first_name: string;
-  last_name: string;
-  email: string;
-  about: string;
-  username: string;
-  avatar: string;
-  country: string;
-}
+import { ProfileInfo } from "~/types";
 
 const display = ref(useDisplay() || null);
 const profile: Ref<ProfileInfo> = ref({

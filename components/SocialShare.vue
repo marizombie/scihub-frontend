@@ -32,22 +32,8 @@
 <script setup lang="ts">
 import { PropType } from 'nuxt/dist/app/compat/capi';
 import { useNotificationStore } from '~/store';
+import { Network, Share } from '~/types';
 
-interface Share {
-  url: string;
-  title: string;
-  description: string;
-  quote: string;
-  hashtags: string[];
-  twitterUser: string;
-  imageURL: string;
-}
-
-interface Network {
-  type: string;
-  name: string;
-  icon: string;
-}
 const props = defineProps({
   shareObject: {
     type: Object as PropType<Share>,

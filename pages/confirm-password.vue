@@ -63,6 +63,7 @@
 import { useNotificationStore } from "../store/index";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
+import { ErrorKeyValue, SuccessResponse } from "~/types";
 const { t } = useI18n({
   useScope: "local",
 });
@@ -72,21 +73,12 @@ interface ConfirmPassswordInfo {
   confirm_password: string;
 }
 
-interface errorKeyValue {
-  name: string;
-  data: string;
-}
-
-interface apiAnswer {
-  success: string;
-}
-
 let registerData: Ref<ConfirmPassswordInfo> = ref({
   new_password: "",
   confirm_password: "",
 });
 const isLoading = ref(false);
-const errorsArray: Ref<errorKeyValue[]> = ref([]);
+const errorsArray: Ref<ErrorKeyValue[]> = ref([]);
 const notifyStore = useNotificationStore();
 const token = ref('');
 const show1 = ref(false);
@@ -134,7 +126,7 @@ const onSubmit = handleSubmit(async (values) => {
   if (data.value) {
     await notifyStore.setNotification({
       type: "info",
-      message: (data.value as apiAnswer).success,
+      message: (data.value as SuccessResponse).success,
     });
   }
   isLoading.value = false;

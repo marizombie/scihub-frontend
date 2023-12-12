@@ -67,19 +67,10 @@
 import { TokenInfo, useUserStore } from "../store/index";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
+import { ErrorKeyValue, UserInfo } from "~/types";
 const { t } = useI18n({
   useScope: "local",
 });
-
-interface UserInfo {
-  password: string;
-  username: string;
-}
-
-interface errorKeyValue {
-  name: string;
-  data: string;
-}
 
 const emit = defineEmits(["closeDialog", "showForgetPasswordDialog"]);
 const props = defineProps({
@@ -94,7 +85,7 @@ let loginData: Ref<UserInfo> = ref({
   password: "",
 });
 const isLoading = ref(false);
-const errorsArray: Ref<errorKeyValue[]> = ref([]);
+const errorsArray: Ref<ErrorKeyValue[]> = ref([]);
 
 watch(dialog, (val) => {
   if (!val) {

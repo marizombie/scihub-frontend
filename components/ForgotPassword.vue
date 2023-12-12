@@ -56,22 +56,10 @@
 import { useNotificationStore, useUserStore } from "../store/index";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
+import { ErrorKeyValue, SuccessResponse, UserInfo } from "~/types";
 const { t } = useI18n({
   useScope: "local",
 });
-
-interface UserInfo {
-  username: string;
-}
-
-interface errorKeyValue {
-  name: string;
-  data: string;
-}
-
-interface SuccessResponse {
-  success: string;
-}
 
 const emit = defineEmits(["closeDialog"]);
 const props = defineProps({
@@ -85,7 +73,7 @@ let loginData: Ref<UserInfo> = ref({
   username: "",
 });
 const isLoading = ref(false);
-const errorsArray: Ref<errorKeyValue[]> = ref([]);
+const errorsArray: Ref<ErrorKeyValue[]> = ref([]);
 
 watch(dialog, (val) => {
   if (!val) {

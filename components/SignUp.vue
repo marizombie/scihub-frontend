@@ -77,9 +77,10 @@
 </template>
 
 <script setup lang="ts">
-import { useNotificationStore, useUserStore } from "../store/index";
+import { useNotificationStore } from "../store/index";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
+import { ErrorKeyValue, SuccessResponse } from "~/types";
 const { t } = useI18n({
   useScope: "local",
 });
@@ -88,15 +89,6 @@ interface RegisterInfo {
   email: string;
   password: string;
   password_verifier: string;
-}
-
-interface errorKeyValue {
-  name: string;
-  data: string;
-}
-
-interface apiAnswer {
-  success: string;
 }
 
 const emit = defineEmits(["closeDialog", "showResendLinkDialog", "showAuthDialog"]);
@@ -116,7 +108,7 @@ let registerData: Ref<RegisterInfo> = ref({
   password_verifier: "",
 });
 const isLoading = ref(false);
-const errorsArray: Ref<errorKeyValue[]> = ref([]);
+const errorsArray: Ref<ErrorKeyValue[]> = ref([]);
 const notifyStore = useNotificationStore();
 const show1 = ref(false);
 const show2 = ref(false);
@@ -178,7 +170,7 @@ const onSubmit = handleSubmit(async (values) => {
   if (data.value) {
     await notifyStore.setNotification({
       type: "info",
-      message: (data.value as apiAnswer).success,
+      message: (data.value as SuccessResponse).success,
     });
     dialog.value = false;
   }

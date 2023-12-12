@@ -84,19 +84,7 @@
 
 <script setup lang="ts">
 import { useNotificationStore, useUserStore } from '~/store';
-
-interface Article {
-  content: string;
-  created_at: string;
-  description: string;
-  id: number;
-  image: string;
-  slug: string;
-  tags: string[];
-  title: string;
-  author_name: string;
-  author_image: string;
-}
+import { Article, CommentData } from '~/types';
 
 interface CRUDResponse {
   results: Article[];
@@ -109,7 +97,6 @@ const { data: recentlyWritten } =
   await useAPIFetch<Article[]>("/api/last-posts/");
 const { data: recomendations } =
   await useAPIFetch<Article[]>("api/popular-posts/");
-let articles: Ref<Article[] | null> = ref(null);
 const followLoading = ref(false);
 const tab = ref(1);
 const currentShowList: Ref<Article[]> = ref([]);
@@ -152,7 +139,7 @@ function removeTag(tag: string) {
 async function followTag(tags: string[]) {
   followLoading.value = true;
   for (const tag in tags) {
-    const { data, error } = await useAPIFetch<Comment[]>(`api/toggle-follow/tag/${tag}/`, {
+    const { data, error } = await useAPIFetch<CommentData[]>(`api/toggle-follow/tag/${tag}/`, {
       method: "post"
     });
     if (error.value?.data) {

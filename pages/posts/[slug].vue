@@ -142,68 +142,14 @@
 import { useDisplay } from "vuetify";
 import SocialShare from '@/components/SocialShare.vue'
 import { useModalsStore, useNotificationStore, useUserStore } from "~/store";
-
-interface Article {
-  content: string;
-  created_at: string;
-  description: string;
-  id: number;
-  image: string;
-  slug: string;
-  tags: string[];
-  title: string;
-  author_name: string;
-  author_image: string;
-  upvotes_count: number;
-  author_followers_count: number;
-  is_author_followed: boolean;
-  bookmarked_by_current_user: boolean;
-}
-
-interface SuccessRespons {
-  success: string;
-}
-
-interface Author {
-  firstName: string;
-  lastName: string;
-  img: string;
-  description: string;
-}
-
-interface Share {
-  url: string;
-  title: string;
-  description: string;
-  quote: string;
-  hashtags: string[];
-  twitterUser: string;
-  imageURL: string;
-}
-
-interface Network {
-  type: string;
-  name: string;
-  icon: string;
-}
-
-interface Comment {
-  author_image: string;
-  author_name: string;
-  created_date: string;
-  id: number;
-  parent_comment: number;
-  post: string;
-  text: string;
-  upvotes_count: number;
-}
+import { Article, CommentData, Network, Share, SuccessResponse } from "~/types";
 
 const route = useRoute();
 const display = ref(useDisplay() || null);
 const showCommentsDialog = ref(false);
 const commentsDialog = ref({
   loading: false,
-  comments: [] as Comment[]
+  comments: [] as CommentData[]
 });
 const followLoading = ref(false);
 const networks: Ref<Network[]> = ref([
@@ -260,7 +206,7 @@ async function sendUpvote() {
     await modalStore.setModal("SignUp", t('upvoteTitle'),);
   }
   if (userStore.userInfo?.access) {
-    const { data, error } = await useAPIFetch("/api/upvote/", {
+    const { data, error } = await useAPIFetch("/api/toggle-upvote/", {
       method: "post",
       body: {
         "content_type": "post",
@@ -296,7 +242,7 @@ async function followAuthor(name: string) {
     return;
   }
   followLoading.value = true;
-  const { data, error } = await useAPIFetch<Comment[]>(`api/toggle-follow/user/${name}/`, {
+  const { data, error } = await useAPIFetch<CommentData[]>(`api/toggle-follow/user/${name}/`, {
     method: "post"
   });
   if (error.value?.data) {
@@ -315,7 +261,7 @@ async function followAuthor(name: string) {
 watch(showCommentsDialog, async (val) => {
   if (val) {
     commentsDialog.value.loading = true;
-    const { data, error } = await useAPIFetch<Comment[]>(`/api/comments/${article.value!.slug}`, {
+    const { data, error } = await useAPIFetch<CommentData[]>(`/api/comments/${article.value!.slug}`, {
       method: "get",
     });
     if (error.value?.data) {
@@ -368,7 +314,7 @@ function formatTimeDifference(dateString: string): string {
 
 async function addBookmark() {
   if (article.value) {
-    const { data, error } = await useAPIFetch<SuccessRespons>(`http://localhost:8000/api/posts/${article.value.slug}/toggle-bookmark/`, {
+    const { data, error } = await useAPIFetch<SuccessResponse>(`http://localhost:8000/api/posts/${article.value.slug}/toggle-bookmark/`, {
       method: "post",
     });
     if (error.value?.data) {

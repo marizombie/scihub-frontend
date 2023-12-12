@@ -92,43 +92,7 @@
 <script setup lang="ts">
 import { useDisplay, useTheme } from "vuetify";
 import { useModalsStore, useNotificationStore, useUserStore } from "~/store";
-
-interface MenuItem {
-  title: string;
-  icon: string;
-}
-
-interface Article {
-  content: string;
-  created_at: string;
-  description: string;
-  id: number;
-  image: string;
-  slug: string;
-  tags: string[];
-  title: string;
-  author_name: string;
-  author_image: string;
-}
-
-interface SearchResult {
-  count: number;
-  results: Article[];
-}
-
-interface SuccessResponse {
-  success: string;
-}
-
-interface ProfileInfo {
-  first_name: string;
-  last_name: string;
-  email: string;
-  about: string;
-  username: string;
-  avatar: string;
-  country: string;
-}
+import { Article, SuccessResponse, ProfileInfo } from "~/types";
 
 const userStore = useUserStore();
 userStore.getUserInfoFromLS();
