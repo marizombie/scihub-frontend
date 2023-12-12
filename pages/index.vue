@@ -126,7 +126,8 @@ watch(tab, async (val) => {
       currentShowList.value = bookmarkPosts.value!.results;
       break;
     case 3:
-      // currentShowList.value = posts.value;
+      const { data: myArticles } = await useAPIFetch<CRUDResponse>(`api/users/${userStore.userInfo?.username}`);
+      currentShowList.value = myArticles.value!.results;
       break;
     case 1:
     default:

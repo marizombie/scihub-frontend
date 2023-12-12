@@ -7,6 +7,7 @@ export interface TokenInfo {
   avatar: string;
   first_name: string;
   last_name: string;
+  username?: string;
 }
 
 export interface Notification {
@@ -63,6 +64,11 @@ export const useUserStore = defineStore("user", {
       }
       this.rehydrate()
      }
+    },
+    setUserName(value: string) {
+      if ( this.userData ) {
+        this.userData.username = value;
+      }
     },
     logout() {
       this.userData = null;

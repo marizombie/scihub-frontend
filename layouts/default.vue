@@ -120,6 +120,16 @@ interface SuccessResponse {
   success: string;
 }
 
+interface ProfileInfo {
+  first_name: string;
+  last_name: string;
+  email: string;
+  about: string;
+  username: string;
+  avatar: string;
+  country: string;
+}
+
 const userStore = useUserStore();
 userStore.getUserInfoFromLS();
 const title: string = "Scihub";
@@ -197,6 +207,14 @@ if (route.query.token && route.name !== 'confirm-password') {
   }
 }
 
+watch(() => userStore.userInfo, async (val) => {
+  if (val?.access) {
+    const { data } = await useAPIFetch<ProfileInfo>("/api/profile/");
+    if (data.value) {
+      userStore.setUserName(data.value.username)
+    }
+  }
+}, { immediate: true })
 </script>
 
 <style lang="less" scoped>
