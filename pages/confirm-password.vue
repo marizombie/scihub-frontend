@@ -21,12 +21,15 @@
         <v-container>
           <v-row>
             <v-col cols="12">
-              <v-text-field autocomplete="none" :label="t('password')" type="password" variant="outlined"
-                v-model="new_password.value.value" :error-messages="new_password.errorMessage.value"></v-text-field>
+              <v-text-field variant="outlined" v-model="new_password.value.value"
+                :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" :type="show1 ? 'text' : 'password'" name="input-10-1"
+                :label="t('password')" @click:append="show1 = !show1"
+                :error-messages="new_password.errorMessage.value"></v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-text-field autocomplete="none" :label="t('confirm_password')" type="password" variant="outlined"
-                v-model="confirm_password.value.value"
+              <v-text-field variant="outlined" v-model="confirm_password.value.value"
+                :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'" :type="show2 ? 'text' : 'password'" name="input-10-1"
+                :label="t('confirm_password')" @click:append="show2 = !show2"
                 :error-messages="confirm_password.errorMessage.value"></v-text-field>
             </v-col>
           </v-row>
@@ -86,6 +89,8 @@ const isLoading = ref(false);
 const errorsArray: Ref<errorKeyValue[]> = ref([]);
 const notifyStore = useNotificationStore();
 const token = ref('');
+const show1 = ref(false);
+const show2 = ref(false);
 
 const validationSchema = markRaw(
   yup
