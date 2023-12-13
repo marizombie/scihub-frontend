@@ -6,7 +6,8 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "@nuxtjs/i18n",
     "@vee-validate/nuxt",
-    "nuxt-lodash"
+    "nuxt-lodash",
+    "@vueuse/nuxt"
   ],
   runtimeConfig: {
     public: {

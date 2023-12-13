@@ -26,7 +26,6 @@ import modeCSSWorker from "ace-builds/src-noconflict/worker-css?url";
 import modePHPWorker from "ace-builds/src-noconflict/worker-php?url";
 import modeXMLWorker from "ace-builds/src-noconflict/worker-xml?url";
 import modeYamlWorker from "ace-builds/src-noconflict/worker-yaml?url";
-import modeLuaWorker from "ace-builds/src-noconflict/worker-lua?url";
 import modeJsonWorker from "ace-builds/src-noconflict/worker-json?url";
 
 ace.config.setModuleUrl("ace/mode/html_worker", modeHTMLWorker);
@@ -35,7 +34,6 @@ ace.config.setModuleUrl("ace/mode/css_worker", modeCSSWorker);
 ace.config.setModuleUrl("ace/mode/php_worker", modePHPWorker);
 ace.config.setModuleUrl("ace/mode/xml_worker", modeXMLWorker);
 ace.config.setModuleUrl("ace/mode/yaml_worker", modeYamlWorker);
-ace.config.setModuleUrl("ace/mode/lua_worker", modeLuaWorker);
 ace.config.setModuleUrl("ace/mode/json_worker", modeJsonWorker);
 
 const aceConfig: AceCodeConfig = {
@@ -88,16 +86,12 @@ const aceConfig: AceCodeConfig = {
       label: "Dart",
       mode: "ace/mode/dart",
     },
-    django: {
-      label: "Django",
-      mode: "ace/mode/django",
-    },
     dockerfile: {
       label: "Docker",
       mode: "ace/mode/dockerfile",
     },
     fsharp: {
-      label: "Docker",
+      label: "F#",
       mode: "ace/mode/fsharp",
     },
     golang: {
@@ -123,14 +117,6 @@ const aceConfig: AceCodeConfig = {
     kotlin: {
       label: "Kotlin",
       mode: "ace/mode/kotlin",
-    },
-    less: {
-      label: "Less",
-      mode: "ace/mode/less",
-    },
-    lua: {
-      label: "PHP (Lua)",
-      mode: "ace/mode/lua",
     },
     makefile: {
       label: "Makefile",
@@ -183,14 +169,6 @@ const aceConfig: AceCodeConfig = {
     rust: {
       label: "Rust",
       mode: "ace/mode/rust",
-    },
-    sass: {
-      label: "Sass",
-      mode: "ace/mode/sass",
-    },
-    scss: {
-      label: "Scss",
-      mode: "ace/mode/scss",
     },
     swift: {
       label: "Swift",

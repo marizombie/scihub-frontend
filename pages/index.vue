@@ -100,9 +100,22 @@ const { data: recomendations } =
 const followLoading = ref(false);
 const tab = ref(1);
 const currentShowList: Ref<Article[]> = ref([]);
+const currentRequest = ref('');
+
+useInfiniteScroll(
+  document,
+  loadData,
+  { distance: 200 }
+)
+
+async function loadData() {
+  const { data: posts } = await useAPIFetch<CRUDResponse>(currentRequest.value + `?limit=5&offset=${currentShowList.value.length}`);
+  currentShowList.value = currentShowList.value.concat(posts.value!.results)
+}
 
 async function fetchDefaultPosts() {
   const { data: posts } = await useAPIFetch<CRUDResponse>("/api/posts/");
+  currentRequest.value = '/api/posts/';
   currentShowList.value = posts.value!.results;
 }
 
@@ -110,10 +123,12 @@ watch(tab, async (val) => {
   switch (val) {
     case 2:
       const { data: bookmarkPosts } = await useAPIFetch<CRUDResponse>(`/api/bookmarks/?limit=5&offset=0`);
+      currentRequest.value = '/api/bookmarks/';
       currentShowList.value = bookmarkPosts.value!.results;
       break;
     case 3:
       const { data: myArticles } = await useAPIFetch<CRUDResponse>(`api/users/${userStore.userInfo?.username}`);
+      currentRequest.value = `api/users/${userStore.userInfo?.username}`;
       currentShowList.value = myArticles.value!.results;
       break;
     case 1:
@@ -125,7 +140,8 @@ watch(tab, async (val) => {
 
 if (route.query.tag) {
   filterByTags.value = Array.isArray(route.query.tag) ? route.query.tag as string[] : [route.query.tag];
-  const { data: tagPosts } = await useAPIFetch<CRUDResponse>(`/api/tags/${filterByTags.value}/?limit=10&offset=0`);
+  const { data: tagPosts } = await useAPIFetch<CRUDResponse>(`/api/tags/${filterByTags.value}/?limit=5&offset=0`);
+  currentRequest.value = `/api/tags/${filterByTags.value}/`;
   if (tagPosts.value?.results.length) {
     currentShowList.value = tagPosts.value?.results;
   }
