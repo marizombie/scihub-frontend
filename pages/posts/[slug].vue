@@ -47,10 +47,12 @@
           </v-card>
         </div>
         <div class="pa-4 pt-0 d-flex align-center">
-          <LikeButton @click="sendUpvote()" :toggable="!!userStore.userInfo?.access" />
+          <LikeButton @click="sendUpvote()" :toggable="!!userStore.userInfo?.access"
+            :isClicked="article?.is_upvoted_by_current_user" />
           <span> {{ article.upvotes_count }} like(s)</span>
           <v-btn class="ml-3" icon dark variant="text" @click="showCommentsDialog = true">
             <v-icon>mdi-comment-multiple</v-icon>
+            {{ article.comments_count }}
           </v-btn>
         </div>
       </v-card>
@@ -72,8 +74,8 @@
         <span class="subtitle mt-3">
         </span>
         <div class="mt-4">
-          <v-btn v-if="!article.is_author_followed" :loading="followLoading" @click="followAuthor(article.author_name)"
-            color="primary">
+          <v-btn v-if="!article.is_author_followed_by_current_user" :loading="followLoading"
+            @click="followAuthor(article.author_name)" color="primary">
             Follow </v-btn>
           <v-btn variant="outlined" @click="followAuthor(article.author_name)" rounded color="success" v-else
             prepend-icon="mdi-check-circle">
@@ -173,7 +175,10 @@ article.value = articleData.value;
 const { data: recentlyWrittenData } =
   await useAPIFetch<Article[]>("/api/last-posts/");
 recentlyWrittenPosts.value = recentlyWrittenData.value!.slice(0, 3);
-const bookmarked = ref(article.value?.bookmarked_by_current_user);
+const bookmarked = ref(false);
+if (article.value) {
+  bookmarked.value = article.value.is_bookmarked_by_current_user;
+}
 
 const sharing = computed(() => {
   return {
@@ -214,7 +219,13 @@ async function sendUpvote() {
       },
     });
     if (article.value?.upvotes_count !== undefined) {
-      article.value.upvotes_count += 1;
+      if (article.value.is_upvoted_by_current_user) {
+        article.value.upvotes_count -= 1;
+        article.value.is_upvoted_by_current_user = false;
+      } else {
+        article.value.upvotes_count += 1;
+        article.value.is_upvoted_by_current_user = true;
+      }
     }
     if (error.value?.data) {
       if (error.value?.data.error === 'Already upvoted') {
@@ -255,7 +266,7 @@ async function followAuthor(name: string) {
     }
   }
   followLoading.value = false;
-  article.value!.is_author_followed = !article.value!.is_author_followed;
+  article.value!.is_author_followed_by_current_user = !article.value!.is_author_followed_by_current_user;
 }
 
 watch(showCommentsDialog, async (val) => {
@@ -326,10 +337,8 @@ async function addBookmark() {
         });
       }
     }
-    if (data.value) {
-      if (data.value.success) {
-        bookmarked.value = false;
-      }
+    if (!data.value?.success) {
+      bookmarked.value = false;
     } else {
       bookmarked.value = true;
     }

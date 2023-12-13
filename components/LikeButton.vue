@@ -23,7 +23,14 @@ const props = defineProps({
   toggable: {
     type: Boolean,
   },
+  isClicked: {
+    type: Boolean
+  }
 });
+
+if (props.isClicked) {
+  clicked.value = true;
+}
 
 function clickHeart() {
   if (props.toggable) {

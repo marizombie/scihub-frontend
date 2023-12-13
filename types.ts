@@ -11,8 +11,10 @@ export interface Article {
   author_image: string;
   upvotes_count: number;
   author_followers_count: number;
-  is_author_followed: boolean;
-  bookmarked_by_current_user: boolean;
+  is_bookmarked_by_current_user: boolean;
+  is_upvoted_by_current_user: boolean;
+  is_author_followed_by_current_user: boolean;
+  comments_count: number;
 }
 
 export interface SuccessResponse {
@@ -28,6 +30,7 @@ export interface CommentData {
   post: string;
   text: string;
   upvotes_count: number;
+  is_upvoted_by_current_user: boolean;
 }
 
 export interface ProfileInfo {
