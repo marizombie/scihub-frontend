@@ -2,7 +2,7 @@
   <v-row justify-md="center">
     <v-col :class="[filterByTags.length ? 'mt-6' : '']" md="7">
       <div>
-        <v-tabs v-model="tab" color="deep-purple-accent-4" v-if="userStore.userData?.access">
+        <v-tabs v-model="tab" color="deep-purple-accent-4" v-if="userStore.userData?.access && !filterByTags.length">
           <v-tab :value="1">For you</v-tab>
           <v-tab :value="2">Bookmarks</v-tab>
           <v-tab :value="3">My articles</v-tab>
@@ -10,7 +10,7 @@
         <div v-if="filterByTags.length" class="ml-4 mr-4 tags d-flex flex-wrap align-center">
           <v-chip-group>
             <v-chip v-for="tag in filterByTags" :key="tag" closable @click:close="removeTag(tag)">
-              {{ tag }}
+              {{ tag.replaceAll("-", " ") }}
             </v-chip>
           </v-chip-group>
           <div>
@@ -120,6 +120,9 @@ async function fetchDefaultPosts() {
 }
 
 watch(tab, async (val) => {
+  if (filterByTags.value.length) {
+    return;
+  }
   switch (val) {
     case 2:
       const { data: bookmarkPosts } = await useAPIFetch<CRUDResponse>(`/api/bookmarks/?limit=5&offset=0`);
@@ -149,7 +152,7 @@ if (route.query.tag) {
 
 function removeTag(tag: string) {
   filterByTags.value = filterByTags.value.filter((item) => item !== tag);
-  fetchDefaultPosts();
+  navigateTo('/')
 }
 
 async function followTag(tags: string[]) {

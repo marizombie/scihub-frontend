@@ -248,7 +248,7 @@ async function sendUpvote(item: Article | CommentData) {
 }
 
 async function searchByTag(tag: string) {
-  await navigateTo(`/?tag=${tag}`);
+  await navigateTo(`/?tag=${tag.replaceAll(' ', '-')}`);
 }
 
 async function followAuthor(name: string) {
