@@ -47,7 +47,7 @@
           </v-card>
         </div>
         <div class="pa-4 pt-0 d-flex align-center">
-          <LikeButton @click="sendUpvote()" :toggable="!!userStore.userInfo?.access"
+          <LikeButton @click="sendUpvote(article)" :toggable="!!userStore.userInfo?.access"
             :isClicked="article?.is_upvoted_by_current_user" />
           <span> {{ article.upvotes_count }} like(s)</span>
           <v-btn class="ml-3" icon dark variant="text" @click="showCommentsDialog = true">
@@ -131,7 +131,8 @@
         </div>
 
         <div class="ml-2 mt-3 d-flex align-center">
-          <LikeButton @click="sendUpvote()" :toggable="!!userStore.userInfo?.access" />
+          <LikeButton @click="sendUpvote(item)" :toggable="!!userStore.userInfo?.access"
+            :is-clicked="item.is_upvoted_by_current_user" />
           <span> {{ item.upvotes_count }} like(s)</span>
         </div>
         <v-divider class="my-4" />
@@ -205,7 +206,11 @@ const { t } = useI18n({
   useScope: 'local'
 })
 
-async function sendUpvote() {
+function isComment(object: Article | CommentData): object is CommentData {
+  return 'post' in object;
+}
+
+async function sendUpvote(item: Article | CommentData) {
   if (!userStore.userInfo?.access) {
     const modalStore = useModalsStore();
     await modalStore.setModal("SignUp", t('upvoteTitle'),);
@@ -214,17 +219,17 @@ async function sendUpvote() {
     const { data, error } = await useAPIFetch("/api/toggle-upvote/", {
       method: "post",
       body: {
-        "content_type": "post",
-        "object_id": article.value!.id
+        "content_type": isComment(item) ? "comment" : "post",
+        "object_id": item.id
       },
     });
-    if (article.value?.upvotes_count !== undefined) {
-      if (article.value.is_upvoted_by_current_user) {
-        article.value.upvotes_count -= 1;
-        article.value.is_upvoted_by_current_user = false;
+    if (item.upvotes_count !== undefined) {
+      if (item.is_upvoted_by_current_user) {
+        item.upvotes_count -= 1;
+        item.is_upvoted_by_current_user = false;
       } else {
-        article.value.upvotes_count += 1;
-        article.value.is_upvoted_by_current_user = true;
+        item.upvotes_count += 1;
+        item.is_upvoted_by_current_user = true;
       }
     }
     if (error.value?.data) {

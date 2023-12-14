@@ -1,5 +1,8 @@
 <template>
   <div id="editorjs"></div>
+  <!-- <v-btn @click="save()">
+    Save
+  </v-btn> -->
 </template>
 
 <script setup lang="ts">
@@ -198,7 +201,6 @@ const aceConfig: AceCodeConfig = {
 };
 
 const editor = new EditorJS({
-
   holder: 'editorjs',
   tools: {
     header: Header,
@@ -237,6 +239,14 @@ const editor = new EditorJS({
   },
 })
 
+// function save() {
+//   editor.save().then((outputData) => {
+//     console.log('Article data: ')
+//     console.log(outputData)
+//   }).catch((error) => {
+//     console.log('Saving failed: ', error)
+//   });
+// }
 
 </script>
 
