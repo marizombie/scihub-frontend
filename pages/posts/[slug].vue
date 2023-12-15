@@ -115,6 +115,13 @@
         <v-toolbar-title>Comments</v-toolbar-title>
         <v-spacer></v-spacer>
       </v-toolbar>
+      <div class="create-comment ma-4" v-if="userStore.userInfo">
+        <v-textarea v-model="newCommentText" rows="3" variant="outlined" class="opacity"
+          label="What are you thinking about this?" autofocus auto-grow></v-textarea>
+        <div class="d-flex justify-end mr-4">
+          <v-btn color="primary" @click="sendComment()">Send</v-btn>
+        </div>
+      </div>
       <div class="ma-4" v-for="(item, index) in commentsDialog.comments" :key="index">
         <div class="author-info d-flex">
           <v-avatar size="48" class="mr-1">
@@ -134,6 +141,14 @@
           <LikeButton @click="sendUpvote(item)" :toggable="!!userStore.userInfo?.access"
             :is-clicked="item.is_upvoted_by_current_user" />
           <span> {{ item.upvotes_count }} like(s)</span>
+          <v-btn v-if="userStore.userInfo" class="ml-auto" variant="text" @click="showReply(item.id)">Reply</v-btn>
+        </div>
+        <div v-if="openReplies?.id === item.id && userStore.userInfo" class="mt-3">
+          <v-textarea v-model="openReplies.value" rows="3" variant="outlined" class="opacity"
+            :label="`Replying to ${item.author_name}`" autofocus auto-grow></v-textarea>
+          <div class="d-flex justify-end mr-4">
+            <v-btn color="primary" @click="sendComment(openReplies)">Send</v-btn>
+          </div>
         </div>
         <v-divider class="my-4" />
       </div>
@@ -147,6 +162,11 @@ import SocialShare from '@/components/SocialShare.vue'
 import { useModalsStore, useNotificationStore, useUserStore } from "~/store";
 import { Article, CommentData, Network, Share, SuccessResponse } from "~/types";
 
+
+interface IdWithValue {
+  id: number;
+  value: string;
+}
 const route = useRoute();
 const display = ref(useDisplay() || null);
 const showCommentsDialog = ref(false);
@@ -180,6 +200,8 @@ const bookmarked = ref(false);
 if (article.value) {
   bookmarked.value = article.value.is_bookmarked_by_current_user;
 }
+const newCommentText = ref('');
+const openReplies: Ref<IdWithValue | null> = ref(null);
 
 const sharing = computed(() => {
   return {
@@ -190,10 +212,6 @@ const sharing = computed(() => {
     hashtags: article.value ? article.value.tags.join(',') : ['']
   };
 });
-
-async function redirectToHomePage() {
-  await navigateTo("/");
-}
 
 async function goToAuthorProfile(username: string) {
   if (username) {
@@ -353,6 +371,33 @@ async function addBookmark() {
   }
 }
 
+function showReply(id: number) {
+  openReplies.value = { id, value: '' }
+}
+
+async function sendComment(replyData?: IdWithValue) {
+  const { data, error } = await useAPIFetch<SuccessResponse>(`http://localhost:8000/api/comments/`, {
+    method: "post",
+    body: {
+      "post": article.value!.slug,
+      "text": replyData ? replyData.value : newCommentText.value,
+      "parent_comment": replyData ? replyData.id : null
+    },
+  });
+  if (replyData) {
+    openReplies.value = null;
+  }
+  if (error.value?.data) {
+    if (error.value) {
+      const notifyStore = useNotificationStore();
+      await notifyStore.setNotification({
+        type: "error",
+        message: error.value.data.detail,
+      });
+    }
+  }
+}
+
 // TODO: Check upvoted data and show active if user already voted
 // const { data, error } = await useAPIFetch(`/api/upvotes/post/${article.value!.id}`, {
 //   method: "get",
@@ -437,7 +482,7 @@ useSeoMeta({
 
 .comments-dialog {
   @media (min-width: @md-min) {
-    width: 550px;
+    width: 450px;
     left: auto;
 
     :deep(.v-overlay__content) {
