@@ -300,6 +300,9 @@ function formatTimeDifference(dateString: string): string {
   const currentDate = new Date();
   const targetDate = new Date(dateString);
 
+  const userTimeZoneOffset = currentDate.getTimezoneOffset();
+  currentDate.setMinutes(currentDate.getMinutes() - userTimeZoneOffset);
+
   const timeDifference = currentDate.getTime() - targetDate.getTime();
   const seconds = Math.floor(timeDifference / 1000);
   const minutes = Math.floor(seconds / 60);
@@ -315,14 +318,14 @@ function formatTimeDifference(dateString: string): string {
   } else if (days < 30) {
     return `${days} days ago`;
   } else {
-    // More than 1 month, return the formatted date
-    const formattedDate = targetDate.toLocaleString('en-US', {
+    const formattedDate = targetDate.toLocaleString(undefined, {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     });
     return formattedDate;
   }
@@ -441,6 +444,7 @@ useSeoMeta({
       max-height: 100%;
       width: 100%;
       max-width: 100%;
+      height: 100%;
     }
   }
 }
