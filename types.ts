@@ -18,7 +18,7 @@ export interface Article {
 }
 
 export interface SuccessResponse {
-  success: string;
+  success: string | boolean;
 }
 
 export interface CommentData {

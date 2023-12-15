@@ -14,7 +14,12 @@
             </v-chip>
           </v-chip-group>
           <div>
-            <v-btn @click="followTag(filterByTags)" :loading="followLoading" color="primary">Follow chosen tag(s)</v-btn>
+            <v-btn @click="followTag(filterByTags)" :loading="followLoading"
+              :variant="isFollowedCurrentTag ? 'outlined' : 'flat'"
+              :prepend-icon="isFollowedCurrentTag ? 'mdi-check-circle' : ''"
+              :color="isFollowedCurrentTag ? 'success' : 'primary'">
+              {{ isFollowedCurrentTag ? 'Following' : 'Follow chosen tag(s)'
+              }}</v-btn>
           </div>
         </div>
         <div v-if="currentShowList?.length">
@@ -84,7 +89,7 @@
 
 <script setup lang="ts">
 import { useNotificationStore, useUserStore } from '~/store';
-import { Article, CommentData } from '~/types';
+import { Article, CommentData, SuccessResponse } from '~/types';
 
 interface CRUDResponse {
   results: Article[];
@@ -98,6 +103,7 @@ const { data: recentlyWritten } =
 const { data: recomendations } =
   await useAPIFetch<Article[]>("api/popular-posts/");
 const followLoading = ref(false);
+const isFollowedCurrentTag = ref(false);
 const tab = ref(1);
 const currentShowList: Ref<Article[]> = ref([]);
 const currentRequest = ref('');
@@ -143,6 +149,10 @@ watch(tab, async (val) => {
 
 if (route.query.tag) {
   filterByTags.value = Array.isArray(route.query.tag) ? route.query.tag as string[] : [route.query.tag];
+  const { data: followed } = await useAPIFetch<SuccessResponse>(`api/is-tag-followed/${filterByTags.value}/`);
+  if (typeof followed.value?.success === 'boolean') {
+    isFollowedCurrentTag.value = followed.value.success;
+  }
   const { data: tagPosts } = await useAPIFetch<CRUDResponse>(`/api/tags/${filterByTags.value}/?limit=5&offset=0`);
   currentRequest.value = `/api/tags/${filterByTags.value}/`;
   if (tagPosts.value?.results.length) {
@@ -157,7 +167,7 @@ function removeTag(tag: string) {
 
 async function followTag(tags: string[]) {
   followLoading.value = true;
-  for (const tag in tags) {
+  for (const tag of tags) {
     const { data, error } = await useAPIFetch<CommentData[]>(`api/toggle-follow/tag/${tag}/`, {
       method: "post"
     });
@@ -170,6 +180,7 @@ async function followTag(tags: string[]) {
         });
       }
     }
+    isFollowedCurrentTag.value = !isFollowedCurrentTag.value;
   }
   followLoading.value = false;
 }

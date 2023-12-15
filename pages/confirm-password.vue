@@ -126,7 +126,7 @@ const onSubmit = handleSubmit(async (values) => {
   if (data.value) {
     await notifyStore.setNotification({
       type: "info",
-      message: (data.value as SuccessResponse).success,
+      message: (data.value as SuccessResponse).success as string,
     });
   }
   isLoading.value = false;
