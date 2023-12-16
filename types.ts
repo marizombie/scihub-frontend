@@ -31,6 +31,8 @@ export interface CommentData {
   text: string;
   upvotes_count: number;
   is_upvoted_by_current_user: boolean;
+  replies_count: number;
+  replies?: CommentData[];
 }
 
 export interface ProfileInfo {

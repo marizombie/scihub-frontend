@@ -141,6 +141,10 @@
           <LikeButton @click="sendUpvote(item)" :toggable="!!userStore.userInfo?.access"
             :is-clicked="item.is_upvoted_by_current_user" />
           <span> {{ item.upvotes_count }} like(s)</span>
+          <v-btn @click="showReplies(item.id)" variant="plain" class="plain-custom-style ml-2 pt-1"
+            prepend-icon="mdi-message-reply-outline" :ripple="false">
+            <span>{{ item.replies_count + " reply" }}</span>
+          </v-btn>
           <v-btn v-if="userStore.userInfo" class="ml-auto" variant="text" @click="showReply(item.id)">Reply</v-btn>
         </div>
         <div v-if="openReplies?.id === item.id && userStore.userInfo" class="mt-3">
@@ -148,6 +152,29 @@
             :label="`Replying to ${item.author_name}`" autofocus auto-grow></v-textarea>
           <div class="d-flex justify-end mr-4">
             <v-btn color="primary" @click="sendComment(openReplies)">Send</v-btn>
+          </div>
+        </div>
+
+        <div class="ml-4 mt-3 reply-comment" v-if="item.replies?.length">
+          <div class="ml-3" v-for="(childItem, childIndex) in item.replies" :key="childIndex">
+            <div class="author-info d-flex">
+              <v-avatar size="48" class="mr-1">
+                <img v-if="childItem.author_image" :src="childItem.author_image" :alt="childItem.author_name" />
+                <v-icon v-else class="font-size-48"> mdi-account-circle </v-icon>
+              </v-avatar>
+              <div class="d-flex flex-column">
+                <span>{{ childItem.author_name || "Anonymous" }}</span>
+                <span>{{ formatTimeDifference(childItem.created_date) }}</span>
+              </div>
+            </div>
+            <div class="ml-2 mt-2">
+              {{ childItem.text }}
+            </div>
+            <div class="ml-2 mt-3 d-flex align-center">
+              <LikeButton @click="sendUpvote(childItem)" :toggable="!!userStore.userInfo?.access"
+                :is-clicked="childItem.is_upvoted_by_current_user" />
+              <span> {{ childItem.upvotes_count }} like(s)</span>
+            </div>
           </div>
         </div>
         <v-divider class="my-4" />
@@ -375,6 +402,24 @@ function showReply(id: number) {
   openReplies.value = { id, value: '' }
 }
 
+async function showReplies(id: number) {
+  const { data, error } = await useAPIFetch<CommentData[]>(`http://localhost:8000/api/child-comments/${id}/`, {
+    method: "get"
+  });
+  if (data.value) {
+    commentsDialog.value.comments.find((item) => item.id === id)!.replies = data.value;
+  }
+  if (error.value?.data) {
+    if (error.value) {
+      const notifyStore = useNotificationStore();
+      await notifyStore.setNotification({
+        type: "error",
+        message: error.value.data.detail,
+      });
+    }
+  }
+}
+
 async function sendComment(replyData?: IdWithValue) {
   const { data, error } = await useAPIFetch<SuccessResponse>(`http://localhost:8000/api/comments/`, {
     method: "post",
@@ -497,5 +542,9 @@ useSeoMeta({
 .plain-custom-style {
   opacity: 1;
   text-transform: unset;
+}
+
+.reply-comment {
+  border-left: 5px solid rgba(239, 239, 240, 1);
 }
 </style>
