@@ -36,7 +36,7 @@
 
         <v-card-title class="text-wrap">{{ article.title }}</v-card-title>
 
-        <v-img :src="article.image" />
+        <v-img :src="$config.public.baseURL + article.preview_image" />
 
         <v-card-text>
           <span>{{ article.content }}</span>
@@ -61,7 +61,8 @@
       <v-card class="recomendation-block ml-md-8 pa-4 d-md-block">
         <div class="d-flex align-center mb-3 author-block" @click="goToAuthorProfile(article.author_name)">
           <v-avatar size="48" class="mr-1">
-            <img v-if="article.author_image" :src="article.author_image" :alt="article.author_name" />
+            <img v-if="article.author_image" :src="$config.public.baseURL + article.author_image"
+              :alt="article.author_name" />
             <v-icon size="48" v-else> mdi-account-circle </v-icon>
           </v-avatar>
           <div class="d-flex flex-column">
@@ -94,7 +95,7 @@
             <div class="author-info">
               <span class="mr-1">by</span>
               <v-avatar size="20" class="mr-1">
-                <img v-if="item.author_image" :src="item.author_image" :alt="item.author_name" />
+                <img v-if="item.author_image" :src="$config.public.baseURL + item.author_image" :alt="item.author_name" />
                 <v-icon v-else> mdi-account-circle </v-icon>
               </v-avatar>
               <span>{{ article.author_name ? article.author_name : 'Anonymous' }}</span>
@@ -125,7 +126,7 @@
       <div class="ma-4" v-for="(item, index) in commentsDialog.comments" :key="index">
         <div class="author-info d-flex">
           <v-avatar size="48" class="mr-1">
-            <img v-if="item.author_image" :src="item.author_image" :alt="item.author_name" />
+            <img v-if="item.author_image" :src="$config.public.baseURL + item.author_image" :alt="item.author_name" />
             <v-icon v-else class="font-size-48"> mdi-account-circle </v-icon>
           </v-avatar>
           <div class="d-flex flex-column">
@@ -159,7 +160,8 @@
           <div class="ml-3" v-for="(childItem, childIndex) in item.replies" :key="childIndex">
             <div class="author-info d-flex">
               <v-avatar size="48" class="mr-1">
-                <img v-if="childItem.author_image" :src="childItem.author_image" :alt="childItem.author_name" />
+                <img v-if="childItem.author_image" :src="$config.public.baseURL + childItem.author_image"
+                  :alt="childItem.author_name" />
                 <v-icon v-else class="font-size-48"> mdi-account-circle </v-icon>
               </v-avatar>
               <div class="d-flex flex-column">

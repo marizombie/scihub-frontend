@@ -200,6 +200,7 @@ const aceConfig: AceCodeConfig = {
   },
 };
 
+const config = useRuntimeConfig();
 const editor = new EditorJS({
   holder: 'editorjs',
   tools: {
@@ -211,7 +212,7 @@ const editor = new EditorJS({
       class: ImageTool,
       config: {
         endpoints: {
-          byFile: 'http://localhost:8008/uploadFile', // Your backend file uploader endpoint
+          byFile: `${config.public.baseURL}upload/postimage/`, // Your backend file uploader endpoint
           byUrl: 'http://localhost:8008/fetchUrl', // Your endpoint that provides uploading by Url
         }
       }
@@ -224,7 +225,7 @@ const editor = new EditorJS({
     linkTool: {
       class: LinkTool,
       config: {
-        endpoint: 'http://localhost:8008/fetchUrl', // Your backend endpoint for url data fetching,
+        endpoint: `${config.public.baseURL}/fetchUrl`, // Your backend endpoint for url data fetching,
       }
     },
     warning: Warning,

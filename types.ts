@@ -3,7 +3,8 @@ export interface Article {
   created_at: string;
   description: string;
   id: number;
-  image: string;
+  images: ImageInfo[];
+  preview_image: string;
   slug: string;
   tags: string[];
   title: string;
@@ -15,6 +16,15 @@ export interface Article {
   is_upvoted_by_current_user: boolean;
   is_author_followed_by_current_user: boolean;
   comments_count: number;
+}
+
+export interface ImageInfo {
+  created_at: string;
+  draft: null | string;
+  id: number;
+  image: string;
+  image_url: string;
+  post: number;
 }
 
 export interface SuccessResponse {

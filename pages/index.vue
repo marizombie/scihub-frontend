@@ -39,27 +39,30 @@
           </div>
           <div v-else>
             <v-card v-for="(article, index) in (currentShowList as Article[])" :key="index" class="article mb-4"
-              :to="`/posts/${article.slug}`">
+              @click="navigateTo(`/posts/${article.slug}`)" :ripple="false">
               <v-card-title class="text-wrap">{{ article.title }}</v-card-title>
               <div class="pa-4 d-flex flex-column flex-md-row">
-                <img :src="article.image" alt="demo picture" />
+                <img :src="$config.public.baseURL + article.preview_image" alt="demo picture" />
                 <div>
                   <v-card-text>
                     {{ article.description }}
                   </v-card-text>
                   <div class="pl-4 pr-4 pb-4 tags d-flex flex-wrap">
-                    <v-card variant="elevated" v-for="(tag, index) in article.tags" :key="index" class="tag ma-1">
+                    <v-card variant="elevated" v-for="(tag, index) in article.tags" :key="index"
+                      @click.native="searchByTag(tag)" class="tag ma-1">
                       <span>{{ tag }}</span>
                     </v-card>
                   </div>
                   <span class="ma-4">Published on {{ article.created_at }}</span>
-                  <div class="pl-4 pr-4 pt-2">
+                  <div class="pl-4 pr-4 pt-2" @click.prevent="goToAuthorProfile(article.author_name)">
                     <span class="mr-1">by</span>
                     <v-avatar size="20" class="mr-1">
-                      <img v-if="article.author_image" :src="article.author_image" :alt="article.author_name" />
+                      <img v-if="article.author_image" :src="$config.public.baseURL + article.author_image"
+                        :alt="article.author_name" />
                       <v-icon v-else> mdi-account-circle </v-icon>
                     </v-avatar>
-                    <span>{{ article.author_name ? article.author_name : 'Anonymous' }}</span>
+                    <span>{{ article.author_name ? article.author_name :
+                      'Anonymous' }}</span>
                   </div>
                 </div>
               </div>
@@ -77,7 +80,7 @@
           <div class="author-info">
             <span class="mr-1">by</span>
             <v-avatar size="20" class="mr-1">
-              <img v-if="item.author_image" :src="item.author_image" alt="John" />
+              <img v-if="item.author_image" :src="$config.public.baseURL + item.author_image" alt="John" />
               <v-icon v-else> mdi-account-circle </v-icon>
             </v-avatar>
             <span>{{ item.author_name ? item.author_name : 'Anonymous' }}</span>
@@ -92,7 +95,7 @@
           <div class="author-info">
             <span class="mr-1">by</span>
             <v-avatar size="20" class="mr-1">
-              <img v-if="item.author_image" :src="item.author_image" alt="John" />
+              <img v-if="item.author_image" :src="$config.public.baseURL + item.author_image" alt="John" />
               <v-icon v-else> mdi-account-circle </v-icon>
             </v-avatar>
             <span>{{ item.author_name ? item.author_name : 'Anonymous' }}</span>
@@ -173,22 +176,40 @@ watch(tab, async (val) => {
   }
 }, { immediate: true })
 
-if (route.query.tag) {
-  filterByTags.value = Array.isArray(route.query.tag) ? route.query.tag as string[] : [route.query.tag];
-  const { data: followed } = await useAPIFetch<SuccessResponse>(`api/is-tag-followed/${filterByTags.value}/`);
-  if (typeof followed.value?.success === 'boolean') {
-    isFollowedCurrentTag.value = followed.value.success;
+showTagList();
+
+watch(() => route.query.tag, () => {
+  showTagList();
+})
+
+async function showTagList() {
+  if (route.query.tag) {
+    filterByTags.value = Array.isArray(route.query.tag) ? route.query.tag as string[] : [route.query.tag];
+    const { data: followed } = await useAPIFetch<SuccessResponse>(`api/is-tag-followed/${filterByTags.value}/`);
+    if (typeof followed.value?.success === 'boolean') {
+      isFollowedCurrentTag.value = followed.value.success;
+    }
+    const { data: tagPosts } = await useAPIFetch<CRUDResponse>(`/api/tags/${filterByTags.value}/?limit=5&offset=0`);
+    currentRequest.value = `/api/tags/${filterByTags.value}/`;
+    if (tagPosts.value?.results.length) {
+      currentShowList.value = tagPosts.value?.results;
+    }
   }
-  const { data: tagPosts } = await useAPIFetch<CRUDResponse>(`/api/tags/${filterByTags.value}/?limit=5&offset=0`);
-  currentRequest.value = `/api/tags/${filterByTags.value}/`;
-  if (tagPosts.value?.results.length) {
-    currentShowList.value = tagPosts.value?.results;
+}
+
+async function goToAuthorProfile(username: string) {
+  if (username) {
+    await navigateTo(`/profile/${username}`);
   }
 }
 
 function removeTag(tag: string) {
   filterByTags.value = filterByTags.value.filter((item) => item !== tag);
   navigateTo('/')
+}
+
+async function searchByTag(tag: string) {
+  await navigateTo(`/?tag=${tag.replaceAll(' ', '-')}`);
 }
 
 async function followTag(tags: string[]) {
