@@ -6,6 +6,8 @@
           <v-tab :value="1">For you</v-tab>
           <v-tab :value="2">Bookmarks</v-tab>
           <v-tab :value="3">My articles</v-tab>
+          <v-tab :value="4">Upvoted posts</v-tab>
+          <v-tab :value="5">Upvoted comments</v-tab>
         </v-tabs>
         <div v-if="filterByTags.length" class="ml-4 mr-4 tags d-flex flex-wrap align-center">
           <v-chip-group>
@@ -23,32 +25,46 @@
           </div>
         </div>
         <div v-if="currentShowList?.length">
-          <v-card v-for="(article, index) in currentShowList" :key="index" class="article mb-4"
-            :to="`/posts/${article.slug}`">
-            <v-card-title class="text-wrap">{{ article.title }}</v-card-title>
-            <div class="pa-4 d-flex flex-column flex-md-row">
-              <img :src="article.image" alt="demo picture" />
-              <div>
-                <v-card-text>
-                  {{ article.description }}
-                </v-card-text>
-                <div class="pl-4 pr-4 pb-4 tags d-flex flex-wrap">
-                  <v-card variant="elevated" v-for="(tag, index) in article.tags" :key="index" class="tag ma-1">
-                    <span>{{ tag }}</span>
-                  </v-card>
-                </div>
-                <span class="ma-4">Published on {{ article.created_at }}</span>
-                <div class="pl-4 pr-4 pt-2">
-                  <span class="mr-1">by</span>
-                  <v-avatar size="20" class="mr-1">
-                    <img v-if="article.author_image" :src="article.author_image" :alt="article.author_name" />
-                    <v-icon v-else> mdi-account-circle </v-icon>
-                  </v-avatar>
-                  <span>{{ article.author_name ? article.author_name : 'Anonymous' }}</span>
+          <div v-if="currentRequest === `api/upvoted-comments/`">
+            <v-card v-for="(commentData, index) in (currentShowList as CommentData[])" :key="index" class="article mb-4">
+              <div class="text-wrap pa-2 pl-4 d-flex">
+                {{ commentData.author_name }}
+                <span class="ml-auto">{{ commentData.created_date }}</span>
+              </div>
+              <v-divider />
+              <v-card-text>
+                {{ commentData.text }}
+              </v-card-text>
+            </v-card>
+          </div>
+          <div v-else>
+            <v-card v-for="(article, index) in (currentShowList as Article[])" :key="index" class="article mb-4"
+              :to="`/posts/${article.slug}`">
+              <v-card-title class="text-wrap">{{ article.title }}</v-card-title>
+              <div class="pa-4 d-flex flex-column flex-md-row">
+                <img :src="article.image" alt="demo picture" />
+                <div>
+                  <v-card-text>
+                    {{ article.description }}
+                  </v-card-text>
+                  <div class="pl-4 pr-4 pb-4 tags d-flex flex-wrap">
+                    <v-card variant="elevated" v-for="(tag, index) in article.tags" :key="index" class="tag ma-1">
+                      <span>{{ tag }}</span>
+                    </v-card>
+                  </div>
+                  <span class="ma-4">Published on {{ article.created_at }}</span>
+                  <div class="pl-4 pr-4 pt-2">
+                    <span class="mr-1">by</span>
+                    <v-avatar size="20" class="mr-1">
+                      <img v-if="article.author_image" :src="article.author_image" :alt="article.author_name" />
+                      <v-icon v-else> mdi-account-circle </v-icon>
+                    </v-avatar>
+                    <span>{{ article.author_name ? article.author_name : 'Anonymous' }}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </v-card>
+            </v-card>
+          </div>
         </div>
       </div>
     </v-col>
@@ -92,7 +108,7 @@ import { useNotificationStore, useUserStore } from '~/store';
 import { Article, CommentData, SuccessResponse } from '~/types';
 
 interface CRUDResponse {
-  results: Article[];
+  results: (Article | CommentData)[];
 }
 
 const route = useRoute();
@@ -105,7 +121,7 @@ const { data: recomendations } =
 const followLoading = ref(false);
 const isFollowedCurrentTag = ref(false);
 const tab = ref(1);
-const currentShowList: Ref<Article[]> = ref([]);
+const currentShowList: Ref<(Article | CommentData)[]> = ref([]);
 const currentRequest = ref('');
 
 useInfiniteScroll(
@@ -139,6 +155,16 @@ watch(tab, async (val) => {
       const { data: myArticles } = await useAPIFetch<CRUDResponse>(`api/users/${userStore.userInfo?.username}`);
       currentRequest.value = `api/users/${userStore.userInfo?.username}`;
       currentShowList.value = myArticles.value!.results;
+      break;
+    case 4:
+      const { data: upvotedPosts } = await useAPIFetch<CRUDResponse>(`api/upvoted-posts/`);
+      currentRequest.value = `api/upvoted-posts/`;
+      currentShowList.value = upvotedPosts.value!.results;
+      break;
+    case 5:
+      const { data: upvotedComments } = await useAPIFetch<CRUDResponse>(`api/upvoted-comments/`);
+      currentRequest.value = `api/upvoted-comments/`;
+      currentShowList.value = upvotedComments.value!.results;
       break;
     case 1:
     default:
