@@ -47,6 +47,21 @@
 import { useDisplay } from "vuetify";
 import { ProfileInfo } from "~/types";
 
+interface TagsResponse {
+  results: TagInfo[];
+}
+
+interface TagInfo {
+  date_followed: string;
+  id: number;
+  followed_tag: {
+    followers_count: number;
+    id: number;
+    name: string;
+    slug: string;
+  }
+}
+
 const display = ref(useDisplay() || null);
 const profileImage: Ref<File[] | undefined> = ref(undefined);
 const profile: Ref<ProfileInfo> = ref({
@@ -66,6 +81,13 @@ function setFile(file: File[]) {
 const { data } = await useAPIFetch<ProfileInfo>("/api/profile/");
 if (data.value) {
   profile.value = data.value;
+}
+
+const { data: followedTags } = await useAPIFetch<TagsResponse>("api/followed-tags/");
+if (followedTags.value) {
+  tags.value = followedTags.value!.results.reduce((acc, value) => {
+    return acc.concat(value.followed_tag.name)
+  }, [] as string[]);
 }
 
 async function redirectToHomePage() {

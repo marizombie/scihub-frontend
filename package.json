@@ -11,6 +11,7 @@
     "prettier": "prettier --write \"**/*.{js,ts,vue,json}\""
   },
   "devDependencies": {
+    "@invictus.codes/nuxt-vuetify": "^0.3.0",
     "@mdi/js": "^7.2.96",
     "@nuxt/devtools": "latest",
     "@nuxtjs/i18n": "^8.0.0-rc.5",
@@ -42,10 +43,8 @@
     "@editorjs/raw": "^2.5.0",
     "@editorjs/table": "^2.3.0",
     "@editorjs/warning": "^1.4.0",
-    "@invictus.codes/nuxt-vuetify": "^0.3.0",
     "@mdi/font": "^7.2.96",
     "@pinia/nuxt": "^0.4.11",
-    "@tinymce/tinymce-vue": "^5",
     "@vee-validate/nuxt": "^4.11.8",
     "ace-builds": "^1.32.1",
     "ace-code-editorjs": "^1.0.2",

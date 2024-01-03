@@ -1,5 +1,5 @@
 <template>
-  <div id="editorjs"></div>
+  <div id="editorjs" class="pa-4"></div>
   <!-- <v-btn @click="save()">
     Save
   </v-btn> -->
@@ -30,6 +30,7 @@ import modePHPWorker from "ace-builds/src-noconflict/worker-php?url";
 import modeXMLWorker from "ace-builds/src-noconflict/worker-xml?url";
 import modeYamlWorker from "ace-builds/src-noconflict/worker-yaml?url";
 import modeJsonWorker from "ace-builds/src-noconflict/worker-json?url";
+import { useUserStore } from '~/store';
 
 ace.config.setModuleUrl("ace/mode/html_worker", modeHTMLWorker);
 ace.config.setModuleUrl("ace/mode/javascript_worker", modeJSWorker);
@@ -201,6 +202,7 @@ const aceConfig: AceCodeConfig = {
 };
 
 const config = useRuntimeConfig();
+const userStore = useUserStore();
 const editor = new EditorJS({
   holder: 'editorjs',
   tools: {
@@ -211,8 +213,11 @@ const editor = new EditorJS({
     image: {
       class: ImageTool,
       config: {
+        additionalRequestHeaders: {
+          'authorization': `Bearer ${userStore.userData?.access}`,
+        },
         endpoints: {
-          byFile: `${config.public.baseURL}upload/postimage/`, // Your backend file uploader endpoint
+          byFile: `${config.public.baseURL}api/upload/postimage/`, // Your backend file uploader endpoint
           byUrl: 'http://localhost:8008/fetchUrl', // Your endpoint that provides uploading by Url
         }
       }
