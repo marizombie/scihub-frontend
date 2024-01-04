@@ -124,7 +124,7 @@ const onSubmit = handleSubmit(async (values) => {
     const notifyStore = useNotificationStore();
     await notifyStore.setNotification({
       type: "success",
-      message: data.value.success,
+      message: data.value.success as string,
     });
     dialog.value = false;
   }

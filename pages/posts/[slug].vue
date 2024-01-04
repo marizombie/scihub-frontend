@@ -456,7 +456,7 @@ useSeoMeta({
   ogTitle: article.value ? article.value.title : '',
   description: article.value ? article.value.description : '',
   ogDescription: article.value ? article.value.description : '',
-  ogImage: article.value ? article.value.image : '',
+  ogImage: article.value ? article.value.preview_image : '',
   twitterCard: 'summary_large_image',
 })
 </script>

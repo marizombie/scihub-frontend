@@ -1,4 +1,4 @@
-FROM node:17-alpine3.14
+FROM node:21.5-alpine3.18
 
 ADD .output /webapp/.output
 
