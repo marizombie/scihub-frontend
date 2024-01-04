@@ -1,8 +1,55 @@
 <template>
-  <div id="editorjs" class="pa-4"></div>
-  <!-- <v-btn @click="save()">
-    Save
-  </v-btn> -->
+  <div class="container-create">
+    <div id="editorjs" class="pa-4"></div>
+    <div class="mt-2 ml-auto buttons-container">
+      <v-btn variant="text" @click="saveAsDraft()">
+        Save as Draft
+      </v-btn>
+      <v-btn color="primary" class="ml-3" @click="save()">
+        Publish
+      </v-btn>
+    </div>
+  </div>
+  <v-dialog v-model="showMetaDialog" :fullscreen="true" transition="'dialog-bottom-transition'" class="comments-dialog"
+    scrollable>
+    <v-card>
+      <v-toolbar dark color="primary">
+        <v-btn icon dark @click="showMetaDialog = false">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-toolbar>
+      <div class="meta-content">
+        <div class="meta-block">
+          <h3>Article preview</h3>
+          <v-text-field label="Fill preview title" v-model="articleData.title" variant="underlined" hide-details
+            class="pb-4" />
+          <v-text-field label="Fill preview description" v-model="articleData.description" variant="underlined"
+            hide-details class="pb-4" />
+          <span>Note: Changes here will affect how your story appears in public places like homepage, during sharing and
+            in
+            subscribers’ inboxes</span>
+        </div>
+        <div class="meta-block ml-4">
+          <span>
+            Add or change tags so readers will know what your story is about
+          </span>
+          <v-autocomplete class="mt-3" label="Choose tag(s)" :items="tagsArray" :model-value="chosenTags" multiple
+            hide-no-data @update:search="onSearchChange" item-title="name" item-value="slug" chips closable-chips
+            variant="outlined">
+
+          </v-autocomplete>
+          <div>
+            <v-btn variant="text">
+              Save as Draft
+            </v-btn>
+            <v-btn color="primary" class="ml-3">
+              Publish
+            </v-btn>
+          </div>
+        </div>
+      </div>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup lang="ts">
@@ -31,6 +78,11 @@ import modeXMLWorker from "ace-builds/src-noconflict/worker-xml?url";
 import modeYamlWorker from "ace-builds/src-noconflict/worker-yaml?url";
 import modeJsonWorker from "ace-builds/src-noconflict/worker-json?url";
 import { useUserStore } from '~/store';
+import { Article } from '~/types';
+
+interface CRUDResponse {
+  results: Article[];
+}
 
 ace.config.setModuleUrl("ace/mode/html_worker", modeHTMLWorker);
 ace.config.setModuleUrl("ace/mode/javascript_worker", modeJSWorker);
@@ -245,14 +297,41 @@ const editor = new EditorJS({
   },
 })
 
-// function save() {
-//   editor.save().then((outputData) => {
-//     console.log('Article data: ')
-//     console.log(outputData)
-//   }).catch((error) => {
-//     console.log('Saving failed: ', error)
-//   });
-// }
+const articleData = ref({
+  title: "",
+  description: "",
+  tags: ""
+})
+
+const showMetaDialog = ref(false);
+const tagsArray: Ref<Article[]> = ref([]);
+const chosenTags = ref([]);
+
+function save() {
+  showMetaDialog.value = true;
+  editor.save().then((outputData) => {
+    console.log('Article data: ')
+    console.log(outputData)
+  }).catch((error) => {
+    console.log('Saving failed: ', error)
+  });
+}
+
+function saveAsDraft() {
+  editor.save().then((outputData) => {
+    console.log('Article data: ')
+    console.log(outputData)
+  }).catch((error) => {
+    console.log('Saving failed: ', error)
+  });
+}
+
+async function onSearchChange(val: string) {
+  const { data: tagPosts } = await useAPIFetch<CRUDResponse>(`/api/tags/?limit=20`);
+  if (tagPosts.value) {
+    tagsArray.value = tagPosts.value?.results;
+  }
+}
 
 </script>
 
@@ -261,5 +340,33 @@ const editor = new EditorJS({
   width: 100%;
   max-width: 800px;
   box-shadow: 0px 2px 1px -1px var(--v-shadow-key-umbra-opacity, rgba(0, 0, 0, 0.2)), 0px 1px 1px 0px var(--v-shadow-key-penumbra-opacity, rgba(0, 0, 0, 0.14)), 0px 1px 3px 0px var(--v-shadow-key-penumbra-opacity, rgba(0, 0, 0, 0.12));
+}
+
+.container-create {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.buttons-container {
+  max-width: 800px;
+}
+
+.meta-content {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  justify-content: center;
+  align-self: center;
+  height: 100vh;
+  align-items: center;
+}
+
+.meta-block {
+  max-width: 400px;
+  width: 100%;
+  padding: 16px;
 }
 </style>

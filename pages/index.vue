@@ -26,7 +26,8 @@
         </div>
         <div v-if="currentShowList?.length">
           <div v-if="currentRequest === `api/upvoted-comments/`">
-            <v-card v-for="(commentData, index) in (currentShowList as CommentData[])" :key="index" class="article mb-4">
+            <v-card v-for="(commentData, index) in (currentShowList as CommentData[])" :key="index" class="article mb-4"
+              @click="goToComment(commentData)">
               <div class="text-wrap pa-2 pl-4 d-flex">
                 {{ commentData.author_name }}
                 <span class="ml-auto">{{ commentData.created_date }}</span>
@@ -200,6 +201,12 @@ async function showTagList() {
 async function goToAuthorProfile(username: string) {
   if (username) {
     await navigateTo(`/profile/${username}`);
+  }
+}
+
+async function goToComment(commentData: CommentData) {
+  if (commentData) {
+    console.log(commentData)
   }
 }
 
