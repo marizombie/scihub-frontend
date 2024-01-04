@@ -43,7 +43,7 @@
               @click="navigateTo(`/posts/${article.slug}`)" :ripple="false">
               <v-card-title class="text-wrap">{{ article.title }}</v-card-title>
               <div class="pa-4 d-flex flex-column flex-md-row">
-                <img :src="$config.public.baseURL + article.preview_image" alt="demo picture" />
+                <img :src="$config.public.baseURL.slice(0, -1) + article.preview_image" alt="demo picture" />
                 <div>
                   <v-card-text>
                     {{ article.description }}
@@ -58,7 +58,7 @@
                   <div class="pl-4 pr-4 pt-2" @click.prevent="goToAuthorProfile(article.author_name)">
                     <span class="mr-1">by</span>
                     <v-avatar size="20" class="mr-1">
-                      <img v-if="article.author_image" :src="$config.public.baseURL + article.author_image"
+                      <img v-if="article.author_image" :src="$config.public.baseURL.slice(0, -1) + article.author_image"
                         :alt="article.author_name" />
                       <v-icon v-else> mdi-account-circle </v-icon>
                     </v-avatar>
@@ -81,7 +81,7 @@
           <div class="author-info">
             <span class="mr-1">by</span>
             <v-avatar size="20" class="mr-1">
-              <img v-if="item.author_image" :src="$config.public.baseURL + item.author_image" alt="John" />
+              <img v-if="item.author_image" :src="$config.public.baseURL.slice(0, -1) + item.author_image" alt="John" />
               <v-icon v-else> mdi-account-circle </v-icon>
             </v-avatar>
             <span>{{ item.author_name ? item.author_name : 'Anonymous' }}</span>
@@ -96,7 +96,7 @@
           <div class="author-info">
             <span class="mr-1">by</span>
             <v-avatar size="20" class="mr-1">
-              <img v-if="item.author_image" :src="$config.public.baseURL + item.author_image" alt="John" />
+              <img v-if="item.author_image" :src="$config.public.baseURL.slice(0, -1) + item.author_image" alt="John" />
               <v-icon v-else> mdi-account-circle </v-icon>
             </v-avatar>
             <span>{{ item.author_name ? item.author_name : 'Anonymous' }}</span>
