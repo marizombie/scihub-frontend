@@ -206,7 +206,7 @@ async function goToAuthorProfile(username: string) {
 
 async function goToComment(commentData: CommentData) {
   if (commentData) {
-    console.log(commentData)
+    await navigateTo(`/posts/${commentData.post_slug}?comment_id=${commentData.id}`)
   }
 }
 

@@ -343,6 +343,10 @@ watch(showCommentsDialog, async (val) => {
   }
 }, { deep: true })
 
+if (route.query.comment_id) {
+  showCommentsDialog.value = true;
+}
+
 function formatTimeDifference(dateString: string): string {
   const currentDate = new Date();
   const targetDate = new Date(dateString);

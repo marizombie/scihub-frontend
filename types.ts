@@ -38,6 +38,7 @@ export interface CommentData {
   id: number;
   parent_comment: number;
   post: string;
+  post_slug: string;
   text: string;
   upvotes_count: number;
   is_upvoted_by_current_user: boolean;
