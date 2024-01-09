@@ -43,6 +43,7 @@
               @click="navigateTo(`/posts/${article.slug}`)" :ripple="false">
               <v-card-title class="text-wrap">{{ article.title }}</v-card-title>
               <div class="pa-4 d-flex flex-column flex-md-row">
+                <!-- TODO: rewrite src generation to util function -->
                 <img :src="$config.public.baseURL.slice(0, -1) + article.preview_image" alt="demo picture" />
                 <div>
                   <v-card-text>

@@ -52,7 +52,8 @@ export interface ProfileInfo {
   email: string;
   about: string;
   username: string;
-  avatar: string;
+  avatar_url: string;
+  avatar?: File | null;
   country: string;
 }
 

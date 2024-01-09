@@ -4,10 +4,11 @@
     <v-row :class="!display.mdAndUp ? 'flex-column' : ''">
       <v-col cols="4" :class="!display.mdAndUp ? 'flex-unset' : ''">
         <v-avatar color="grey" class="avatar-preview" :size="display.mdAndUp ? '290' : '100%'"
-          image="https://cdn.vuetifyjs.com/images/profiles/marcus.jpg">
+          :image="currentFilePreview ? currentFilePreview : `${$config.public.baseURL.slice(0, -1)}${profile.avatar_url}`">
         </v-avatar>
-        <v-file-input class="file-input mt-3" label="Change Image" variant="underlined" clearable accept="jpeg, png, bmp"
-          :model-value="profileImage" @change="setFile($event)"></v-file-input>
+        <v-file-input class="file-input mt-3" label="Change Image" variant="underlined" clearable
+          accept="image/jpeg, image/png, image/gif" v-model="profileImage" :multiple="false" @change="setFile($event)"
+          @click:clear="currentFilePreview = ''"></v-file-input>
       </v-col>
       <v-col cols="4">
         <v-text-field label="Name" v-model="profile.first_name" variant="outlined" hide-details class="pb-4" />
@@ -26,7 +27,7 @@
       <v-textarea label="About" v-model="profile.about" outlined counter="250" />
       <div class="subtitle">Following</div>
       <v-chip-group>
-        <v-chip v-for="tag in tags" :key="tag" closable @click:close="removeTag(tag)" @click="searchByTag(tag)">
+        <v-chip v-for=" tag  in  tags " :key="tag" closable @click:close="removeTag(tag)" @click="searchByTag(tag)">
           {{ tag }}
         </v-chip>
       </v-chip-group>
@@ -36,7 +37,7 @@
       <v-btn color="blue darken-1" variant="text" @click="redirectToHomePage()">
         Cancel
       </v-btn>
-      <v-btn color="blue darken-1" variant="text" @click="profileSend()">
+      <v-btn color="blue darken-1" variant="text" @click="profileSend()" :loading="sendLoading">
         Save
       </v-btn>
     </v-card-actions>
@@ -45,6 +46,7 @@
 
 <script setup lang="ts">
 import { useDisplay } from "vuetify";
+import { useNotificationStore } from "~/store";
 import { ProfileInfo } from "~/types";
 
 interface TagsResponse {
@@ -63,20 +65,25 @@ interface TagInfo {
 }
 
 const display = ref(useDisplay() || null);
-const profileImage: Ref<File[] | undefined> = ref(undefined);
+const profileImage: Ref<File[]> = ref([]);
+const currentFilePreview = ref('')
 const profile: Ref<ProfileInfo> = ref({
   first_name: "",
   last_name: "",
   email: "",
   about: "",
   username: "",
-  avatar: "",
+  avatar_url: "",
+  avatar: null,
   country: "",
 });
 const tags = ref(["ml", "technologies", "biology", "mathematics"]);
+const sendLoading = ref(false);
 
-function setFile(file: File[]) {
-  profileImage.value = file;
+function setFile(files: File[]) {
+  if (profileImage.value) {
+    currentFilePreview.value = URL.createObjectURL(profileImage.value[0]);
+  }
 }
 const { data } = await useAPIFetch<ProfileInfo>("/api/profile/");
 if (data.value) {
@@ -93,7 +100,34 @@ if (followedTags.value) {
 async function redirectToHomePage() {
   await navigateTo("/");
 }
-async function profileSend() { }
+
+async function profileSend() {
+  sendLoading.value = true;
+  const formData = new FormData();
+  if (!profileImage.value.length) {
+    delete profile.value.avatar;
+  } else {
+    profile.value.avatar = profileImage.value[0];
+  }
+  for (const keyData in profile.value) {
+    //@ts-ignore
+    formData.append(keyData, profile.value[keyData])
+  }
+  const { data } = await useAPIFetch<ProfileInfo>("/api/profile/", {
+    method: "PUT",
+    body: formData,
+  });
+  sendLoading.value = false;
+  if (data.value) {
+    const notifyStore = useNotificationStore();
+    await notifyStore.setNotification({
+      type: "success",
+      message: "Succesfully saved",
+    });
+  }
+}
+
+
 function removeTag(tag: string) {
   tags.value = tags.value.filter((item) => item !== tag);
 }
