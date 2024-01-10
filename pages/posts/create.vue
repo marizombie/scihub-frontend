@@ -268,6 +268,9 @@ const editor = new EditorJS({
         additionalRequestHeaders: {
           'authorization': `Bearer ${userStore.userData?.access}`,
         },
+        additionalRequestData: {
+          // draft: 'test123'
+        },
         endpoints: {
           byFile: `${config.public.baseURL}api/upload/postimage/`, // Your backend file uploader endpoint
           byUrl: 'http://localhost:8008/fetchUrl', // Your endpoint that provides uploading by Url
@@ -327,11 +330,27 @@ function saveAsDraft() {
 }
 
 async function onSearchChange(val: string) {
-  const { data: tagPosts } = await useAPIFetch<CRUDResponse>(`/api/tags/?limit=20`);
+  const { data: tagPosts } = await useAPIFetch<Article[]>(`/api/tags/?search=${val}&limit=20`);
   if (tagPosts.value) {
-    tagsArray.value = tagPosts.value?.results;
+    tagsArray.value = tagPosts.value;
   }
 }
+
+// const { data: data123 } = await useAPIFetch(`api/drafts/`, {
+//   method: "post",
+//   // body: {
+//   //   "title": "New Post Title",
+//   //   "description": "Description of the post",
+//   //   "content": "The content of the post",
+//   //   "images": [],
+//   //   "author": 1,
+//   //   "tags": []
+//   // }
+// });
+// if (data123.value) {
+//   console.log(data123.value)
+// }
+
 
 </script>
 
