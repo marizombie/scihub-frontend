@@ -23,17 +23,17 @@
           <v-card-text class="pb-0">
             <v-container>
               <v-row>
-                <v-col cols="12">
-                  <v-text-field :label="t('email')" variant="outlined" v-model="email.value.value"
+                <v-col cols="12" class="pb-0">
+                  <v-text-field density="compact" :label="t('email')" variant="outlined" v-model="email.value.value"
                     :error-messages="email.errorMessage.value"></v-text-field>
                 </v-col>
-                <v-col cols="12">
-                  <v-text-field :label="t('password')" variant="outlined" v-model="password.value.value"
+                <v-col cols="12" class="pb-0">
+                  <v-text-field density="compact" :label="t('password')" variant="outlined" v-model="password.value.value"
                     :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" :type="show1 ? 'text' : 'password'"
                     @click:append="show1 = !show1" :error-messages="password.errorMessage.value"></v-text-field>
                 </v-col>
-                <v-col cols="12">
-                  <v-text-field :label="t('confirm_password')" :type="show2 ? 'text' : 'password'"
+                <v-col cols="12" class="pb-2">
+                  <v-text-field density="compact" :label="t('confirm_password')" :type="show2 ? 'text' : 'password'"
                     :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'" variant="outlined"
                     v-model="password_verifier.value.value" @click:append="show2 = !show2"
                     :error-messages="password_verifier.errorMessage.value"></v-text-field>

@@ -20,14 +20,14 @@
       <v-card-text class="pb-0">
         <v-container>
           <v-row>
-            <v-col cols="12">
-              <v-text-field variant="outlined" v-model="new_password.value.value"
+            <v-col cols="12" class="mb-0">
+              <v-text-field density="compact" variant="outlined" v-model="new_password.value.value"
                 :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" :type="show1 ? 'text' : 'password'" name="input-10-1"
                 :label="t('password')" @click:append="show1 = !show1"
                 :error-messages="new_password.errorMessage.value"></v-text-field>
             </v-col>
-            <v-col cols="12">
-              <v-text-field variant="outlined" v-model="confirm_password.value.value"
+            <v-col cols="12" class="mb-0">
+              <v-text-field density="compact" variant="outlined" v-model="confirm_password.value.value"
                 :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'" :type="show2 ? 'text' : 'password'" name="input-10-1"
                 :label="t('confirm_password')" @click:append="show2 = !show2"
                 :error-messages="confirm_password.errorMessage.value"></v-text-field>

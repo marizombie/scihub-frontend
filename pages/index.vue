@@ -39,14 +39,14 @@
             </v-card>
           </div>
           <div v-else>
-            <v-card v-for="(article, index) in (currentShowList as Article[])" :key="index" class="article mb-4"
+            <v-card v-for="(article, index) in (currentShowList as Article[])" :key="index" class="article mb-8"
               @click="navigateTo(`/posts/${article.slug}`)" :ripple="false">
               <v-card-title class="text-wrap">{{ article.title }}</v-card-title>
               <div class="pa-4 d-flex flex-column flex-md-row">
                 <!-- TODO: rewrite src generation to util function -->
                 <img :src="$config.public.baseURL.slice(0, -1) + article.preview_image" alt="demo picture" />
                 <div>
-                  <v-card-text>
+                  <v-card-text class="article-description">
                     {{ article.description }}
                   </v-card-text>
                   <div class="pl-4 pr-4 pb-4 tags d-flex flex-wrap">
@@ -75,8 +75,8 @@
     </v-col>
     <v-card class="recomendation-block ml-8 d-sm-none d-none d-md-block">
       <div class="d-flex flex-column">
-        <h3>Recommendations:</h3>
-        <NuxtLink v-for="(item, index) in recommendedPosts" :key="index" class="text-subtitle"
+        <h3 class="mb-5">Recommendations:</h3>
+        <NuxtLink v-for="(item, index) in recommendedPosts" :key="index" class="text-subtitle mb-5"
           :to="`/posts/${item.slug}`">
           <span class="title">{{ item.title }}</span>
           <div class="author-info">
@@ -89,9 +89,9 @@
           </div>
         </NuxtLink>
       </div>
-      <div class="d-flex flex-column mt-6">
-        <h3>Recently written:</h3>
-        <NuxtLink v-for="(item, index) in recentlyWrittenPosts" :key="index" class="text-subtitle"
+      <div class="d-flex flex-column mt-12">
+        <h3 class="mb-5">Recently written:</h3>
+        <NuxtLink v-for="(item, index) in recentlyWrittenPosts" :key="index" class="text-subtitle mb-5"
           :to="`/posts/${item.slug}`">
           <span class="title">{{ item.title }}</span>
           <div class="author-info">
@@ -245,6 +245,8 @@ let recommendedPosts = recomendations.value;
 </script>
 
 <style lang="less" scoped>
+@import "../assets/breakpoints.less";
+
 .text-subtitle {
   text-decoration: none;
 }
@@ -252,13 +254,17 @@ let recommendedPosts = recomendations.value;
 .article {
   img {
     min-width: 300px;
-    max-width: 300px;
+
+    @media (min-width: @md-min) {
+      max-width: 300px;
+    }
   }
 
   .v-card-title {
     font-size: 32px;
     word-break: break-word;
     line-height: 38px;
+    font-weight: 700;
   }
 
   .tags .tag {
@@ -284,7 +290,7 @@ let recommendedPosts = recomendations.value;
   }
 
   .title {
-    font-size: 20px;
+    font-size: 1rem;
     font-weight: 400;
   }
 
@@ -299,5 +305,9 @@ let recommendedPosts = recomendations.value;
 
 :deep(.v-img__img) {
   object-fit: cover;
+}
+
+.article-description {
+  font-size: 1.125rem;
 }
 </style>

@@ -22,12 +22,12 @@
           <v-card-text class="pb-0">
             <v-container>
               <v-row>
-                <v-col cols="12">
-                  <v-text-field variant="outlined" :label="t('username')" required v-model="username.value.value"
-                    :error-messages="username.errorMessage.value"></v-text-field>
+                <v-col cols="12" class="pb-0">
+                  <v-text-field density="compact" variant="outlined" :label="t('username')" required
+                    v-model="username.value.value" :error-messages="username.errorMessage.value"></v-text-field>
                 </v-col>
-                <v-col cols="12">
-                  <v-text-field variant="outlined" :label="t('password')" type="password" required
+                <v-col cols="12" class="pb-0">
+                  <v-text-field density="compact" variant="outlined" :label="t('password')" type="password" required
                     v-model="password.value.value" :error-messages="password.errorMessage.value"></v-text-field>
                 </v-col>
               </v-row>

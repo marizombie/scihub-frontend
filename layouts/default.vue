@@ -240,6 +240,10 @@ watch(() => userStore.userInfo, async (val) => {
   flex: unset;
 }
 
+.v-container {
+  max-width: 1400px;
+}
+
 .search {
   width: 220px;
   transition: width ease-out 0.5s;
