@@ -59,7 +59,7 @@
                   <div class="pl-4 pr-4 pt-2" @click.prevent="goToAuthorProfile(article.author_name)">
                     <span class="mr-1">by</span>
                     <v-avatar size="20" class="mr-1">
-                      <img v-if="article.author_image" :src="$config.public.baseURL.slice(0, -1) + article.author_image"
+                      <v-img v-if="article.author_image" :src="$config.public.baseURL.slice(0, -1) + article.author_image"
                         :alt="article.author_name" />
                       <v-icon v-else> mdi-account-circle </v-icon>
                     </v-avatar>
@@ -82,7 +82,7 @@
           <div class="author-info">
             <span class="mr-1">by</span>
             <v-avatar size="20" class="mr-1">
-              <img v-if="item.author_image" :src="$config.public.baseURL.slice(0, -1) + item.author_image" alt="John" />
+              <v-img v-if="item.author_image" :src="$config.public.baseURL.slice(0, -1) + item.author_image" alt="John" />
               <v-icon v-else> mdi-account-circle </v-icon>
             </v-avatar>
             <span>{{ item.author_name ? item.author_name : 'Anonymous' }}</span>
@@ -97,7 +97,7 @@
           <div class="author-info">
             <span class="mr-1">by</span>
             <v-avatar size="20" class="mr-1">
-              <img v-if="item.author_image" :src="$config.public.baseURL.slice(0, -1) + item.author_image" alt="John" />
+              <v-img v-if="item.author_image" :src="$config.public.baseURL.slice(0, -1) + item.author_image" alt="John" />
               <v-icon v-else> mdi-account-circle </v-icon>
             </v-avatar>
             <span>{{ item.author_name ? item.author_name : 'Anonymous' }}</span>
@@ -295,5 +295,9 @@ let recommendedPosts = recomendations.value;
   a {
     color: inherit !important;
   }
+}
+
+:deep(.v-img__img) {
+  object-fit: cover;
 }
 </style>

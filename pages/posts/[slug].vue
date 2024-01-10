@@ -18,7 +18,8 @@
             <div class="pl-2 pr-2 author-block" @click="goToAuthorProfile(article.author_name)">
               <span class="mr-1">by</span>
               <v-avatar size="20" class="mr-1">
-                <img v-if="article.author_image" :src="article.author_image" :alt="article.author_name" />
+                <v-img v-if="article.author_image" :src="$config.public.baseURL.slice(0, -1) + article.author_image"
+                  :alt="article.author_name" />
                 <v-icon v-else> mdi-account-circle </v-icon>
               </v-avatar>
               <span>{{ article.author_name ? article.author_name : 'Anonymous' }}</span>
@@ -61,7 +62,7 @@
       <v-card class="recomendation-block ml-md-8 pa-4 d-md-block">
         <div class="d-flex align-center mb-3 author-block" @click="goToAuthorProfile(article.author_name)">
           <v-avatar size="48" class="mr-1">
-            <img v-if="article.author_image" :src="$config.public.baseURL.slice(0, -1) + article.author_image"
+            <v-img v-if="article.author_image" :src="$config.public.baseURL.slice(0, -1) + article.author_image"
               :alt="article.author_name" />
             <v-icon size="48" v-else> mdi-account-circle </v-icon>
           </v-avatar>
@@ -95,7 +96,7 @@
             <div class="author-info">
               <span class="mr-1">by</span>
               <v-avatar size="20" class="mr-1">
-                <img v-if="item.author_image" :src="$config.public.baseURL.slice(0, -1) + item.author_image"
+                <v-img v-if="item.author_image" :src="$config.public.baseURL.slice(0, -1) + item.author_image"
                   :alt="item.author_name" />
                 <v-icon v-else> mdi-account-circle </v-icon>
               </v-avatar>
@@ -127,7 +128,7 @@
       <div class="ma-4" v-for="(item, index) in commentsDialog.comments" :key="index">
         <div class="author-info d-flex">
           <v-avatar size="48" class="mr-1">
-            <img v-if="item.author_image" :src="$config.public.baseURL.slice(0, -1) + item.author_image"
+            <v-img v-if="item.author_image" :src="$config.public.baseURL.slice(0, -1) + item.author_image"
               :alt="item.author_name" />
             <v-icon v-else class="font-size-48"> mdi-account-circle </v-icon>
           </v-avatar>
@@ -162,7 +163,7 @@
           <div class="ml-3" v-for="(childItem, childIndex) in item.replies" :key="childIndex">
             <div class="author-info d-flex">
               <v-avatar size="48" class="mr-1">
-                <img v-if="childItem.author_image" :src="$config.public.baseURL.slice(0, -1) + childItem.author_image"
+                <v-img v-if="childItem.author_image" :src="$config.public.baseURL.slice(0, -1) + childItem.author_image"
                   :alt="childItem.author_name" />
                 <v-icon v-else class="font-size-48"> mdi-account-circle </v-icon>
               </v-avatar>
@@ -554,5 +555,9 @@ useSeoMeta({
 
 .reply-comment {
   border-left: 5px solid rgba(239, 239, 240, 1);
+}
+
+:deep(.v-img__img) {
+  object-fit: cover;
 }
 </style>

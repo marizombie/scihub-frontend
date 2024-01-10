@@ -44,7 +44,7 @@
               <template v-slot:activator="{ props }">
                 <v-btn size="48" rounded variant="outlined" :ripple="false" class="mr-3 plain-custom-style"
                   v-bind="props">
-                  <v-avatar>
+                  <v-avatar size="48">
                     <v-img v-if="userStore.userInfo.avatar"
                       :src="$config.public.baseURL.slice(0, -1) + userStore.userInfo.avatar"
                       :alt="userStore.userInfo.first_name + ' ' + userStore.userInfo.last_name" />
@@ -261,5 +261,9 @@ watch(() => userStore.userInfo, async (val) => {
 .plain-custom-style {
   opacity: 1;
   text-transform: unset;
+}
+
+:deep(.v-img__img) {
+  object-fit: cover;
 }
 </style>

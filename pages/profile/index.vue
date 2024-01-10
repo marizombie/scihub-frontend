@@ -46,7 +46,7 @@
 
 <script setup lang="ts">
 import { useDisplay } from "vuetify";
-import { useNotificationStore } from "~/store";
+import { useNotificationStore, useUserStore } from "~/store";
 import { ProfileInfo } from "~/types";
 
 interface TagsResponse {
@@ -124,6 +124,8 @@ async function profileSend() {
       type: "success",
       message: "Succesfully saved",
     });
+    const userStore = useUserStore();
+    userStore.setUserAvatar(data.value.avatar_url)
   }
 }
 

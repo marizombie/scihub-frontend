@@ -70,6 +70,11 @@ export const useUserStore = defineStore("user", {
         this.userData.username = value;
       }
     },
+    setUserAvatar(value: string) {
+      if ( this.userData ) {
+        this.userData.avatar = value;
+      }
+    },
     logout() {
       this.userData = null;
       localStorage.removeItem("token");
