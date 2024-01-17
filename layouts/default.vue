@@ -26,7 +26,7 @@
             </v-menu>
             <v-switch v-model="darkTheme" hide-details class="mr-8" :label="` ${display.mdAndUp ? 'Dark theme' : ''}`" />
             <Auth :showDialog="showAuth" @closeDialog="showAuth = false; modalStore.removeModal()"
-              @showForgetPasswordDialog="showForgetPassword = true" />
+              @showForgetPasswordDialog="showForgetPassword = true" :redirectOnCancel="modalStore.currentModal?.prevRoute"/>
             <v-btn @click="showAuth = true" class="header-button mr-md-4" v-if="!userStore.userInfo">
               Sign in
             </v-btn>
@@ -124,17 +124,18 @@ const fetchItems = async () => {
 
 const modalStore = useModalsStore();
 
-watch(() => modalStore.currentModal, (val) => {
+watch(() => modalStore.currentModal, async (val) => {
   if (val) {
     if (val.name === 'SignUp') {
       signUpTitle.value = val.title;
       showSignUp.value = true;
     }
     if (val.name === 'Auth') {
+      await new Promise(resolve => setTimeout(resolve, 1));
       showAuth.value = true;
     }
   }
-})
+}, { immediate: true })
 
 const debouncedFetchItems = useDebounce(fetchItems, 300);
 

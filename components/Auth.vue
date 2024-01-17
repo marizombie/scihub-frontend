@@ -77,6 +77,9 @@ const props = defineProps({
   showDialog: {
     type: Boolean,
   },
+  redirectOnCancel: {
+    type: String,
+  }
 });
 const userStore = useUserStore();
 let dialog = ref(false);
@@ -89,6 +92,9 @@ const errorsArray: Ref<ErrorKeyValue[]> = ref([]);
 
 watch(dialog, (val) => {
   if (!val) {
+    if (props.redirectOnCancel) {
+      navigateTo(props.redirectOnCancel)
+    }
     emit("closeDialog");
   }
 });

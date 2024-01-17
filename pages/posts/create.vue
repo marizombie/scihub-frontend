@@ -80,9 +80,11 @@ import modeJsonWorker from "ace-builds/src-noconflict/worker-json?url";
 import { useUserStore } from '~/store';
 import { Article } from '~/types';
 
-interface CRUDResponse {
-  results: Article[];
-}
+definePageMeta({
+  middleware: [
+    'auth',
+  ]
+});
 
 ace.config.setModuleUrl("ace/mode/html_worker", modeHTMLWorker);
 ace.config.setModuleUrl("ace/mode/javascript_worker", modeJSWorker);

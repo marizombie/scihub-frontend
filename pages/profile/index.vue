@@ -49,6 +49,12 @@ import { useDisplay } from "vuetify";
 import { useNotificationStore, useUserStore } from "~/store";
 import { ProfileInfo } from "~/types";
 
+definePageMeta({
+  middleware: [
+    'auth',
+  ]
+});
+
 interface TagsResponse {
   results: TagInfo[];
 }

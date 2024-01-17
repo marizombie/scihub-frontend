@@ -19,6 +19,7 @@ export interface Notification {
 export interface Modal {
   name: string;
   title: string;
+  prevRoute: string;
 }
 
 function parseJwt (token: string | undefined) {
@@ -143,10 +144,11 @@ export const useModalsStore = defineStore("modal", {
     curModal: (state) => state.currentModal,
   },
   actions: {
-    setModal(modalName: string, additionalData: any) {
+    setModal(modalName: string, additionalData: any, prevRoute: string) {
       this.currentModal = {
         name: modalName,
-        title: additionalData || ''
+        title: additionalData || '',
+        prevRoute: prevRoute
       }
     },
     removeModal() {
