@@ -17,7 +17,7 @@ let notifications = computed(() => notificationStore.notificationsArray);
 @import "../assets/breakpoints.less";
 
 .notification {
-  position: absolute;
+  position: sticky;
   z-index: 9999;
   width: 80%;
   display: block;

@@ -2,7 +2,8 @@
   <v-row justify-md="center">
     <v-col :class="[filterByTags.length ? 'mt-6' : '']" md="7">
       <div>
-        <v-tabs v-model="tab" color="deep-purple-accent-4" v-if="userStore.userData?.access && !filterByTags.length">
+        <v-tabs class="mb-8" v-model="tab" color="deep-purple-accent-4"
+          v-if="userStore.userData?.access && !filterByTags.length">
           <v-tab :value="1">For you</v-tab>
           <v-tab :value="2">Bookmarks</v-tab>
           <v-tab :value="3">My articles</v-tab>

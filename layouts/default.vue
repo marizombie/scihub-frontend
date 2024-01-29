@@ -25,26 +25,28 @@
                 </v-list-item>
               </v-list>
             </v-menu>
-            <v-switch v-model="darkTheme" hide-details class="mr-8" :label="` ${display.mdAndUp ? 'Dark theme' : ''}`" />
+            <v-switch v-model="darkTheme" hide-details class="ml-3 mr-10"
+              :label="` ${display.mdAndUp ? 'Dark theme' : ''}`" />
             <Auth :showDialog="showAuth" @closeDialog="showAuth = false; modalStore.removeModal()"
               @showForgetPasswordDialog="showForgetPassword = true"
               :redirectOnCancel="modalStore.currentModal?.prevRoute" />
-            <v-btn @click="showAuth = true" class="header-button mr-md-4" v-if="!userStore.userInfo">
+            <v-btn @click="showAuth = true" class="header-button mr-md-4 ml-md-4" v-if="!userStore.userInfo">
               Sign in
             </v-btn>
             <SignUp :showDialog="showSignUp" @closeDialog="showSignUp = false; modalStore.removeModal()"
               :title="signUpTitle" @showResendLinkDialog="showResendLink = true"
               @showAuthDialog="showSignUp = false; showAuth = true" />
-            <v-btn class="header-button" variant="text" @click="showSignUp = true" v-if="!userStore.userInfo">
+            <v-btn class="header-button ml-md-4 mr-md-5" variant="text" @click="showSignUp = true"
+              v-if="!userStore.userInfo">
               Sign up
             </v-btn>
-            <v-btn prepend-icon="mdi-pencil" class="ml-5 header-button" variant="text" @click="openCreatePage()"
+            <v-btn prepend-icon="mdi-pencil" class="ml-8 mr-md-5 header-button" variant="text" @click="openCreatePage()"
               v-if="userStore.userInfo">
               Write
             </v-btn>
             <v-menu v-if="userStore.userInfo">
               <template v-slot:activator="{ props }">
-                <v-btn size="48" rounded variant="outlined" :ripple="false" class="mr-3 plain-custom-style"
+                <v-btn size="48" rounded variant="outlined" :ripple="false" class="mr-6 plain-custom-style"
                   v-bind="props">
                   <v-avatar size="48">
                     <v-img v-if="userStore.userInfo.avatar"
