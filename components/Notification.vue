@@ -1,8 +1,7 @@
 <template>
   <div class="notification">
     <div v-for="item in notifications" :key="item.id">
-      <v-alert class="mb-4" eager :text="item.message" closable :type="item.type" density="compact"
-        @click:close="notificationStore.removeNotification(item.id!)" icon="false"></v-alert>
+      <v-alert class="mb-4" eager :text="item.message" :type="item.type" density="compact" icon="false"></v-alert>
     </div>
   </div>
 </template>
@@ -19,7 +18,7 @@ let notifications = computed(() => notificationStore.notificationsArray);
 
 .notification {
   position: absolute;
-  z-index: 10;
+  z-index: 9999;
   width: 80%;
   display: block;
   top: 140px;

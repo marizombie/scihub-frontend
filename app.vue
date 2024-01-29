@@ -18,6 +18,7 @@ useHead({
     },
   ],
 });
+// Rewrite some useFetch to useLazyFetch(to not freeze app)
 </script>
 
 <style lang="less" scoped>

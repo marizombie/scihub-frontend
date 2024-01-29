@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <Notification />
     <v-theme-provider :theme="theme.global.name.value">
       <v-app-bar fixed app class="header d-flex flex-column">
         <div class="main-content">
@@ -26,7 +27,8 @@
             </v-menu>
             <v-switch v-model="darkTheme" hide-details class="mr-8" :label="` ${display.mdAndUp ? 'Dark theme' : ''}`" />
             <Auth :showDialog="showAuth" @closeDialog="showAuth = false; modalStore.removeModal()"
-              @showForgetPasswordDialog="showForgetPassword = true" :redirectOnCancel="modalStore.currentModal?.prevRoute"/>
+              @showForgetPasswordDialog="showForgetPassword = true"
+              :redirectOnCancel="modalStore.currentModal?.prevRoute" />
             <v-btn @click="showAuth = true" class="header-button mr-md-4" v-if="!userStore.userInfo">
               Sign in
             </v-btn>
@@ -81,7 +83,6 @@
         </div>
       </v-app-bar>
       <v-main>
-        <Notification />
         <v-container class="custom-container">
           <slot />
         </v-container>

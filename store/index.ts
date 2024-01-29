@@ -120,16 +120,20 @@ export const useNotificationStore = defineStore("notification", {
   },
   actions: {
     setNotification(data: Notification) {
-      this.notifications.push({
+      const dataObject = {
         type: data.type,
         message: data.message,
         id: this.notifications.length && this.notifications[this.notifications.length - 1].id
           ? this.notifications[this.notifications.length - 1].id! + 1
           : 0,
-      });
+      }
+      this.notifications.push(dataObject);
+      this.removeNotificationDelayed(dataObject.id, 5000);
     },
-    removeNotification(id: number) {
-      this.notifications = this.notifications.filter((item) => item.id !== id);
+    removeNotificationDelayed(id: number, delay: number) {
+      setTimeout(() => {
+        this.notifications = this.notifications.filter((item) => item.id !== id);
+      }, delay);
     },
   },
 });
@@ -144,11 +148,11 @@ export const useModalsStore = defineStore("modal", {
     curModal: (state) => state.currentModal,
   },
   actions: {
-    setModal(modalName: string, additionalData: any, prevRoute: string) {
+    setModal(modalName: string, additionalData: any, prevRoute?: string) {
       this.currentModal = {
         name: modalName,
         title: additionalData || '',
-        prevRoute: prevRoute
+        prevRoute: prevRoute ? prevRoute : ''
       }
     },
     removeModal() {

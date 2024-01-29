@@ -125,32 +125,34 @@
           <v-btn color="primary" @click="sendComment()">Send</v-btn>
         </div>
       </div>
-      <div class="ma-4" v-for="(item, index) in commentsDialog.comments" :key="index">
-        <div class="author-info d-flex">
-          <v-avatar size="48" class="mr-1">
-            <v-img v-if="item.author_image" :src="$config.public.baseURL.slice(0, -1) + item.author_image"
-              :alt="item.author_name" />
-            <v-icon v-else class="font-size-48"> mdi-account-circle </v-icon>
-          </v-avatar>
-          <div class="d-flex flex-column">
-            <span>{{ item.author_name || "Anonymous" }}</span>
-            <span>{{ formatTimeDifference(item.created_date) }}</span>
+      <div v-for="(item, index) in commentsDialog.comments" :key="index" class="ma-4">
+        <div :class="[createdCommentId === item.id ? 'created-comment' : '']">
+          <div class="author-info d-flex">
+            <v-avatar size="48" class="mr-1">
+              <v-img v-if="item.author_image" :src="$config.public.baseURL.slice(0, -1) + item.author_image"
+                :alt="item.author_name" />
+              <v-icon v-else class="font-size-48"> mdi-account-circle </v-icon>
+            </v-avatar>
+            <div class="d-flex flex-column">
+              <span>{{ item.author_name || "Anonymous" }}</span>
+              <span>{{ formatTimeDifference(item.created_date) }}</span>
+            </div>
+          </div>
+          <div class="ml-2 mt-2">
+            {{ item.text }}
+          </div>
+          <div class="ml-2 mt-3 d-flex align-center">
+            <LikeButton @click="sendUpvote(item)" :toggable="!!userStore.userInfo?.access"
+              :is-clicked="item.is_upvoted_by_current_user" />
+            <span> {{ item.upvotes_count }} like(s)</span>
+            <v-btn @click="showReplies(item.id)" variant="plain" class="plain-custom-style ml-2 pt-1"
+              prepend-icon="mdi-message-reply-outline" :ripple="false">
+              <span>{{ item.replies_count + " reply" }}</span>
+            </v-btn>
+            <v-btn v-if="userStore.userInfo" class="ml-auto" variant="text" @click="showReply(item.id)">Reply</v-btn>
           </div>
         </div>
-        <div class="ml-2 mt-2">
-          {{ item.text }}
-        </div>
 
-        <div class="ml-2 mt-3 d-flex align-center">
-          <LikeButton @click="sendUpvote(item)" :toggable="!!userStore.userInfo?.access"
-            :is-clicked="item.is_upvoted_by_current_user" />
-          <span> {{ item.upvotes_count }} like(s)</span>
-          <v-btn @click="showReplies(item.id)" variant="plain" class="plain-custom-style ml-2 pt-1"
-            prepend-icon="mdi-message-reply-outline" :ripple="false">
-            <span>{{ item.replies_count + " reply" }}</span>
-          </v-btn>
-          <v-btn v-if="userStore.userInfo" class="ml-auto" variant="text" @click="showReply(item.id)">Reply</v-btn>
-        </div>
         <div v-if="openReplies?.id === item.id && userStore.userInfo" class="mt-3">
           <v-textarea v-model="openReplies.value" rows="3" variant="outlined" class="opacity"
             :label="`Replying to ${item.author_name}`" autofocus auto-grow></v-textarea>
@@ -159,8 +161,10 @@
           </div>
         </div>
 
+
         <div class="ml-4 mt-3 reply-comment" v-if="item.replies?.length">
-          <div class="ml-3" v-for="(childItem, childIndex) in item.replies" :key="childIndex">
+          <div class="ml-3" v-for="(childItem, childIndex) in item.replies" :key="childIndex"
+            :class="['ma-4', createdCommentId === childItem.id ? 'created-comment' : '']">
             <div class="author-info d-flex">
               <v-avatar size="48" class="mr-1">
                 <v-img v-if="childItem.author_image" :src="$config.public.baseURL.slice(0, -1) + childItem.author_image"
@@ -234,6 +238,7 @@ if (article.value) {
 }
 const newCommentText = ref('');
 const openReplies: Ref<IdWithValue | null> = ref(null);
+const createdCommentId: Ref<null | number> = ref(null);
 
 const sharing = computed(() => {
   return {
@@ -340,7 +345,7 @@ watch(showCommentsDialog, async (val) => {
       }
     }
     if (data.value) {
-      commentsDialog.value.comments = data.value.filter((item) => !item.parent_comment);
+      commentsDialog.value.comments = data.value.filter((item) => !item.parent_comment).reverse();
     }
     commentsDialog.value.loading = false;
   }
@@ -430,16 +435,20 @@ async function showReplies(id: number) {
 }
 
 async function sendComment(replyData?: IdWithValue) {
-  const { data, error } = await useAPIFetch<SuccessResponse>(`http://localhost:8000/api/comments/`, {
+  const textValue = replyData ? replyData.value : newCommentText.value;
+  const { data, error } = await useAPIFetch<CommentData>(`http://localhost:8000/api/comments/`, {
     method: "post",
     body: {
       "post": article.value!.slug,
-      "text": replyData ? replyData.value : newCommentText.value,
+      "text": textValue,
       "parent_comment": replyData ? replyData.id : null
     },
   });
   if (replyData) {
     openReplies.value = null;
+    replyData.value = "";
+  } else {
+    newCommentText.value = "";
   }
   if (error.value?.data) {
     if (error.value) {
@@ -448,7 +457,26 @@ async function sendComment(replyData?: IdWithValue) {
         type: "error",
         message: error.value.data.detail,
       });
+      return;
     }
+  }
+  const notifyStore = useNotificationStore();
+  await notifyStore.setNotification({
+    type: "success",
+    message: "Your comment was sent!",
+  });
+  if (data.value) {
+    const parentComment = replyData ? commentsDialog.value.comments.find(item => item.id === replyData.id) : null;
+    if (parentComment) {
+      parentComment.replies = parentComment.replies || [];
+      parentComment.replies.push(data.value);
+    } else {
+      commentsDialog.value.comments.unshift(data.value);
+    }
+    createdCommentId.value = data.value.id;
+    setTimeout(() => {
+      createdCommentId.value = null
+    }, 5000);
   }
 }
 
@@ -559,5 +587,10 @@ useSeoMeta({
 
 :deep(.v-img__img) {
   object-fit: cover;
+}
+
+.created-comment {
+  background-color: rgba(128, 128, 128, 0.15);
+  border-radius: 8px;
 }
 </style>
