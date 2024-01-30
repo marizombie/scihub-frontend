@@ -28,10 +28,13 @@
           <v-col cols="2" class="d-flex justify-end align-center">
             <v-btn variant="plain" :ripple="false" class="plain-custom-style" v-if="userStore.userInfo?.access"
               @click="addBookmark()">
-              <v-icon v-if="!bookmarked"> mdi-bookmark </v-icon>
-              <v-icon v-else color="primary"> mdi-bookmark-check </v-icon>
+              <v-tooltip activator="parent" location="bottom">Add to bookmarks</v-tooltip>
+              <v-icon size="26" v-if="!bookmarked"> mdi-bookmark </v-icon>
+              <v-icon size="26" v-else color="primary"> mdi-bookmark-check </v-icon>
             </v-btn>
-            <SocialShare :share-object="(sharing as Share)" :networks="networks" />
+            <SocialShare :share-object="(sharing as Share)" :networks="networks">
+              <v-tooltip activator="parent" location="bottom">Share</v-tooltip>
+            </SocialShare>
           </v-col>
         </v-row>
 
@@ -50,9 +53,10 @@
         <div class="pa-4 pt-0 d-flex align-center">
           <LikeButton @click="sendUpvote(article)" :toggable="!!userStore.userInfo?.access"
             :isClicked="article?.is_upvoted_by_current_user" />
-          <span> {{ article.upvotes_count }} like(s)</span>
-          <v-btn class="ml-3" icon dark variant="text" @click="showCommentsDialog = true">
-            <v-icon>mdi-comment-multiple</v-icon>
+          <span> {{ article.upvotes_count }} </span>
+          <v-btn class="ml-3" icon dark variant="text" @click="showCommentsDialog = true" :ripple="false">
+            <v-tooltip activator="parent" location="bottom">Open comments</v-tooltip>
+            <v-icon size="26">mdi-comment-multiple</v-icon>
             {{ article.comments_count }}
           </v-btn>
         </div>
@@ -144,10 +148,13 @@
           <div class="ml-2 mt-3 d-flex align-center">
             <LikeButton @click="sendUpvote(item)" :toggable="!!userStore.userInfo?.access"
               :is-clicked="item.is_upvoted_by_current_user" />
-            <span> {{ item.upvotes_count }} like(s)</span>
-            <v-btn @click="showReplies(item.id)" variant="plain" class="plain-custom-style ml-2 pt-1"
-              prepend-icon="mdi-message-reply-outline" :ripple="false">
-              <span>{{ item.replies_count + " reply" }}</span>
+            <span> {{ item.upvotes_count }} </span>
+            <v-btn @click="showReplies(item.id)" variant="plain" class="plain-custom-style" :ripple="false">
+              <v-icon size="30">
+                mdi-message-reply-outline
+              </v-icon>
+              {{ item.replies_count }}
+              <v-tooltip activator="parent" location="bottom">Open discussion</v-tooltip>
             </v-btn>
             <v-btn v-if="userStore.userInfo" class="ml-auto" variant="text" @click="showReply(item.id)">Reply</v-btn>
           </div>
@@ -182,7 +189,7 @@
             <div class="ml-2 mt-3 d-flex align-center">
               <LikeButton @click="sendUpvote(childItem)" :toggable="!!userStore.userInfo?.access"
                 :is-clicked="childItem.is_upvoted_by_current_user" />
-              <span> {{ childItem.upvotes_count }} like(s)</span>
+              <span> {{ childItem.upvotes_count }} </span>
             </div>
           </div>
         </div>

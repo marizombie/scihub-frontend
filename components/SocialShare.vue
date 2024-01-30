@@ -1,7 +1,11 @@
 <template>
   <v-menu offset-y>
-    <template v-slot:activator="{ props }">
-      <v-icon large v-bind="props" icon="mdi-share" />
+    <template v-slot:activator="{ isActive, props }">
+      <v-btn class="plain-custom-style" variant="plain" size="large" v-bind="props" :ripple="false">
+        <v-icon size="30">
+          mdi-share
+        </v-icon>
+        <v-tooltip v-if="!isActive" activator="parent" location="bottom">Share</v-tooltip></v-btn>
     </template>
     <v-list>
       <v-list-item v-for="(network, index) in networks" :key="index" link @click="selectItem(network)">
@@ -113,4 +117,9 @@ async function selectItem(item: Network) {
 
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.plain-custom-style {
+  opacity: 1;
+  text-transform: unset;
+}
+</style>
