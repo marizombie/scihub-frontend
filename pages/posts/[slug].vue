@@ -15,7 +15,7 @@
         <v-row>
           <v-col>
             <span class="ma-2">{{ article.created_at }}</span>
-            <div class="pl-2 pr-2 author-block" @click="goToAuthorProfile(article.author_name)">
+            <div class="pl-2 pr-2 author-block" @click="goToAuthorPosts(article.author_name)">
               <span class="mr-1">by</span>
               <v-avatar size="20" class="mr-1">
                 <v-img v-if="article.author_image" :src="$config.public.baseURL.slice(0, -1) + article.author_image"
@@ -64,7 +64,7 @@
     </v-col>
     <v-col>
       <v-card class="recomendation-block ml-md-8 pa-4 d-md-block">
-        <div class="d-flex align-center mb-3 author-block" @click="goToAuthorProfile(article.author_name)">
+        <div class="d-flex align-center mb-3 author-block" @click="goToAuthorPosts(article.author_name)">
           <v-avatar size="48" class="mr-1">
             <v-img v-if="article.author_image" :src="$config.public.baseURL.slice(0, -1) + article.author_image"
               :alt="article.author_name" />
@@ -78,6 +78,7 @@
           </div>
         </div>
         <span class="subtitle mt-3">
+          {{ article.author_about }}
         </span>
         <div class="mt-4">
           <v-btn v-if="!article.is_author_followed_by_current_user" :loading="followLoading"
@@ -131,7 +132,7 @@
       </div>
       <div v-for="(item, index) in commentsDialog.comments" :key="index" class="ma-4">
         <div :class="[createdCommentId === item.id ? 'created-comment' : '']">
-          <div class="author-info d-flex">
+          <div class="author-info author-block d-flex" @click="goToAuthorPosts(item.author_name)">
             <v-avatar size="48" class="mr-1">
               <v-img v-if="item.author_image" :src="$config.public.baseURL.slice(0, -1) + item.author_image"
                 :alt="item.author_name" />
@@ -172,7 +173,7 @@
         <div class="ml-4 mt-3 reply-comment" v-if="item.replies?.length">
           <div class="ml-3" v-for="(childItem, childIndex) in item.replies" :key="childIndex"
             :class="['ma-4', createdCommentId === childItem.id ? 'created-comment' : '']">
-            <div class="author-info d-flex">
+            <div class="author-info author-block d-flex" @click="goToAuthorPosts(item.author_name)">
               <v-avatar size="48" class="mr-1">
                 <v-img v-if="childItem.author_image" :src="$config.public.baseURL.slice(0, -1) + childItem.author_image"
                   :alt="childItem.author_name" />
@@ -257,9 +258,9 @@ const sharing = computed(() => {
   };
 });
 
-async function goToAuthorProfile(username: string) {
+async function goToAuthorPosts(username: string) {
   if (username) {
-    await navigateTo(`/profile/${username}`);
+    await navigateTo(`/?userName=${username}`);
   }
 }
 

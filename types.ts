@@ -55,6 +55,8 @@ export interface ProfileInfo {
   avatar_url: string;
   avatar?: File | null;
   country: string;
+  followers_count: number;
+  author_about: string;
 }
 
 export interface ErrorKeyValue {

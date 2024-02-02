@@ -4,9 +4,10 @@
       <div>
         <v-tabs class="mb-8" v-model="tab" color="deep-purple-accent-4"
           v-if="userStore.userData?.access && !filterByTags.length">
+          <v-tab class="pa-0 ma-0" style="min-width:0px" />
           <v-tab :value="1">For you</v-tab>
           <v-tab :value="2">Bookmarks</v-tab>
-          <v-tab :value="3">My articles</v-tab>
+          <v-tab :value="3">My posts</v-tab>
           <v-tab :value="4">Upvoted posts</v-tab>
           <v-tab :value="5">Upvoted comments</v-tab>
         </v-tabs>
@@ -57,7 +58,7 @@
                     </v-card>
                   </div>
                   <span class="ma-4">Published on {{ article.created_at }}</span>
-                  <div class="pl-4 pr-4 pt-2" @click.prevent="goToAuthorProfile(article.author_name)">
+                  <div class="pl-4 pr-4 pt-2" @click.prevent="goToAuthorPosts(article.author_name)">
                     <span class="mr-1">by</span>
                     <v-avatar size="20" class="mr-1">
                       <v-img v-if="article.author_image" :src="$config.public.baseURL.slice(0, -1) + article.author_image"
@@ -76,11 +77,42 @@
     </v-col>
     <v-card class="recomendation-block ml-8 d-sm-none d-none d-md-block">
       <div class="d-flex flex-column">
+        <div v-if="userProfile" class="mb-12">
+          <div class="d-flex align-center mb-3 author-block" @click="goToAuthorPosts(userProfile.username)">
+            <v-avatar size="48" class="mr-1">
+              <v-img v-if="userProfile.avatar_url" :src="$config.public.baseURL.slice(0, -1) + userProfile.avatar_url"
+                :alt="userProfile.avatar_url" />
+              <v-icon size="48" v-else> mdi-account-circle </v-icon>
+            </v-avatar>
+            <div class="d-flex flex-column">
+              <span class="title">{{
+                route.query.userName ? route.query.userName : 'Anonymous'
+              }}</span>
+              <span class="subtitle">{{ userProfile.followers_count }} follower(s)</span>
+            </div>
+          </div>
+          <span class="subtitle mt-3">
+            {{ userProfile.author_about }}
+          </span>
+          <!-- <div class="mt-4">
+            <v-btn v-if="!userProfile.is_author_followed_by_current_user" :loading="followLoading"
+              @click="followAuthor(userProfile.author_name)" color="primary">
+              Follow </v-btn>
+            <v-btn variant="outlined" @click="followAuthor(userProfile.author_name)" rounded color="success" v-else
+              prepend-icon="mdi-check-circle">
+              <template v-slot:prepend>
+                <v-icon color="success"></v-icon>
+              </template>
+              Following
+            </v-btn>
+          </div> -->
+        </div>
+
         <h3 class="mb-5">Recommendations:</h3>
         <NuxtLink v-for="(item, index) in recommendedPosts" :key="index" class="text-subtitle mb-5"
           :to="`/posts/${item.slug}`">
           <span class="title">{{ item.title }}</span>
-          <div class="author-info">
+          <div class="author-info" @click.prevent="goToAuthorPosts(item.author_name)">
             <span class="mr-1">by</span>
             <v-avatar size="20" class="mr-1">
               <v-img v-if="item.author_image" :src="$config.public.baseURL.slice(0, -1) + item.author_image" alt="John" />
@@ -90,12 +122,12 @@
           </div>
         </NuxtLink>
       </div>
-      <div class="d-flex flex-column mt-12">
+      <div class="d-flex flex-column mt-12" v-if="!filterByUser">
         <h3 class="mb-5">Recently written:</h3>
         <NuxtLink v-for="(item, index) in recentlyWrittenPosts" :key="index" class="text-subtitle mb-5"
           :to="`/posts/${item.slug}`">
           <span class="title">{{ item.title }}</span>
-          <div class="author-info">
+          <div class="author-info" @click.prevent="goToAuthorPosts(item.author_name)">
             <span class="mr-1">by</span>
             <v-avatar size="20" class="mr-1">
               <v-img v-if="item.author_image" :src="$config.public.baseURL.slice(0, -1) + item.author_image" alt="John" />
@@ -111,7 +143,7 @@
 
 <script setup lang="ts">
 import { useNotificationStore, useUserStore } from '~/store';
-import { Article, CommentData, SuccessResponse } from '~/types';
+import { Article, CommentData, ProfileInfo, SuccessResponse } from '~/types';
 
 interface CRUDResponse {
   results: (Article | CommentData)[];
@@ -120,15 +152,17 @@ interface CRUDResponse {
 const route = useRoute();
 const userStore = useUserStore();
 const filterByTags: Ref<string[]> = ref([]);
+const filterByUser: Ref<string> = ref('');
 const { data: recentlyWritten } =
   await useAPIFetch<Article[]>("/api/last-posts/");
 const { data: recomendations } =
   await useAPIFetch<Article[]>("api/popular-posts/");
 const followLoading = ref(false);
 const isFollowedCurrentTag = ref(false);
-const tab = ref(1);
+const tab: Ref<number | null> = ref(null);
 const currentShowList: Ref<(Article | CommentData)[]> = ref([]);
 const currentRequest = ref('');
+const userProfile: Ref<null | ProfileInfo> = ref(null)
 
 useInfiniteScroll(
   document,
@@ -142,16 +176,26 @@ async function loadData() {
 }
 
 async function fetchDefaultPosts() {
+  tab.value = 1;
   const { data: posts } = await useAPIFetch<CRUDResponse>("/api/posts/");
   currentRequest.value = '/api/posts/';
   currentShowList.value = posts.value!.results;
 }
 
-watch(tab, async (val) => {
+watch(tab, async (val, oldVal) => {
   if (filterByTags.value.length) {
     return;
   }
+  if (route.query.userName && oldVal === 0) {
+    const router = useRouter()
+    router.replace('/')
+    filterByUser.value = '';
+    userProfile.value = null;
+  }
+
   switch (val) {
+    case 0:
+      break;
     case 2:
       const { data: bookmarkPosts } = await useAPIFetch<CRUDResponse>(`/api/bookmarks/?limit=5&offset=0`);
       currentRequest.value = '/api/bookmarks/';
@@ -181,9 +225,26 @@ watch(tab, async (val) => {
 
 showTagList();
 
-watch(() => route.query.tag, () => {
-  showTagList();
+watch(() => route.query.tag, (val) => {
+  if (val) {
+    showTagList();
+  }
 })
+
+watch(() => route.query.userName, async (val, oldVal) => {
+  if (route.query.userName) {
+    tab.value = 0;
+    filterByUser.value = route.query.userName.toString();
+    const { data: userPosts } = await useAPIFetch<CRUDResponse>(`/api/users/${route.query.userName}/`);
+    currentRequest.value = `/api/users/${route.query.userName}/`;
+    currentShowList.value = userPosts.value!.results;
+
+    const { data: profileInfo } = await useAPIFetch<ProfileInfo>(`/api/profile/${route.query.userName}`);
+    if (profileInfo.value) {
+      userProfile.value = profileInfo.value;
+    }
+  }
+}, { immediate: true })
 
 async function showTagList() {
   if (route.query.tag) {
@@ -200,9 +261,9 @@ async function showTagList() {
   }
 }
 
-async function goToAuthorProfile(username: string) {
+async function goToAuthorPosts(username: string) {
   if (username) {
-    await navigateTo(`/profile/${username}`);
+    await navigateTo(`/?userName=${username}`);
   }
 }
 

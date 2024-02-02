@@ -5,7 +5,7 @@
       <v-app-bar fixed app class="header d-flex flex-column">
         <div class="main-content">
           <v-app-bar-title class="ml-4">
-            <NuxtLink to="/">{{ title }}</NuxtLink>
+            <a href="/">{{ title }}</a>
           </v-app-bar-title>
           <div class="d-flex align-center ml-auto">
             <ForgotPassword :showDialog="showForgetPassword" @closeDialog="showForgetPassword = false" />
