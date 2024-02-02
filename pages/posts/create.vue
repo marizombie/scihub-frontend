@@ -1,6 +1,6 @@
 <template>
   <div class="container-create">
-    <div id="editorjs" class="pa-4"></div>
+    <div id="editorjs" :class="['pa-4', theme.global.current.value.dark ? 'dark-theme' : '']"></div>
     <div class="mt-2 ml-auto buttons-container">
       <v-btn variant="text" @click="saveAsDraft()">
         Save as Draft
@@ -64,7 +64,8 @@ import Embed from '@editorjs/embed';
 import LinkTool from '@editorjs/link';
 import Undo from 'editorjs-undo';
 import Warning from '@editorjs/warning';
-import Table from '@editorjs/table'
+import Table from '@editorjs/table';
+import { useTheme } from "vuetify";
 
 import AceCodeEditorJS, { AceCodeConfig } from "ace-code-editorjs";
 import ace from "ace-builds";
@@ -352,6 +353,7 @@ async function onSearchChange(val: string) {
 // if (data123.value) {
 //   console.log(data123.value)
 // }
+const theme = useTheme();
 
 
 </script>
@@ -389,5 +391,18 @@ async function onSearchChange(val: string) {
   max-width: 400px;
   width: 100%;
   padding: 16px;
+}
+
+.dark-theme {
+  background: rgb(var(--v-theme-surface));
+  color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
+
+  :deep(.ce-toolbar__plus) {
+    color: white;
+  }
+
+  :deep(.ce-toolbar__plus:hover) {
+    background-color: rgb(33, 50, 41);
+  }
 }
 </style>
