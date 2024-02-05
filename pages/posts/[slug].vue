@@ -40,10 +40,10 @@
 
         <v-card-title class="text-wrap">{{ article.title }}</v-card-title>
 
-        <v-img :src="$config.public.baseURL.slice(0, -1) + article.preview_image" />
+        <v-img :src="$config.public.baseURL.slice(0, -1) + article.images[0].image_url" />
 
         <v-card-text>
-          <span>{{ article.content }}</span>
+          <span v-html="article.html_content"></span>
         </v-card-text>
         <div class="pl-4 pr-4 pb-4 tags d-flex flex-wrap">
           <v-card outlined v-for="(tag, index) in article.tags" :key="index" class="tag ma-1" @click="searchByTag(tag)">
@@ -140,7 +140,7 @@
             </v-avatar>
             <div class="d-flex flex-column">
               <span>{{ item.author_name || "Anonymous" }}</span>
-              <span>{{ formatTimeDifference(item.created_date) }}</span>
+              <span>{{ item.created_date }}</span>
             </div>
           </div>
           <div class="ml-2 mt-2">
@@ -181,7 +181,7 @@
               </v-avatar>
               <div class="d-flex flex-column">
                 <span>{{ childItem.author_name || "Anonymous" }}</span>
-                <span>{{ formatTimeDifference(childItem.created_date) }}</span>
+                <span>{{ childItem.created_date }}</span>
               </div>
             </div>
             <div class="ml-2 mt-2">
@@ -363,40 +363,6 @@ if (route.query.comment_id) {
   showCommentsDialog.value = true;
 }
 
-function formatTimeDifference(dateString: string): string {
-  const currentDate = new Date();
-  const targetDate = new Date(dateString);
-
-  const userTimeZoneOffset = currentDate.getTimezoneOffset();
-  currentDate.setMinutes(currentDate.getMinutes() - userTimeZoneOffset);
-
-  const timeDifference = currentDate.getTime() - targetDate.getTime();
-  const seconds = Math.floor(timeDifference / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
-
-  if (seconds < 60) {
-    return `${seconds} seconds ago`;
-  } else if (minutes < 60) {
-    return `${minutes} minutes ago`;
-  } else if (hours < 24) {
-    return `${hours} hours ago`;
-  } else if (days < 30) {
-    return `${days} days ago`;
-  } else {
-    const formattedDate = targetDate.toLocaleString(undefined, {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    });
-    return formattedDate;
-  }
-}
 
 async function addBookmark() {
   if (article.value) {

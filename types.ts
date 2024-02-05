@@ -1,5 +1,6 @@
 export interface Article {
   content: string;
+  html_content: string;
   created_at: string;
   description: string;
   id: number;
@@ -10,6 +11,7 @@ export interface Article {
   title: string;
   author_name: string;
   author_image: string;
+  author_about: string;
   upvotes_count: number;
   author_followers_count: number;
   is_bookmarked_by_current_user: boolean;

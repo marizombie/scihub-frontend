@@ -1,11 +1,11 @@
 <template>
-  <div class="container-create">
+  <div class="container-create" @click.once="saveAsDraft()">
     <div id="editorjs" :class="['pa-4', theme.global.current.value.dark ? 'dark-theme' : '']"></div>
     <div class="mt-2 ml-auto buttons-container">
       <v-btn variant="text" @click="saveAsDraft()">
         Save as Draft
       </v-btn>
-      <v-btn color="primary" class="ml-3" @click="save()">
+      <v-btn color="primary" class="ml-3" @click="showMetaPreview()">
         Publish
       </v-btn>
     </div>
@@ -33,16 +33,16 @@
           <span>
             Add or change tags so readers will know what your story is about
           </span>
-          <v-autocomplete class="mt-3" label="Choose tag(s)" :items="tagsArray" :model-value="chosenTags" multiple
-            hide-no-data @update:search="onSearchChange" item-title="name" item-value="slug" chips closable-chips
-            variant="outlined">
+          <v-autocomplete :clear-on-select="true" v-model="articleData.tags" class="mt-3" label="Choose tag(s)"
+            :items="tagsArray" multiple hide-no-data @update:search="onSearchChange" item-title="name" item-value="slug"
+            chips closable-chips variant="outlined">
 
           </v-autocomplete>
           <div>
-            <v-btn variant="text">
+            <v-btn variant="text" @click="saveAsDraft()">
               Save as Draft
             </v-btn>
-            <v-btn color="primary" class="ml-3">
+            <v-btn color="primary" class="ml-3" @click="save()">
               Publish
             </v-btn>
           </div>
@@ -80,6 +80,11 @@ import modeYamlWorker from "ace-builds/src-noconflict/worker-yaml?url";
 import modeJsonWorker from "ace-builds/src-noconflict/worker-json?url";
 import { useUserStore } from '~/store';
 import { Article } from '~/types';
+
+interface DraftResponse {
+  success: string;
+  slug: string;
+}
 
 definePageMeta({
   middleware: [
@@ -256,6 +261,13 @@ const aceConfig: AceCodeConfig = {
   },
 };
 
+const articleData = ref({
+  title: "",
+  description: "",
+  tags: [],
+  draftSlug: ""
+})
+
 const config = useRuntimeConfig();
 const userStore = useUserStore();
 const editor = new EditorJS({
@@ -272,11 +284,11 @@ const editor = new EditorJS({
           'authorization': `Bearer ${userStore.userData?.access}`,
         },
         additionalRequestData: {
-          // draft: 'test123'
+          draft: articleData.value.draftSlug
         },
         endpoints: {
           byFile: `${config.public.baseURL}api/upload/postimage/`, // Your backend file uploader endpoint
-          byUrl: 'http://localhost:8008/fetchUrl', // Your endpoint that provides uploading by Url
+          // byUrl: 'http://localhost:8008/fetchUrl', // Your endpoint that provides uploading by Url
         }
       }
     },
@@ -303,30 +315,53 @@ const editor = new EditorJS({
   },
 })
 
-const articleData = ref({
-  title: "",
-  description: "",
-  tags: ""
-})
 
 const showMetaDialog = ref(false);
 const tagsArray: Ref<Article[]> = ref([]);
-const chosenTags = ref([]);
+
+function showMetaPreview() {
+  showMetaDialog.value = true;
+}
 
 function save() {
-  showMetaDialog.value = true;
-  editor.save().then((outputData) => {
-    console.log('Article data: ')
-    console.log(outputData)
+  editor.save().then(async (outputData) => {
+    const bodyData = {
+      "is_draft": "false",
+      "title": articleData.value.title,
+      "description": articleData.value.description,
+      "content": outputData,
+      "tags": articleData.value.tags
+    }
+    const { data: data123 } = await useAPIFetch<DraftResponse>(`api/drafts/${articleData.value.draftSlug}/publish/`, {
+      method: "post",
+      body: articleData.value.draftSlug ? Object.assign(bodyData, { "draft": articleData.value.draftSlug }) : bodyData
+    });
+    if (data123.value) {
+      // articleData.value.draftSlug = data123.value.slug;
+      // navigateTo(`/posts/${}`)
+    }
   }).catch((error) => {
     console.log('Saving failed: ', error)
   });
 }
 
 function saveAsDraft() {
-  editor.save().then((outputData) => {
-    console.log('Article data: ')
-    console.log(outputData)
+  editor.configuration.tools.image.config.additionalRequestData.draft = articleData.value.draftSlug;
+  editor.save().then(async (outputData) => {
+    const bodyData = {
+      "title": articleData.value.title,
+      "description": articleData.value.description,
+      "content": outputData,
+      "tags": articleData.value.tags
+    }
+    const { data: data123 } = await useAPIFetch<DraftResponse>(`api/autosave/`, {
+      method: "post",
+      body: articleData.value.draftSlug ? Object.assign(bodyData, { "slug": articleData.value.draftSlug }) : bodyData
+    });
+    if (data123.value) {
+      articleData.value.draftSlug = data123.value.slug;
+      editor.configuration.tools.image.config.additionalRequestData.draft = data123.value.slug;
+    }
   }).catch((error) => {
     console.log('Saving failed: ', error)
   });
@@ -339,20 +374,16 @@ async function onSearchChange(val: string) {
   }
 }
 
-// const { data: data123 } = await useAPIFetch(`api/drafts/`, {
-//   method: "post",
-//   // body: {
-//   //   "title": "New Post Title",
-//   //   "description": "Description of the post",
-//   //   "content": "The content of the post",
-//   //   "images": [],
-//   //   "author": 1,
-//   //   "tags": []
-//   // }
-// });
-// if (data123.value) {
-//   console.log(data123.value)
-// }
+async function getDrafts() {
+  const { data: data123 } = await useAPIFetch(`api/drafts/`, {
+    method: "get"
+  });
+  if (data123.value) {
+    console.log(data123.value)
+  }
+}
+
+getDrafts();
 const theme = useTheme();
 
 

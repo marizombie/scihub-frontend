@@ -1,3 +1,5 @@
+import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   ssr: false,
@@ -6,56 +8,32 @@ export default defineNuxtConfig({
       title: 'Scihub'
     }
   },
+  build: {
+    transpile: ['vuetify'],
+  },
   modules: [
-    "@invictus.codes/nuxt-vuetify",
     "@pinia/nuxt",
     "@nuxtjs/i18n",
     "@vee-validate/nuxt",
     "nuxt-lodash",
-    "@vueuse/nuxt"
+    "@vueuse/nuxt",
+    (_options, nuxt) => {
+      nuxt.hooks.hook('vite:extendConfig', (config) => {
+        // @ts-expect-error
+        config.plugins.push(vuetify({ autoImport: true }))
+      })
+    },
   ],
   runtimeConfig: {
     public: {
       baseURL: process.env.BASE_URL || "http://127.0.0.1:8000/",
     },
   },
-  vuetify: {
-    vuetifyOptions: {
-      theme: {
-        defaultTheme: "customLight",
-        themes: {
-          customDark: {
-            dark: true,
-            colors: {
-              primary: "#1976D2",
-              accent: "#424242",
-              secondary: "#FF8F00",
-              info: "#26A69A",
-              warning: "#FFC107",
-              error: "#DD2C00",
-              success: "#00E676",
-            },
-          },
-          customLight: {
-            dark: false,
-            colors: {
-              primary: "#9C27B0",
-              secondary: "#757575",
-              accent: "#000000",
-              error: "#FF1744",
-            },
-          },
-        },
+  vite: {
+    vue: {
+      template: {
+        transformAssetUrls,
       },
-      defaults: {},
-    },
-
-    moduleOptions: {
-      treeshaking: true,
-      useIconCDN: true,
-      styles: true,
-      autoImport: true,
-      useVuetifyLabs: true,
     },
   },
   pinia: {
