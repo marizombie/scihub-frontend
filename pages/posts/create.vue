@@ -1,5 +1,5 @@
 <template>
-  <div class="container-create" @click.once="saveAsDraft()">
+  <div class="container-create" @click.once="initAutosave()">
     <div id="editorjs" :class="['pa-4', theme.global.current.value.dark ? 'dark-theme' : '']"></div>
     <div class="mt-2 ml-auto buttons-container">
       <v-btn variant="text" @click="saveAsDraft()">
@@ -84,6 +84,13 @@ import { Article } from '~/types';
 interface DraftResponse {
   success: string;
   slug: string;
+}
+
+interface PublishResponse {
+  post: {
+    slug: string;
+    title: string;
+  }
 }
 
 definePageMeta({
@@ -332,13 +339,12 @@ function save() {
       "content": outputData,
       "tags": articleData.value.tags
     }
-    const { data: data123 } = await useAPIFetch<DraftResponse>(`api/drafts/${articleData.value.draftSlug}/publish/`, {
+    const { data: data123 } = await useAPIFetch<PublishResponse>(`api/drafts/${articleData.value.draftSlug}/publish/`, {
       method: "post",
       body: articleData.value.draftSlug ? Object.assign(bodyData, { "draft": articleData.value.draftSlug }) : bodyData
     });
     if (data123.value) {
-      // articleData.value.draftSlug = data123.value.slug;
-      // navigateTo(`/posts/${}`)
+      navigateTo(`/posts/${data123.value.post.slug}`)
     }
   }).catch((error) => {
     console.log('Saving failed: ', error)
@@ -346,7 +352,6 @@ function save() {
 }
 
 function saveAsDraft() {
-  editor.configuration.tools.image.config.additionalRequestData.draft = articleData.value.draftSlug;
   editor.save().then(async (outputData) => {
     const bodyData = {
       "title": articleData.value.title,
@@ -360,7 +365,7 @@ function saveAsDraft() {
     });
     if (data123.value) {
       articleData.value.draftSlug = data123.value.slug;
-      editor.configuration.tools.image.config.additionalRequestData.draft = data123.value.slug;
+      editor.configuration.tools.image.config.additionalRequestData.draft = articleData.value.draftSlug;
     }
   }).catch((error) => {
     console.log('Saving failed: ', error)
@@ -374,18 +379,28 @@ async function onSearchChange(val: string) {
   }
 }
 
-async function getDrafts() {
-  const { data: data123 } = await useAPIFetch(`api/drafts/`, {
-    method: "get"
-  });
-  if (data123.value) {
-    console.log(data123.value)
-  }
+// async function getDrafts() {
+//   const { data: data123 } = await useAPIFetch(`api/drafts/`, {
+//     method: "get"
+//   });
+//   if (data123.value) {
+//     console.log(data123.value)
+//   }
+// }
+
+// getDrafts();
+
+const theme = useTheme();
+const timer = ref();
+
+function initAutosave() {
+  saveAsDraft();
+  timer.value = setInterval(() => {
+    saveAsDraft();
+  }, 60000);
 }
 
-getDrafts();
-const theme = useTheme();
-
+onUnmounted(() => timer.value = null)
 
 </script>
 
