@@ -99,7 +99,6 @@ import { useModalsStore, useNotificationStore, useUserStore } from "~/store";
 import { Article, SuccessResponse, ProfileInfo } from "~/types";
 
 const userStore = useUserStore();
-userStore.getUserInfoFromLS();
 const title: string = "Scihub";
 const display = ref(useDisplay() || null);
 let search: Ref<string> = ref('');
