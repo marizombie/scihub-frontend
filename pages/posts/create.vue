@@ -339,12 +339,12 @@ function save() {
       "content": outputData,
       "tags": articleData.value.tags
     }
-    const { data: data123 } = await useAPIFetch<PublishResponse>(`api/drafts/${articleData.value.draftSlug}/publish/`, {
+    const { data: postData } = await useAPIFetch<PublishResponse>(`api/drafts/${articleData.value.draftSlug}/publish/`, {
       method: "post",
       body: articleData.value.draftSlug ? Object.assign(bodyData, { "draft": articleData.value.draftSlug }) : bodyData
     });
-    if (data123.value) {
-      navigateTo(`/posts/${data123.value.post.slug}`)
+    if (postData.value) {
+      navigateTo(`/posts/${postData.value.post.slug}`)
     }
   }).catch((error) => {
     console.log('Saving failed: ', error)
@@ -359,12 +359,12 @@ function saveAsDraft() {
       "content": outputData,
       "tags": articleData.value.tags
     }
-    const { data: data123 } = await useAPIFetch<DraftResponse>(`api/autosave/`, {
+    const { data: draftData } = await useAPIFetch<DraftResponse>(`api/autosave/`, {
       method: "post",
       body: articleData.value.draftSlug ? Object.assign(bodyData, { "slug": articleData.value.draftSlug }) : bodyData
     });
-    if (data123.value) {
-      articleData.value.draftSlug = data123.value.slug;
+    if (draftData.value) {
+      articleData.value.draftSlug = draftData.value.slug;
       editor.configuration.tools.image.config.additionalRequestData.draft = articleData.value.draftSlug;
     }
   }).catch((error) => {
@@ -378,6 +378,19 @@ async function onSearchChange(val: string) {
     tagsArray.value = tagPosts.value;
   }
 }
+
+const route = useRoute();
+
+watch(() => route.query.postSlug, async (val, oldVal) => {
+  if (route.query.postSlug) {
+    const { data: postData } = await useAPIFetch<Article>(`api/posts/${route.query.postSlug}/edit/`, {
+      method: "get",
+    });
+    if (postData.value) {
+      console.log(postData.value)
+    }
+  }
+})
 
 // async function getDrafts() {
 //   const { data: data123 } = await useAPIFetch(`api/drafts/`, {

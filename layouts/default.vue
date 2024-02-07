@@ -111,6 +111,7 @@ let showResendLink: Ref<boolean> = ref(false);
 let expandedSearch: Ref<boolean> = ref(false);
 let searchedPosts: Ref<Article[]> = ref([]);
 
+await userStore.getUserInfoFromLS();
 const theme = useTheme();
 
 watch(darkTheme, () => {

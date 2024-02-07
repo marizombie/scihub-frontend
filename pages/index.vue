@@ -1,4 +1,25 @@
 <template>
+  <v-row justify="center">
+    <v-dialog v-model="showDeleteDialog" max-width="600px">
+      <v-card>
+        <v-card-title class="mt-4">
+          <span class="text-h5 pl-6">Are you sure want to delete?</span>
+        </v-card-title>
+        <v-card-text class="pb-0">
+          Deletion is not reversible. After you delete your story, we can't help you to restore it.
+        </v-card-text>
+        <v-card-actions class="mb-4">
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" variant="text" @click="showDeleteDialog = false">
+            Cancel
+          </v-btn>
+          <v-btn variant="text" class="mr-6 removeClass" @click="onDeletePost()">
+            Delete
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-row>
   <v-row justify-md="center">
     <v-col :class="[filterByTags.length ? 'mt-6' : '']" md="7">
       <div>
@@ -43,7 +64,23 @@
           <div v-else>
             <v-card v-for="(article, index) in (currentShowList as Article[])" :key="index" class="article mb-8"
               @click="navigateTo(`/posts/${article.slug}`)" :ripple="false">
-              <v-card-title class="text-wrap">{{ article.title }}</v-card-title>
+              <div class="d-flex align-baseline">
+                <h3 class="test text-wrap">{{ article.title }}</h3>
+                <v-menu offset-y v-if="currentRequest === `api/users/${userStore.userInfo?.username}`">
+                  <template v-slot:activator="{ props }">
+                    <v-btn class="plain-custom-style" variant="plain" size="large" v-bind="props" :ripple="false">
+                      <v-icon size="30">
+                        mdi-dots-vertical
+                      </v-icon>
+                    </v-btn>
+                  </template>
+                  <v-list density="compact">
+                    <v-list-item v-for="(item, index) in postActions" :key="index" link @click="item.action(article)">
+                      <v-list-item-title :class="item.class ? item.class : ''">{{ item.name }}</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+              </div>
               <div class="pa-4 d-flex flex-column flex-md-row">
                 <!-- TODO: rewrite src generation to util function -->
                 <img :src="$config.public.baseURL.slice(0, -1) + article.preview_image" alt="demo picture" />
@@ -163,6 +200,22 @@ const tab: Ref<number | null> = ref(null);
 const currentShowList: Ref<(Article | CommentData)[]> = ref([]);
 const currentRequest = ref('');
 const userProfile: Ref<null | ProfileInfo> = ref(null)
+const showDeleteDialog = ref(false);
+const deletePostId = ref(0);
+const postActions = ref([
+  {
+    name: "Edit",
+    action: (post: Article) => navigateTo(`/posts/create?postSlug=${post.slug}`)
+  },
+  {
+    name: "Remove",
+    class: 'removeClass',
+    action: (post: Article) => {
+      showDeleteDialog.value = true;
+      deletePostId.value = post.id;
+    }
+  },
+]);
 
 useInfiniteScroll(
   document,
@@ -282,6 +335,12 @@ async function searchByTag(tag: string) {
   await navigateTo(`/?tag=${tag.replaceAll(' ', '-')}`);
 }
 
+async function onDeletePost() {
+  console.log('Here will be executed deletion')
+  currentShowList.value = currentShowList.value.filter((item) => item.id !== deletePostId.value);
+  showDeleteDialog.value = false;
+}
+
 async function followTag(tags: string[]) {
   followLoading.value = true;
   for (const tag of tags) {
@@ -371,5 +430,32 @@ let recommendedPosts = recomendations.value;
 
 .article-description {
   font-size: 1.125rem;
+}
+
+.test {
+  display: block;
+  flex: none;
+  font-size: 1.25rem;
+  font-weight: 500;
+  hyphens: auto;
+  letter-spacing: 0.0125em;
+  min-width: 0;
+  overflow-wrap: normal;
+  overflow: hidden;
+  padding: 0.5rem 1rem;
+  text-overflow: ellipsis;
+  text-transform: none;
+  white-space: nowrap;
+  word-break: normal;
+  word-wrap: break-word;
+  font-size: 32px;
+  word-break: break-word;
+  line-height: 38px;
+  font-weight: 700;
+  width: 92%;
+}
+
+.removeClass {
+  color: rgb(var(--v-theme-error));
 }
 </style>
