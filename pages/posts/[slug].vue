@@ -18,8 +18,7 @@
             <div class="pl-2 pr-2 author-block" @click="goToAuthorPosts(article.author_name)">
               <span class="mr-1">by</span>
               <v-avatar size="20" class="mr-1">
-                <v-img v-if="article.author_image" :src="$config.public.baseURL.slice(0, -1) + article.author_image"
-                  :alt="article.author_name" />
+                <v-img v-if="article.author_image" :src="article.author_image" :alt="article.author_name" />
                 <v-icon v-else> mdi-account-circle </v-icon>
               </v-avatar>
               <span>{{ article.author_name ? article.author_name : 'Anonymous' }}</span>
@@ -40,7 +39,7 @@
 
         <v-card-title class="text-wrap">{{ article.title }}</v-card-title>
 
-        <v-img :src="$config.public.baseURL.slice(0, -1) + article.images[0].image_url" />
+        <v-img v-if="article.images[0]?.image_url" :src="article.images[0].image_url" />
 
         <v-card-text>
           <span v-html="article.html_content"></span>
@@ -66,8 +65,7 @@
       <v-card class="recomendation-block ml-md-8 pa-4 d-md-block">
         <div class="d-flex align-center mb-3 author-block" @click="goToAuthorPosts(article.author_name)">
           <v-avatar size="48" class="mr-1">
-            <v-img v-if="article.author_image" :src="$config.public.baseURL.slice(0, -1) + article.author_image"
-              :alt="article.author_name" />
+            <v-img v-if="article.author_image" :src="article.author_image" :alt="article.author_name" />
             <v-icon size="48" v-else> mdi-account-circle </v-icon>
           </v-avatar>
           <div class="d-flex flex-column">
@@ -101,8 +99,7 @@
             <div class="author-info">
               <span class="mr-1">by</span>
               <v-avatar size="20" class="mr-1">
-                <v-img v-if="item.author_image" :src="$config.public.baseURL.slice(0, -1) + item.author_image"
-                  :alt="item.author_name" />
+                <v-img v-if="item.author_image" :src="item.author_image" :alt="item.author_name" />
                 <v-icon v-else> mdi-account-circle </v-icon>
               </v-avatar>
               <span>{{ article.author_name ? article.author_name : 'Anonymous' }}</span>
@@ -134,8 +131,7 @@
         <div :class="[createdCommentId === item.id ? 'created-comment' : '']">
           <div class="author-info author-block d-flex" @click="goToAuthorPosts(item.author_name)">
             <v-avatar size="48" class="mr-1">
-              <v-img v-if="item.author_image" :src="$config.public.baseURL.slice(0, -1) + item.author_image"
-                :alt="item.author_name" />
+              <v-img v-if="item.author_image" :src="item.author_image" :alt="item.author_name" />
               <v-icon v-else class="font-size-48"> mdi-account-circle </v-icon>
             </v-avatar>
             <div class="d-flex flex-column">
@@ -175,8 +171,7 @@
             :class="['ma-4', createdCommentId === childItem.id ? 'created-comment' : '']">
             <div class="author-info author-block d-flex" @click="goToAuthorPosts(item.author_name)">
               <v-avatar size="48" class="mr-1">
-                <v-img v-if="childItem.author_image" :src="$config.public.baseURL.slice(0, -1) + childItem.author_image"
-                  :alt="childItem.author_name" />
+                <v-img v-if="childItem.author_image" :src="childItem.author_image" :alt="childItem.author_name" />
                 <v-icon v-else class="font-size-48"> mdi-account-circle </v-icon>
               </v-avatar>
               <div class="d-flex flex-column">

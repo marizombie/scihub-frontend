@@ -4,7 +4,7 @@
     <v-row :class="!display.mdAndUp ? 'flex-column' : ''">
       <v-col cols="4" :class="!display.mdAndUp ? 'flex-unset' : ''">
         <v-avatar color="grey" class="avatar-preview" :size="display.mdAndUp ? '290' : '100%'"
-          :image="currentFilePreview ? currentFilePreview : `${$config.public.baseURL.slice(0, -1)}${profile.avatar_url}`">
+          :image="currentFilePreview ? currentFilePreview : `${profile.avatar_url}`">
         </v-avatar>
         <v-file-input class="file-input mt-3" label="Change Image" variant="underlined" clearable
           accept="image/jpeg, image/png, image/gif" v-model="profileImage" :multiple="false" @change="setFile($event)"

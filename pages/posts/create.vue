@@ -268,11 +268,12 @@ const aceConfig: AceCodeConfig = {
   },
 };
 
+const route = useRoute();
 const articleData = ref({
   title: "",
   description: "",
   tags: [],
-  draftSlug: ""
+  draftSlug: "",
 })
 
 const config = useRuntimeConfig();
@@ -322,6 +323,29 @@ const editor = new EditorJS({
   },
 })
 
+editor.isReady
+  .then(async () => {
+    if (route.query.postSlug) {
+      const { data: postData } = await useAPIFetch<Article>(`api/posts/${route.query.postSlug}/edit/`, {
+        method: "get",
+      });
+      if (postData.value) {
+        editor.render(postData.value.success.content)
+      }
+    }
+  })
+  .catch((reason) => {
+    console.log(`Editor.js initialization failed because of ${reason}`)
+  });
+
+watch(() => route.query.postSlug, (val, oldVal) => {
+  if (oldVal && !val) {
+    editor.isReady
+      .then(async () => {
+        editor.clear()
+      })
+  }
+})
 
 const showMetaDialog = ref(false);
 const tagsArray: Ref<Article[]> = ref([]);
@@ -329,6 +353,36 @@ const tagsArray: Ref<Article[]> = ref([]);
 function showMetaPreview() {
   showMetaDialog.value = true;
 }
+
+async function onSearchChange(val: string) {
+  const { data: tagPosts } = await useAPIFetch<Article[]>(`/api/tags/?search=${val}&limit=20`);
+  if (tagPosts.value) {
+    tagsArray.value = tagPosts.value;
+  }
+}
+
+// async function getDrafts() {
+//   const { data: data123 } = await useAPIFetch(`api/drafts/`, {
+//     method: "get"
+//   });
+//   if (data123.value) {
+//     console.log(data123.value)
+//   }
+// }
+
+// getDrafts();
+
+const theme = useTheme();
+const timer = ref();
+
+function initAutosave() {
+  saveAsDraft();
+  timer.value = setInterval(() => {
+    saveAsDraft();
+  }, 60000);
+}
+
+onUnmounted(() => timer.value = null)
 
 function save() {
   editor.save().then(async (outputData) => {
@@ -371,49 +425,6 @@ function saveAsDraft() {
     console.log('Saving failed: ', error)
   });
 }
-
-async function onSearchChange(val: string) {
-  const { data: tagPosts } = await useAPIFetch<Article[]>(`/api/tags/?search=${val}&limit=20`);
-  if (tagPosts.value) {
-    tagsArray.value = tagPosts.value;
-  }
-}
-
-const route = useRoute();
-
-watch(() => route.query.postSlug, async (val, oldVal) => {
-  if (route.query.postSlug) {
-    const { data: postData } = await useAPIFetch<Article>(`api/posts/${route.query.postSlug}/edit/`, {
-      method: "get",
-    });
-    if (postData.value) {
-      console.log(postData.value)
-    }
-  }
-})
-
-// async function getDrafts() {
-//   const { data: data123 } = await useAPIFetch(`api/drafts/`, {
-//     method: "get"
-//   });
-//   if (data123.value) {
-//     console.log(data123.value)
-//   }
-// }
-
-// getDrafts();
-
-const theme = useTheme();
-const timer = ref();
-
-function initAutosave() {
-  saveAsDraft();
-  timer.value = setInterval(() => {
-    saveAsDraft();
-  }, 60000);
-}
-
-onUnmounted(() => timer.value = null)
 
 </script>
 

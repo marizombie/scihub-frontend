@@ -83,7 +83,7 @@
               </div>
               <div class="pa-4 d-flex flex-column flex-md-row">
                 <!-- TODO: rewrite src generation to util function -->
-                <img :src="$config.public.baseURL.slice(0, -1) + article.preview_image" alt="demo picture" />
+                <img :src="article.preview_image" alt="demo picture" />
                 <div>
                   <v-card-text class="article-description">
                     {{ article.description }}
@@ -98,8 +98,7 @@
                   <div class="pl-4 pr-4 pt-2" @click.prevent="goToAuthorPosts(article.author_name)">
                     <span class="mr-1">by</span>
                     <v-avatar size="20" class="mr-1">
-                      <v-img v-if="article.author_image" :src="$config.public.baseURL.slice(0, -1) + article.author_image"
-                        :alt="article.author_name" />
+                      <v-img v-if="article.author_image" :src="article.author_image" :alt="article.author_name" />
                       <v-icon v-else> mdi-account-circle </v-icon>
                     </v-avatar>
                     <span>{{ article.author_name ? article.author_name :
@@ -117,8 +116,7 @@
         <div v-if="userProfile" class="mb-12">
           <div class="d-flex align-center mb-3 author-block" @click="goToAuthorPosts(userProfile.username)">
             <v-avatar size="48" class="mr-1">
-              <v-img v-if="userProfile.avatar_url" :src="$config.public.baseURL.slice(0, -1) + userProfile.avatar_url"
-                :alt="userProfile.avatar_url" />
+              <v-img v-if="userProfile.avatar_url" :src="userProfile.avatar_url" :alt="userProfile.avatar_url" />
               <v-icon size="48" v-else> mdi-account-circle </v-icon>
             </v-avatar>
             <div class="d-flex flex-column">
@@ -152,7 +150,7 @@
           <div class="author-info" @click.prevent="goToAuthorPosts(item.author_name)">
             <span class="mr-1">by</span>
             <v-avatar size="20" class="mr-1">
-              <v-img v-if="item.author_image" :src="$config.public.baseURL.slice(0, -1) + item.author_image" alt="John" />
+              <v-img v-if="item.author_image" :src="item.author_image" alt="John" />
               <v-icon v-else> mdi-account-circle </v-icon>
             </v-avatar>
             <span>{{ item.author_name ? item.author_name : 'Anonymous' }}</span>
@@ -167,7 +165,7 @@
           <div class="author-info" @click.prevent="goToAuthorPosts(item.author_name)">
             <span class="mr-1">by</span>
             <v-avatar size="20" class="mr-1">
-              <v-img v-if="item.author_image" :src="$config.public.baseURL.slice(0, -1) + item.author_image" alt="John" />
+              <v-img v-if="item.author_image" :src="item.author_image" alt="John" />
               <v-icon v-else> mdi-account-circle </v-icon>
             </v-avatar>
             <span>{{ item.author_name ? item.author_name : 'Anonymous' }}</span>
@@ -201,7 +199,7 @@ const currentShowList: Ref<(Article | CommentData)[]> = ref([]);
 const currentRequest = ref('');
 const userProfile: Ref<null | ProfileInfo> = ref(null)
 const showDeleteDialog = ref(false);
-const deletePostId = ref(0);
+const deletePostSlug = ref('');
 const postActions = ref([
   {
     name: "Edit",
@@ -212,7 +210,7 @@ const postActions = ref([
     class: 'removeClass',
     action: (post: Article) => {
       showDeleteDialog.value = true;
-      deletePostId.value = post.id;
+      deletePostSlug.value = post.slug;
     }
   },
 ]);
@@ -336,8 +334,19 @@ async function searchByTag(tag: string) {
 }
 
 async function onDeletePost() {
-  console.log('Here will be executed deletion')
-  currentShowList.value = currentShowList.value.filter((item) => item.id !== deletePostId.value);
+  const { error } = await useAPIFetch<CommentData[]>(`api/posts/${deletePostSlug.value}/`, {
+    method: "delete"
+  });
+  if (error.value) {
+    const notifyStore = useNotificationStore();
+    await notifyStore.setNotification({
+      type: "error",
+      message: error.value.data.detail,
+    });
+  } else {
+    currentShowList.value = (currentShowList.value as Article[]).filter((item: Article) => item.slug !== deletePostSlug.value);
+    deletePostSlug.value = '';
+  }
   showDeleteDialog.value = false;
 }
 
