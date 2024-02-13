@@ -1,5 +1,5 @@
 <template>
-  <v-row justify="center">
+  <v-row justify="center" v-if="showDeleteDialog">
     <v-dialog v-model="showDeleteDialog" max-width="600px">
       <v-card>
         <v-card-title class="mt-4">
@@ -23,7 +23,7 @@
   <v-row justify-md="center">
     <v-col :class="[filterByTags.length ? 'mt-6' : '']" md="7">
       <div>
-        <v-tabs hide-slider :show-arrows="false" class="mb-8" v-model="tab" color="deep-purple-accent-4"
+        <v-tabs mobile-breakpoint="xxl" class="mb-8" v-model="tab" color="deep-purple-accent-4"
           v-if="userStore.userData?.access && !filterByTags.length">
           <v-tab class="pa-0 ma-0" style="min-width:0px" />
           <v-tab :value="1">For you</v-tab>
@@ -110,6 +110,7 @@
             </v-card>
           </div>
         </div>
+        <div v-else></div>
       </div>
     </v-col>
     <v-card class="recomendation-block ml-8 d-sm-none d-none d-md-block">
