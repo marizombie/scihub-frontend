@@ -23,7 +23,7 @@
   <v-row justify-md="center">
     <v-col :class="[filterByTags.length ? 'mt-6' : '']" md="7">
       <div>
-        <v-tabs class="mb-8" v-model="tab" color="deep-purple-accent-4"
+        <v-tabs hide-slider :show-arrows="false" class="mb-8" v-model="tab" color="deep-purple-accent-4"
           v-if="userStore.userData?.access && !filterByTags.length">
           <v-tab class="pa-0 ma-0" style="min-width:0px" />
           <v-tab :value="1">For you</v-tab>
@@ -279,6 +279,14 @@ watch(tab, async (val, oldVal) => {
     default:
       fetchDefaultPosts()
       break;
+  }
+}, { immediate: true })
+
+watch(() => route.query.showDraft, (val) => {
+  if (val) {
+    const router = useRouter()
+    tab.value = 4;
+    router.replace('/');
   }
 }, { immediate: true })
 

@@ -3,7 +3,7 @@
     <v-text-field label="Title" v-model="articleData.title" variant="solo" hide-details class="pb-4 title-input" />
     <div id="editorjs" :class="['pa-4', theme.global.current.value.dark ? 'dark-theme' : '']"></div>
     <div class="mt-2 ml-auto buttons-container">
-      <v-btn variant="text" @click="saveAsDraft()">
+      <v-btn variant="text" @click="saveAsDraft(); redirectToDrafts();">
         Save as Draft
       </v-btn>
       <v-btn color="primary" class="ml-3" @click="showMetaPreview()">
@@ -40,7 +40,7 @@
 
           </v-autocomplete>
           <div>
-            <v-btn variant="text" @click="saveAsDraft()">
+            <v-btn variant="text" @click="saveAsDraft(); redirectToDrafts();">
               Save as Draft
             </v-btn>
             <v-btn color="primary" class="ml-3" @click="save()">
@@ -414,6 +414,10 @@ function saveAsDraft() {
   }).catch((error) => {
     console.log('Saving failed: ', error)
   });
+}
+
+function redirectToDrafts() {
+  navigateTo(`/?showDraft=true`);
 }
 
 </script>
