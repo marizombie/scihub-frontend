@@ -1,5 +1,6 @@
 <template>
   <div class="container-create" @click.once="initAutosave()">
+    <v-text-field label="Title" v-model="articleData.title" variant="solo" hide-details class="pb-4 title-input" />
     <div id="editorjs" :class="['pa-4', theme.global.current.value.dark ? 'dark-theme' : '']"></div>
     <div class="mt-2 ml-auto buttons-container">
       <v-btn variant="text" @click="saveAsDraft()">
@@ -361,17 +362,6 @@ async function onSearchChange(val: string) {
   }
 }
 
-// async function getDrafts() {
-//   const { data: data123 } = await useAPIFetch(`api/drafts/`, {
-//     method: "get"
-//   });
-//   if (data123.value) {
-//     console.log(data123.value)
-//   }
-// }
-
-// getDrafts();
-
 const theme = useTheme();
 const timer = ref();
 
@@ -474,5 +464,15 @@ function saveAsDraft() {
   :deep(.ce-toolbar__plus:hover) {
     background-color: rgb(33, 50, 41);
   }
+}
+
+.title-input {
+  width: 100%;
+
+  :deep(input) {
+    font-size: xx-large;
+    font-weight: bold;
+  }
+
 }
 </style>

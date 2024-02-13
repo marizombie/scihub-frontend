@@ -29,8 +29,9 @@
           <v-tab :value="1">For you</v-tab>
           <v-tab :value="2">Bookmarks</v-tab>
           <v-tab :value="3">My posts</v-tab>
-          <v-tab :value="4">Upvoted posts</v-tab>
-          <v-tab :value="5">Upvoted comments</v-tab>
+          <v-tab :value="4">Drafts</v-tab>
+          <v-tab :value="5">Upvoted posts</v-tab>
+          <v-tab :value="6">Upvoted comments</v-tab>
         </v-tabs>
         <div v-if="filterByTags.length" class="ml-4 mr-4 tags d-flex flex-wrap align-center">
           <v-chip-group>
@@ -258,11 +259,18 @@ watch(tab, async (val, oldVal) => {
       currentShowList.value = myArticles.value!.results;
       break;
     case 4:
+      const { data: drafts } = await useAPIFetch<CRUDResponse>(`api/drafts/?limit=5&offset=0`, {
+        method: "get"
+      });
+      currentRequest.value = `api/drafts/?limit=5&offset=0`;
+      currentShowList.value = drafts.value!.results;
+      break;
+    case 5:
       const { data: upvotedPosts } = await useAPIFetch<CRUDResponse>(`api/upvoted-posts/`);
       currentRequest.value = `api/upvoted-posts/`;
       currentShowList.value = upvotedPosts.value!.results;
       break;
-    case 5:
+    case 6:
       const { data: upvotedComments } = await useAPIFetch<CRUDResponse>(`api/upvoted-comments/`);
       currentRequest.value = `api/upvoted-comments/`;
       currentShowList.value = upvotedComments.value!.results;

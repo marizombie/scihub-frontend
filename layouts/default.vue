@@ -244,7 +244,7 @@ watch(() => userStore.userInfo, async (val) => {
 }
 
 .v-container {
-  max-width: 1400px;
+  max-width: 1500px;
 }
 
 .search {
