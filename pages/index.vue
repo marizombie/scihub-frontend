@@ -110,7 +110,7 @@
             </v-card>
           </div>
         </div>
-        <div v-else></div>
+        <div class="full-height" v-else></div>
       </div>
     </v-col>
     <v-card class="recomendation-block ml-8 d-sm-none d-none d-md-block">
@@ -483,5 +483,9 @@ let recommendedPosts = recomendations.value;
 
 .removeClass {
   color: rgb(var(--v-theme-error));
+}
+
+.full-height {
+  min-height: 100vh;
 }
 </style>
