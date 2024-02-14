@@ -1,6 +1,7 @@
 <template>
   <div class="container-create" @click.once="initAutosave()">
-    <v-text-field label="Title" v-model="articleData.title" variant="solo" hide-details class="pb-4 title-input" />
+    <v-text-field single-line label="Title" v-model="articleData.title" variant="solo" hide-details
+      class="pb-4 title-input" />
     <div id="editorjs" :class="['pa-4', theme.global.current.value.dark ? 'dark-theme' : '']"></div>
     <div class="mt-2 ml-auto buttons-container">
       <v-btn variant="text" @click="saveAsDraft(); redirectToDrafts();">
@@ -54,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import EditorJS from '@editorjs/editorjs';
+import EditorJS, { OutputData } from '@editorjs/editorjs';
 import Header from '@editorjs/header';
 import List from '@editorjs/list';
 import RawTool from '@editorjs/raw';
@@ -90,6 +91,14 @@ interface DraftResponse {
 interface PublishResponse {
   post: {
     slug: string;
+    title: string;
+  }
+}
+
+interface GetPostOrDraftResponse {
+  success: {
+    content: OutputData;
+    description: string;
     title: string;
   }
 }
@@ -327,11 +336,23 @@ const editor = new EditorJS({
 editor.isReady
   .then(async () => {
     if (route.query.postSlug) {
-      const { data: postData } = await useAPIFetch<Article>(`api/posts/${route.query.postSlug}/edit/`, {
+      const { data: postData } = await useAPIFetch<GetPostOrDraftResponse>(`api/posts/${route.query.postSlug}/edit/`, {
         method: "get",
       });
       if (postData.value) {
         editor.render(postData.value.success.content)
+        articleData.value.description = postData.value.success.description;
+        articleData.value.title = postData.value.success.title;
+      }
+    }
+    if (route.query.draftSlug) {
+      const { data: postData } = await useAPIFetch<GetPostOrDraftResponse>(`api/drafts/${route.query.draftSlug}/edit/`, {
+        method: "get",
+      });
+      if (postData.value) {
+        editor.render(postData.value.success.content)
+        articleData.value.description = postData.value.success.description;
+        articleData.value.title = postData.value.success.title;
       }
     }
   })
@@ -478,5 +499,8 @@ function redirectToDrafts() {
     font-weight: bold;
   }
 
+  :deep(.v-field-label:not(.v-field-label--floating)) {
+    font-size: xx-large;
+  }
 }
 </style>

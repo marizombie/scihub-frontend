@@ -67,7 +67,8 @@
               @click="navigateTo(`/posts/${article.slug}`)" :ripple="false">
               <div class="d-flex align-baseline">
                 <h3 class="test text-wrap">{{ article.title }}</h3>
-                <v-menu offset-y v-if="currentRequest === `api/users/${userStore.userInfo?.username}`">
+                <v-menu offset-y
+                  v-if="currentRequest === `api/users/${userStore.userInfo?.username}` || currentRequest === `api/drafts/`">
                   <template v-slot:activator="{ props }">
                     <v-btn class="plain-custom-style" variant="plain" size="large" v-bind="props" :ripple="false">
                       <v-icon size="30">
@@ -202,17 +203,22 @@ const currentRequest = ref('');
 const userProfile: Ref<null | ProfileInfo> = ref(null)
 const showDeleteDialog = ref(false);
 const deletePostSlug = ref('');
+const deleteDraftSlug = ref('');
 const postActions = ref([
   {
     name: "Edit",
-    action: (post: Article) => navigateTo(`/posts/create?postSlug=${post.slug}`)
+    action: (post: Article) => currentRequest.value === `api/users/${userStore.userInfo?.username}` ? navigateTo(`/posts/create?postSlug=${post.slug}`) : navigateTo(`/posts/create?draftSlug=${post.slug}`)
   },
   {
     name: "Remove",
     class: 'removeClass',
     action: (post: Article) => {
       showDeleteDialog.value = true;
-      deletePostSlug.value = post.slug;
+      if (currentRequest.value === `api/users/${userStore.userInfo?.username}`) {
+        deletePostSlug.value = post.slug;
+      } else {
+        deleteDraftSlug.value = post.slug;
+      }
     }
   },
 ]);
@@ -263,7 +269,7 @@ watch(tab, async (val, oldVal) => {
       const { data: drafts } = await useAPIFetch<CRUDResponse>(`api/drafts/?limit=5&offset=0`, {
         method: "get"
       });
-      currentRequest.value = `api/drafts/?limit=5&offset=0`;
+      currentRequest.value = `api/drafts/`;
       currentShowList.value = drafts.value!.results;
       break;
     case 5:
@@ -351,7 +357,7 @@ async function searchByTag(tag: string) {
 }
 
 async function onDeletePost() {
-  const { error } = await useAPIFetch<CommentData[]>(`api/posts/${deletePostSlug.value}/`, {
+  const { error } = await useAPIFetch<CommentData[]>(deletePostSlug.value ? `api/posts/${deletePostSlug.value}/` : `api/drafts/${deleteDraftSlug.value}/`, {
     method: "delete"
   });
   if (error.value) {
@@ -361,8 +367,9 @@ async function onDeletePost() {
       message: error.value.data.detail,
     });
   } else {
-    currentShowList.value = (currentShowList.value as Article[]).filter((item: Article) => item.slug !== deletePostSlug.value);
+    currentShowList.value = (currentShowList.value as Article[]).filter((item: Article) => deletePostSlug.value ? item.slug !== deletePostSlug.value : item.slug !== deleteDraftSlug.value);
     deletePostSlug.value = '';
+    deleteDraftSlug.value = '';
   }
   showDeleteDialog.value = false;
 }
