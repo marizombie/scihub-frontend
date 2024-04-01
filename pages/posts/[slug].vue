@@ -199,7 +199,7 @@
 import { useDisplay } from "vuetify";
 import SocialShare from '@/components/SocialShare.vue'
 import { useModalsStore, useNotificationStore, useUserStore } from "~/store";
-import { Article, CommentData, Network, Share, SuccessResponse } from "~/types";
+import type { Article, CommentData, Network, Share, SuccessResponse } from "~/types";
 
 
 interface IdWithValue {

@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import EditorJS, { OutputData } from '@editorjs/editorjs';
+import EditorJS, { type OutputData } from '@editorjs/editorjs';
 import Header from '@editorjs/header';
 import List from '@editorjs/list';
 import RawTool from '@editorjs/raw';
@@ -69,7 +69,7 @@ import Warning from '@editorjs/warning';
 import Table from '@editorjs/table';
 import { useTheme } from "vuetify";
 
-import AceCodeEditorJS, { AceCodeConfig } from "ace-code-editorjs";
+import AceCodeEditorJS, { type AceCodeConfig } from "ace-code-editorjs";
 import ace from "ace-builds";
 import "ace-builds/esm-resolver";
 
@@ -81,7 +81,7 @@ import modeXMLWorker from "ace-builds/src-noconflict/worker-xml?url";
 import modeYamlWorker from "ace-builds/src-noconflict/worker-yaml?url";
 import modeJsonWorker from "ace-builds/src-noconflict/worker-json?url";
 import { useUserStore } from '~/store';
-import { Article } from '~/types';
+import type { Article } from '~/types';
 
 interface DraftResponse {
   success: string;
@@ -302,7 +302,7 @@ const editor = new EditorJS({
           'authorization': `Bearer ${userStore.userData?.access}`,
         },
         additionalRequestData: {
-          draft: articleData.value.draftSlug
+          'draft_slug': articleData.value.draftSlug
         },
         endpoints: {
           byFile: `${config.public.baseURL}api/upload/postimage/`, // Your backend file uploader endpoint
@@ -430,7 +430,7 @@ function saveAsDraft() {
     });
     if (draftData.value) {
       articleData.value.draftSlug = draftData.value.slug;
-      editor.configuration.tools.image.config.additionalRequestData.draft = articleData.value.draftSlug;
+      editor.configuration.tools.image.config.additionalRequestData.draft_slug = articleData.value.draftSlug;
     }
   }).catch((error) => {
     console.log('Saving failed: ', error)

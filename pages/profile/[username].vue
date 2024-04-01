@@ -35,7 +35,7 @@
 
 <script setup lang="ts">
 import { useDisplay } from "vuetify";
-import { ProfileInfo } from "~/types";
+import type { ProfileInfo } from "~/types";
 
 const display = ref(useDisplay() || null);
 const profile: Ref<ProfileInfo> = ref({

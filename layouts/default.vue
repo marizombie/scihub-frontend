@@ -95,7 +95,7 @@
 <script setup lang="ts">
 import { useDisplay, useTheme } from "vuetify";
 import { useModalsStore, useNotificationStore, useUserStore } from "~/store";
-import { Article, SuccessResponse, ProfileInfo } from "~/types";
+import type { Article, SuccessResponse, ProfileInfo } from "~/types";
 
 const userStore = useUserStore();
 const title: string = "Scihub";

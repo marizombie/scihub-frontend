@@ -63,7 +63,7 @@
 import { useNotificationStore } from "../store/index";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
-import { ErrorKeyValue, SuccessResponse } from "~/types";
+import type { ErrorKeyValue, SuccessResponse } from "~/types";
 const { t } = useI18n({
   useScope: "local",
 });

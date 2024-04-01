@@ -181,7 +181,7 @@
 
 <script setup lang="ts">
 import { useNotificationStore, useUserStore } from '~/store';
-import { Article, CommentData, ProfileInfo, SuccessResponse } from '~/types';
+import type { Article, CommentData, ProfileInfo, SuccessResponse } from '~/types';
 
 interface CRUDResponse {
   results: (Article | CommentData)[];

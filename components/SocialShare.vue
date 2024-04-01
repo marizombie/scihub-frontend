@@ -34,9 +34,8 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from 'nuxt/dist/app/compat/capi';
 import { useNotificationStore } from '~/store';
-import { Network, Share } from '~/types';
+import type { Network, Share } from '~/types';
 
 const props = defineProps({
   shareObject: {

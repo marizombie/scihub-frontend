@@ -47,7 +47,7 @@
 <script setup lang="ts">
 import { useDisplay } from "vuetify";
 import { useNotificationStore, useUserStore } from "~/store";
-import { ProfileInfo } from "~/types";
+import type { ProfileInfo } from "~/types";
 
 definePageMeta({
   middleware: [

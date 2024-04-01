@@ -64,10 +64,10 @@
 </template>
 
 <script setup lang="ts">
-import { TokenInfo, useUserStore } from "../store/index";
+import { type TokenInfo, useUserStore } from "../store/index";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
-import { ErrorKeyValue, UserInfo } from "~/types";
+import type { ErrorKeyValue, UserInfo } from "~/types";
 const { t } = useI18n({
   useScope: "local",
 });
