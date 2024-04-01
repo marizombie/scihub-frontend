@@ -431,6 +431,8 @@ function saveAsDraft() {
     if (draftData.value) {
       articleData.value.draftSlug = draftData.value.slug;
       editor.configuration.tools.image.config.additionalRequestData.draft_slug = articleData.value.draftSlug;
+      const router = useRouter()
+      router.replace({ query: {draftSlug: articleData.value.draftSlug} })
     }
   }).catch((error) => {
     console.log('Saving failed: ', error)
