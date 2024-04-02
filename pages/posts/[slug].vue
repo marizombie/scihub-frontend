@@ -9,7 +9,26 @@
 </i18n>
 
 <template>
-  <v-row v-if="article">
+  <v-dialog v-model="showDeleteDialog" max-width="600px" v-if="showDeleteDialog">
+    <v-card>
+      <v-card-title class="mt-4">
+        <span class="text-h5 pl-6">Are you sure want to delete?</span>
+      </v-card-title>
+      <v-card-text class="pb-0">
+        Deletion is not reversible. After you delete your story, we can't help you to restore it.
+      </v-card-text>
+      <v-card-actions class="mb-4">
+        <v-spacer></v-spacer>
+        <v-btn color="blue darken-1" variant="text" @click="showDeleteDialog = false">
+          Cancel
+        </v-btn>
+        <v-btn variant="text" class="mr-6 removeClass" @click="onDeletePost()">
+          Delete
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+  <v-row v-if="article" justify-md="center">
     <v-col md="8">
       <v-card class="pa-3">
         <v-row>
@@ -34,6 +53,21 @@
             <SocialShare :share-object="(sharing as Share)" :networks="networks">
               <v-tooltip activator="parent" location="bottom">Share</v-tooltip>
             </SocialShare>
+            <v-menu offset-y
+              v-if="article.author_name === userStore.userInfo?.username">
+              <template v-slot:activator="{ props }">
+                <v-btn class="plain-custom-style" variant="plain" size="large" v-bind="props" :ripple="false">
+                  <v-icon size="30">
+                    mdi-dots-vertical
+                  </v-icon>
+                </v-btn>
+              </template>
+              <v-list density="compact">
+                <v-list-item v-for="(item, index) in postActions" :key="index" link @click="item.action(article)">
+                  <v-list-item-title :class="item.class ? item.class : ''">{{ item.name }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </v-col>
         </v-row>
 
@@ -242,6 +276,8 @@ if (article.value) {
 const newCommentText = ref('');
 const openReplies: Ref<IdWithValue | null> = ref(null);
 const createdCommentId: Ref<null | number> = ref(null);
+const showDeleteDialog = ref(false);
+const deletePostSlug = ref('');
 
 const sharing = computed(() => {
   return {
@@ -449,6 +485,38 @@ async function sendComment(replyData?: IdWithValue) {
   }
 }
 
+const postActions = ref([
+  {
+    name: "Edit",
+    action: (post: Article) => navigateTo(`/posts/create?postSlug=${post.slug}`)
+  },
+  {
+    name: "Remove",
+    class: 'removeClass',
+    action: (post: Article) => {
+      showDeleteDialog.value = true;
+      deletePostSlug.value = post.slug;
+    }
+  },
+]);
+
+async function onDeletePost() {
+  const { error } = await useAPIFetch<CommentData[]>(`api/posts/${deletePostSlug.value}/`, {
+    method: "delete"
+  });
+  if (error.value) {
+    const notifyStore = useNotificationStore();
+    await notifyStore.setNotification({
+      type: "error",
+      message: error.value.data.detail,
+    });
+  } else {
+    deletePostSlug.value = '';
+  }
+  showDeleteDialog.value = false;
+  navigateTo('/');
+}
+
 // TODO: Check upvoted data and show active if user already voted
 // const { data, error } = await useAPIFetch(`/api/upvotes/post/${article.value!.id}`, {
 //   method: "get",
@@ -561,5 +629,9 @@ useSeoMeta({
 .created-comment {
   background-color: rgba(128, 128, 128, 0.15);
   border-radius: 8px;
+}
+
+.removeClass {
+  color: rgb(var(--v-theme-error));
 }
 </style>
