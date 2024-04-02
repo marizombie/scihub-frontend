@@ -35,6 +35,10 @@ if (props.isClicked) {
   clicked.value = true;
 }
 
+watch(() => props.isClicked, () => {
+  clicked.value = props.isClicked;
+})
+
 function clickHeart() {
   if (props.toggable) {
     if (!clicked.value) {

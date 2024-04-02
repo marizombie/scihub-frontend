@@ -85,7 +85,7 @@
         </div>
         <div class="pa-4 pt-0 d-flex align-center">
           <LikeButton @click="sendUpvote(article)" :toggable="!!userStore.userInfo?.access"
-            :isClicked="article?.is_upvoted_by_current_user" />
+          :is-clicked="userStore.userInfo && article?.is_upvoted_by_current_user" />
           <span> {{ article.upvotes_count }} </span>
           <v-btn class="ml-3" icon dark variant="text" @click="showCommentsDialog = true" :ripple="false">
             <v-tooltip activator="parent" location="bottom">Open comments</v-tooltip>
@@ -112,8 +112,8 @@
         <span class="subtitle mt-3">
           {{ article.author_about }}
         </span>
-        <div class="mt-4">
-          <v-btn v-if="!article.is_author_followed_by_current_user" :loading="followLoading"
+        <div class="mt-4" v-if="article.author_name !== userStore.userInfo?.username">
+          <v-btn v-if="!article.is_author_followed_by_current_user || !userStore.userInfo" :loading="followLoading"
             @click="followAuthor(article.author_name)" color="primary">
             Follow </v-btn>
           <v-btn variant="outlined" @click="followAuthor(article.author_name)" rounded color="success" v-else
@@ -178,7 +178,7 @@
           </div>
           <div class="ml-2 mt-3 d-flex align-center">
             <LikeButton @click="sendUpvote(item)" :toggable="!!userStore.userInfo?.access"
-              :is-clicked="item.is_upvoted_by_current_user" />
+              :is-clicked="userStore.userInfo && item.is_upvoted_by_current_user" />
             <span> {{ item.upvotes_count }} </span>
             <v-btn @click="showReplies(item.id)" variant="plain" class="plain-custom-style" :ripple="false">
               <v-icon size="30">
@@ -218,7 +218,7 @@
             </div>
             <div class="ml-2 mt-3 d-flex align-center">
               <LikeButton @click="sendUpvote(childItem)" :toggable="!!userStore.userInfo?.access"
-                :is-clicked="childItem.is_upvoted_by_current_user" />
+                :is-clicked="userStore.userInfo && childItem.is_upvoted_by_current_user" />
               <span> {{ childItem.upvotes_count }} </span>
             </div>
           </div>
@@ -389,6 +389,19 @@ watch(showCommentsDialog, async (val) => {
     commentsDialog.value.loading = false;
   }
 }, { deep: true })
+
+const wasLoaded = ref(false);
+
+watch(() => userStore.userInfo, async (val) => {
+  if (val && !wasLoaded.value) {
+    const { data: articleData } = await useAPIFetch<Article>(
+      `/api/posts/${route.params.slug}`,
+    );
+    article.value = articleData.value;
+    wasLoaded.value = true;
+    bookmarked.value = article.value!.is_bookmarked_by_current_user;
+  }
+})
 
 if (route.query.comment_id) {
   showCommentsDialog.value = true;

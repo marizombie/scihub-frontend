@@ -60,7 +60,7 @@
                   <v-list-item-title>Profile</v-list-item-title>
                 </v-list-item>
                 <v-divider />
-                <v-list-item @click="userStore.logout()">
+                <v-list-item @click="logoutAndRedirect()">
                   <v-list-item-title>Logout</v-list-item-title>
                 </v-list-item>
               </v-list>
@@ -172,6 +172,14 @@ if (route.query.token && route.name !== 'confirm-password') {
   }
   if (error.value) {
     console.error(error.value)
+  }
+}
+
+function logoutAndRedirect() {
+  userStore.logout()
+  const onlyAuthRoutes = ['profile', 'posts-create'];
+  if (onlyAuthRoutes.includes(route.name as string)) {
+    navigateTo('/')
   }
 }
 
