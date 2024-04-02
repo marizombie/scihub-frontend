@@ -64,7 +64,7 @@
           </div>
           <div v-else>
             <v-card v-for="(article, index) in (currentShowList as Article[])" :key="index" class="article mb-8"
-              @click="navigateTo(`/posts/${article.slug}`)" :ripple="false">
+              @click="navigateTo(currentRequest === `api/drafts/` ? `/posts/create?draftSlug=${article.slug}` : `/posts/${article.slug}`)" :ripple="false">
               <div class="d-flex align-baseline">
                 <h3 class="test text-wrap">{{ article.title }}</h3>
                 <v-menu offset-y
