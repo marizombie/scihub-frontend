@@ -1,3 +1,11 @@
+<i18n lang="json">
+  {
+    "en": {
+      "followTitle": "Create an account to follow the tag."
+  }
+}
+</i18n>
+
 <template>
   <v-row justify="center" v-if="showDeleteDialog">
     <v-dialog v-model="showDeleteDialog" max-width="600px">
@@ -180,7 +188,7 @@
 </template>
 
 <script setup lang="ts">
-import { useNotificationStore, useUserStore } from '~/store';
+import { useModalsStore, useNotificationStore, useUserStore } from '~/store';
 import type { Article, CommentData, ProfileInfo, SuccessResponse } from '~/types';
 
 interface CRUDResponse {
@@ -374,22 +382,32 @@ async function onDeletePost() {
   showDeleteDialog.value = false;
 }
 
+const { t } = useI18n({
+  useScope: 'local'
+})
+
 async function followTag(tags: string[]) {
   followLoading.value = true;
   for (const tag of tags) {
-    const { data, error } = await useAPIFetch<CommentData[]>(`api/toggle-follow/tag/${tag}/`, {
-      method: "post"
-    });
-    if (error.value?.data) {
-      if (error.value) {
-        const notifyStore = useNotificationStore();
-        await notifyStore.setNotification({
-          type: "error",
-          message: error.value.data.detail,
-        });
+    if (userStore.userInfo?.access) {
+        const { data, error } = await useAPIFetch<CommentData[]>(`api/toggle-follow/tag/${tag}/`, {
+        method: "post"
+      });
+      if (error.value?.data) {
+        if (error.value) {
+          const notifyStore = useNotificationStore();
+          await notifyStore.setNotification({
+            type: "error",
+            message: error.value.data.detail,
+          });
+        }
+      } else {
+        isFollowedCurrentTag.value = !isFollowedCurrentTag.value;
       }
+    } else {
+      const modalStore = useModalsStore();
+      await modalStore.setModal("SignUp", t('followTitle'),);
     }
-    isFollowedCurrentTag.value = !isFollowedCurrentTag.value;
   }
   followLoading.value = false;
 }
