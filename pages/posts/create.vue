@@ -23,10 +23,10 @@
       <div class="meta-content">
         <div class="meta-block">
           <h3>Article preview</h3>
-          <v-text-field label="Fill preview title" v-model="articleData.title" variant="underlined" hide-details
-            class="pb-4" />
-          <v-text-field label="Fill preview description" v-model="articleData.description" variant="underlined"
-            hide-details class="pb-4" />
+          <v-text-field label="Fill preview title" v-model.sync="title.value.value" variant="underlined"
+            class="pb-4" :error-messages="title.errorMessage.value"/>
+          <v-text-field label="Fill preview description" v-model="description.value.value" variant="underlined"
+            class="pb-4" :error-messages="description.errorMessage.value"/>
           <span>Note: Changes here will affect how your story appears in public places like homepage, during sharing and
             in
             subscribers’ inboxes</span>
@@ -82,6 +82,7 @@ import modeYamlWorker from "ace-builds/src-noconflict/worker-yaml?url";
 import modeJsonWorker from "ace-builds/src-noconflict/worker-json?url";
 import { useUserStore } from '~/store';
 import type { Article } from '~/types';
+import * as yup from "yup";
 
 interface DraftResponse {
   success: string;
@@ -373,6 +374,7 @@ const showMetaDialog = ref(false);
 const tagsArray: Ref<Article[]> = ref([]);
 
 function showMetaPreview() {
+  title.value.value = articleData.value.title;
   showMetaDialog.value = true;
 }
 
@@ -395,12 +397,43 @@ function initAutosave() {
 
 onUnmounted(() => timer.value = null)
 
-function save() {
+interface PublishInfo {
+  title: string;
+  description: string;
+}
+
+let publishData: Ref<PublishInfo> = ref({
+  title: "",
+  description: "",
+});
+
+const validationSchema = markRaw(
+  yup
+    .object({
+      title: yup.string().required().min(3).label("Title"),
+      description: yup
+        .string()
+        .required()
+        .min(3)
+        .label("Description"),
+    })
+    .required(),
+);
+
+const { handleSubmit, errors } = useForm({
+  validationSchema: validationSchema,
+  initialValues: publishData.value,
+});
+
+const title = useField("title", validationSchema);
+const description = useField("description", validationSchema);
+
+const save = handleSubmit(async (values) => {
   editor.save().then(async (outputData) => {
     const bodyData = {
       "is_draft": "false",
-      "title": articleData.value.title,
-      "description": articleData.value.description,
+      "title": values.title,
+      "description": values.description,
       "content": outputData,
       "tags": articleData.value.tags
     }
@@ -414,7 +447,7 @@ function save() {
   }).catch((error) => {
     console.log('Saving failed: ', error)
   });
-}
+})
 
 function saveAsDraft() {
   editor.save().then(async (outputData) => {
