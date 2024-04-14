@@ -319,7 +319,10 @@ const editor = new EditorJS({
     linkTool: {
       class: LinkTool,
       config: {
-        endpoint: `${config.public.baseURL}/fetchUrl`, // Your backend endpoint for url data fetching,
+        headers: {
+          'authorization': `Bearer ${userStore.userData?.access}`,
+        },
+        endpoint: `${config.public.baseURL}api/fetch-url`, 
       }
     },
     warning: Warning,
