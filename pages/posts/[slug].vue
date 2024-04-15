@@ -161,7 +161,15 @@
           <v-btn color="primary" @click="sendComment()">Send</v-btn>
         </div>
       </div>
-      <div v-for="(item, index) in commentsDialog.comments" :key="index" class="ma-4">
+      <div v-else>
+        <v-alert
+          type="info"
+          variant="tonal"
+        >
+        Please, <a @click="showSignUpModal()">sign up</a> if you want to leave a comment
+      </v-alert>
+      </div>
+      <div v-for="(item, index) in commentsDialog.comments" :key="index" class="ma-4" v-if="commentsDialog.comments.length">
         <div :class="[createdCommentId === item.id ? 'created-comment' : '']">
           <div class="author-info author-block d-flex" @click="goToAuthorPosts(item.author_name)">
             <v-avatar size="48" class="mr-1">
@@ -224,6 +232,11 @@
           </div>
         </div>
         <v-divider class="my-4" />
+      </div>
+      <div v-else class="no-comments">
+        <span>
+          Be the trailblazer! Take the lead and share your thoughts. There are currently no responses for this story. Be the first to respond and ignite the conversation.
+        </span>
       </div>
     </v-card>
   </v-dialog>
@@ -530,6 +543,12 @@ async function onDeletePost() {
   navigateTo('/');
 }
 
+async function showSignUpModal() {
+  const modalStore = useModalsStore();
+  await modalStore.setModal("SignUp", t('responseTitle'),);
+  return;
+}
+
 // TODO: Check upvoted data and show active if user already voted
 // const { data, error } = await useAPIFetch(`/api/upvotes/post/${article.value!.id}`, {
 //   method: "get",
@@ -624,6 +643,10 @@ useSeoMeta({
       height: 100%;
     }
   }
+  .v-alert a{
+    color: rgb(var(--v-theme-primary));
+    cursor: pointer;
+  }
 }
 
 .plain-custom-style {
@@ -646,5 +669,17 @@ useSeoMeta({
 
 .removeClass {
   color: rgb(var(--v-theme-error));
+}
+
+.no-comments {
+  padding: 16px;
+  display: flex;
+  height: 100vh;
+  align-items: center;
+
+  span {
+    font-size: large;
+    font-style: italic;
+  }
 }
 </style>
