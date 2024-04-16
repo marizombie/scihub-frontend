@@ -101,6 +101,7 @@ interface GetPostOrDraftResponse {
     content: OutputData;
     description: string;
     title: string;
+    slug?: string;
   }
 }
 
@@ -347,6 +348,11 @@ editor.isReady
         editor.render(postData.value.success.content)
         articleData.value.description = postData.value.success.description;
         articleData.value.title = postData.value.success.title;
+        title.value.value = articleData.value.title;
+        description.value.value = articleData.value.description;
+        if (postData.value.success.slug) {
+          articleData.value.draftSlug = postData.value.success.slug;
+        }
       }
     }
     if (route.query.draftSlug) {
@@ -357,21 +363,17 @@ editor.isReady
         editor.render(postData.value.success.content)
         articleData.value.description = postData.value.success.description;
         articleData.value.title = postData.value.success.title;
+        title.value.value = articleData.value.title;
+        description.value.value = articleData.value.description;
+        if (postData.value.success.slug) {
+          articleData.value.draftSlug = postData.value.success.slug;
+        }
       }
     }
   })
   .catch((reason) => {
     console.log(`Editor.js initialization failed because of ${reason}`)
   });
-
-watch(() => route.query.postSlug, (val, oldVal) => {
-  if (oldVal && !val) {
-    editor.isReady
-      .then(async () => {
-        editor.clear()
-      })
-  }
-})
 
 const showMetaDialog = ref(false);
 const tagsArray: Ref<Article[]> = ref([]);
@@ -454,11 +456,14 @@ const save = handleSubmit(async (values) => {
 
 function saveAsDraft() {
   editor.save().then(async (outputData) => {
-    const bodyData = {
+    let bodyData = {
       "title": articleData.value.title,
       "description": articleData.value.description,
       "content": outputData,
       "tags": articleData.value.tags
+    }
+    if (articleData.value.draftSlug) {
+      bodyData = Object.assign(bodyData, {slug: articleData.value.draftSlug}) ;
     }
     const { data: draftData } = await useAPIFetch<DraftResponse>(`api/autosave/`, {
       method: "post",
