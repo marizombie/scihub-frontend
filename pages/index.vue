@@ -138,20 +138,20 @@
             </div>
           </div>
           <span class="subtitle mt-3">
-            {{ userProfile.author_about }}
+            {{ userProfile.about }}
           </span>
-          <!-- <div class="mt-4">
-            <v-btn v-if="!userProfile.is_author_followed_by_current_user" :loading="followLoading"
-              @click="followAuthor(userProfile.author_name)" color="primary">
+          <div class="mt-4" v-if="userProfile.username !== userStore.userInfo?.username">
+            <v-btn v-if="!userProfile.is_followed_by_current_user" :loading="followLoading"
+              @click="followAuthor(userProfile.username)" color="primary">
               Follow </v-btn>
-            <v-btn variant="outlined" @click="followAuthor(userProfile.author_name)" rounded color="success" v-else
+            <v-btn variant="outlined" @click="followAuthor(userProfile.username)" rounded color="success" v-else
               prepend-icon="mdi-check-circle">
               <template v-slot:prepend>
                 <v-icon color="success"></v-icon>
               </template>
               Following
             </v-btn>
-          </div> -->
+          </div>
         </div>
 
         <h3 class="mb-5">Recommendations:</h3>
@@ -412,6 +412,29 @@ async function followTag(tags: string[]) {
   followLoading.value = false;
 }
 
+async function followAuthor(name: string) {
+  if (!userStore.userInfo?.access) {
+    const modalStore = useModalsStore();
+    await modalStore.setModal("SignUp", t('followTitle'),);
+    return;
+  }
+  followLoading.value = true;
+  const { data, error } = await useAPIFetch<CommentData[]>(`api/toggle-follow/user/${name}/`, {
+    method: "post"
+  });
+  if (error.value?.data) {
+    if (error.value) {
+      const notifyStore = useNotificationStore();
+      await notifyStore.setNotification({
+        type: "error",
+        message: error.value.data.detail,
+      });
+    }
+  }
+  followLoading.value = false;
+  userProfile.value!.is_followed_by_current_user = !userProfile.value!.is_followed_by_current_user;
+}
+
 let recentlyWrittenPosts = recentlyWritten.value;
 let recommendedPosts = recomendations.value;
 </script>
@@ -469,6 +492,11 @@ let recommendedPosts = recomendations.value;
   span {
     font-size: 14px;
   }
+
+  .subtitle {
+      color: #857f7f;
+      font-size: 18px;
+    }
 
   a {
     color: inherit !important;

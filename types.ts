@@ -59,6 +59,7 @@ export interface ProfileInfo {
   country: string;
   followers_count: number;
   author_about: string;
+  is_followed_by_current_user: boolean;
 }
 
 export interface ErrorKeyValue {
