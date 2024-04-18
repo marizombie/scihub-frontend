@@ -400,7 +400,10 @@ function initAutosave() {
   }, 60000);
 }
 
-onUnmounted(() => timer.value = null)
+onUnmounted(() => {
+  clearInterval(timer.value);
+  timer.value = null
+})
 
 interface PublishInfo {
   title: string;
