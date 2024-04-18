@@ -1,5 +1,5 @@
 <template>
-  <div class="container-create" @click.once="initAutosave()">
+  <div class="container-create" @click="initAutosave()">
     <v-text-field single-line label="Title" v-model="articleData.title" variant="solo" hide-details
       class="pb-4 title-input" />
     <div id="editorjs" :class="['pa-4', theme.global.current.value.dark ? 'dark-theme' : '']"></div>
@@ -393,12 +393,36 @@ async function onSearchChange(val: string) {
 const theme = useTheme();
 const timer = ref();
 
-function initAutosave() {
-  saveAsDraft();
-  timer.value = setInterval(() => {
-    saveAsDraft();
-  }, 60000);
+async function initAutosave() {
+  if (!timer.value) {
+    await saveAsDraft();
+    timer.value = setInterval(() => {
+      saveAsDraft();
+    }, 60000);
+  }
 }
+
+const router = useRouter()
+
+watch(() => router.currentRoute.value, () => {
+  if (!route.query.postSlug && !route.query.showDraft && !route.query.draftSlug) {
+    editor.isReady
+      .then(async () => {
+        await saveAsDraft(false);
+      }).then(async () => {
+        await editor.clear()
+        await clearInterval(timer.value);
+        articleData.value = {
+          title: "",
+          description: "",
+          tags: [],
+          draftSlug: "",
+        };
+        timer.value = null
+      })
+      
+  }
+})
 
 onUnmounted(() => {
   clearInterval(timer.value);
@@ -457,7 +481,7 @@ const save = handleSubmit(async (values) => {
   });
 })
 
-function saveAsDraft() {
+async function saveAsDraft(setDraftSlug: boolean = true) {
   editor.save().then(async (outputData) => {
     let bodyData = {
       "title": articleData.value.title,
@@ -472,11 +496,11 @@ function saveAsDraft() {
       method: "post",
       body: articleData.value.draftSlug ? Object.assign(bodyData, { "slug": articleData.value.draftSlug }) : bodyData
     });
-    if (draftData.value) {
+    if (draftData.value && setDraftSlug) {
       articleData.value.draftSlug = draftData.value.slug;
       editor.configuration.tools.image.config.additionalRequestData.draft_slug = articleData.value.draftSlug;
       const router = useRouter()
-      router.replace({ query: {showDraft: articleData.value.draftSlug} })
+      await router.replace({ query: {showDraft: articleData.value.draftSlug} })
     }
   }).catch((error) => {
     console.log('Saving failed: ', error)
