@@ -420,10 +420,10 @@ if (route.query.comment_id) {
   showCommentsDialog.value = true;
 }
 
-
+const config = useRuntimeConfig();
 async function addBookmark() {
   if (article.value) {
-    const { data, error } = await useAPIFetch<SuccessResponse>(`http://localhost:8000/api/posts/${article.value.slug}/toggle-bookmark/`, {
+    const { data, error } = await useAPIFetch<SuccessResponse>(`${config.public.baseURL}api/posts/${article.value.slug}/toggle-bookmark/`, {
       method: "post",
     });
     if (error.value?.data) {
@@ -448,7 +448,7 @@ function showReply(id: number) {
 }
 
 async function showReplies(id: number) {
-  const { data, error } = await useAPIFetch<CommentData[]>(`http://localhost:8000/api/child-comments/${id}/`, {
+  const { data, error } = await useAPIFetch<CommentData[]>(`${config.public.baseURL}api/child-comments/${id}/`, {
     method: "get"
   });
   if (data.value) {
@@ -467,7 +467,7 @@ async function showReplies(id: number) {
 
 async function sendComment(replyData?: IdWithValue) {
   const textValue = replyData ? replyData.value : newCommentText.value;
-  const { data, error } = await useAPIFetch<CommentData>(`http://localhost:8000/api/comments/`, {
+  const { data, error } = await useAPIFetch<CommentData>(`${config.public.baseURL}api/comments/`, {
     method: "post",
     body: {
       "post": article.value!.slug,
