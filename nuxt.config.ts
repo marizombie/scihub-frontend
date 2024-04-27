@@ -1,4 +1,4 @@
-import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
+import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -9,34 +9,34 @@ export default defineNuxtConfig({
     }
   },
   build: {
-    transpile: ['vuetify'],
+    transpile: ['vuetify']
   },
   modules: [
-    "@pinia/nuxt",
-    "@nuxtjs/i18n",
-    "@vee-validate/nuxt",
-    "nuxt-lodash",
-    "@vueuse/nuxt",
+    '@pinia/nuxt',
+    '@nuxtjs/i18n',
+    '@vee-validate/nuxt',
+    'nuxt-lodash',
+    '@vueuse/nuxt',
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
         // @ts-expect-error
-        config.plugins.push(vuetify({ autoImport: true }))
-      })
-    },
+        config.plugins.push(vuetify({ autoImport: true }));
+      });
+    }
   ],
   runtimeConfig: {
     public: {
-      baseURL: process.env.BASE_URL || "http://127.0.0.1:8000/",
-    },
+      baseURL: process.env.BASE_URL || 'http://127.0.0.1:8000/'
+    }
   },
   vite: {
     vue: {
       template: {
-        transformAssetUrls,
-      },
-    },
+        transformAssetUrls
+      }
+    }
   },
   pinia: {
-    autoImports: ["defineStore", ["defineStore", "definePiniaStore"]],
-  },
+    autoImports: ['defineStore', ['defineStore', 'definePiniaStore']]
+  }
 });

@@ -1,10 +1,25 @@
 <template>
   <div class="container-create" @click="initAutosave()">
-    <v-text-field single-line label="Title" v-model="articleData.title" variant="solo" hide-details
-      class="pb-4 title-input" />
-    <div id="editorjs" :class="['pa-4', theme.global.current.value.dark ? 'dark-theme' : '']"></div>
+    <v-text-field
+      single-line
+      label="Title"
+      v-model="articleData.title"
+      variant="solo"
+      hide-details
+      class="pb-4 title-input"
+    />
+    <div
+      id="editorjs"
+      :class="['pa-4', theme.global.current.value.dark ? 'dark-theme' : '']"
+    ></div>
     <div class="mt-2 ml-auto buttons-container">
-      <v-btn variant="text" @click="saveAsDraft(); redirectToDrafts();">
+      <v-btn
+        variant="text"
+        @click="
+          saveAsDraft();
+          redirectToDrafts();
+        "
+      >
         Save as Draft
       </v-btn>
       <v-btn color="primary" class="ml-3" @click="showMetaPreview()">
@@ -12,8 +27,13 @@
       </v-btn>
     </div>
   </div>
-  <v-dialog v-model="showMetaDialog" :fullscreen="true" transition="'dialog-bottom-transition'" class="comments-dialog"
-    scrollable>
+  <v-dialog
+    v-model="showMetaDialog"
+    :fullscreen="true"
+    transition="'dialog-bottom-transition'"
+    class="comments-dialog"
+    scrollable
+  >
     <v-card>
       <v-toolbar dark color="primary">
         <v-btn icon dark @click="showMetaDialog = false">
@@ -23,25 +43,54 @@
       <div class="meta-content">
         <div class="meta-block">
           <h3>Article preview</h3>
-          <v-text-field label="Fill preview title" v-model.sync="title.value.value" variant="underlined"
-            class="pb-4" :error-messages="title.errorMessage.value"/>
-          <v-text-field label="Fill preview description" v-model="description.value.value" variant="underlined"
-            class="pb-4" :error-messages="description.errorMessage.value"/>
-          <span>Note: Changes here will affect how your story appears in public places like homepage, during sharing and
-            in
-            subscribers’ inboxes</span>
+          <v-text-field
+            label="Fill preview title"
+            v-model.sync="title.value.value"
+            variant="underlined"
+            class="pb-4"
+            :error-messages="title.errorMessage.value"
+          />
+          <v-text-field
+            label="Fill preview description"
+            v-model="description.value.value"
+            variant="underlined"
+            class="pb-4"
+            :error-messages="description.errorMessage.value"
+          />
+          <span
+            >Note: Changes here will affect how your story appears in public
+            places like homepage, during sharing and in subscribers’
+            inboxes</span
+          >
         </div>
         <div class="meta-block ml-4">
           <span>
             Add or change tags so readers will know what your story is about
           </span>
-          <v-autocomplete :clear-on-select="true" v-model="articleData.tags" class="mt-3" label="Choose tag(s)"
-            :items="tagsArray" multiple hide-no-data @update:search="onSearchChange" item-title="name" item-value="slug"
-            chips closable-chips variant="outlined">
-
+          <v-autocomplete
+            :clear-on-select="true"
+            v-model="articleData.tags"
+            class="mt-3"
+            label="Choose tag(s)"
+            :items="tagsArray"
+            multiple
+            hide-no-data
+            @update:search="onSearchChange"
+            item-title="name"
+            item-value="slug"
+            chips
+            closable-chips
+            variant="outlined"
+          >
           </v-autocomplete>
           <div>
-            <v-btn variant="text" @click="saveAsDraft(); redirectToDrafts();">
+            <v-btn
+              variant="text"
+              @click="
+                saveAsDraft();
+                redirectToDrafts();
+              "
+            >
               Save as Draft
             </v-btn>
             <v-btn color="primary" class="ml-3" @click="save()">
@@ -58,31 +107,30 @@
 import EditorJS, { type OutputData } from '@editorjs/editorjs';
 import Header from '@editorjs/header';
 import List from '@editorjs/list';
-import RawTool from '@editorjs/raw';
 import Quote from '@editorjs/quote';
 import ImageTool from '@editorjs/image';
-import Checklist from '@editorjs/checklist'
+import Checklist from '@editorjs/checklist';
 import Embed from '@editorjs/embed';
 import LinkTool from '@editorjs/link';
 import Undo from 'editorjs-undo';
 import Warning from '@editorjs/warning';
 import Table from '@editorjs/table';
-import { useTheme } from "vuetify";
+import { useTheme } from 'vuetify';
 
-import AceCodeEditorJS, { type AceCodeConfig } from "ace-code-editorjs";
-import ace from "ace-builds";
-import "ace-builds/esm-resolver";
+import AceCodeEditorJS, { type AceCodeConfig } from 'ace-code-editorjs';
+import ace from 'ace-builds';
+import 'ace-builds/esm-resolver';
 
-import modeHTMLWorker from "ace-builds/src-noconflict/worker-html?url";
-import modeJSWorker from "ace-builds/src-noconflict/worker-javascript?url";
-import modeCSSWorker from "ace-builds/src-noconflict/worker-css?url";
-import modePHPWorker from "ace-builds/src-noconflict/worker-php?url";
-import modeXMLWorker from "ace-builds/src-noconflict/worker-xml?url";
-import modeYamlWorker from "ace-builds/src-noconflict/worker-yaml?url";
-import modeJsonWorker from "ace-builds/src-noconflict/worker-json?url";
+import modeHTMLWorker from 'ace-builds/src-noconflict/worker-html?url';
+import modeJSWorker from 'ace-builds/src-noconflict/worker-javascript?url';
+import modeCSSWorker from 'ace-builds/src-noconflict/worker-css?url';
+import modePHPWorker from 'ace-builds/src-noconflict/worker-php?url';
+import modeXMLWorker from 'ace-builds/src-noconflict/worker-xml?url';
+import modeYamlWorker from 'ace-builds/src-noconflict/worker-yaml?url';
+import modeJsonWorker from 'ace-builds/src-noconflict/worker-json?url';
 import { useUserStore } from '~/store';
 import type { Article } from '~/types';
-import * as yup from "yup";
+import * as yup from 'yup';
 
 interface DraftResponse {
   success: string;
@@ -93,7 +141,7 @@ interface PublishResponse {
   post: {
     slug: string;
     title: string;
-  }
+  };
 }
 
 interface GetPostOrDraftResponse {
@@ -102,191 +150,189 @@ interface GetPostOrDraftResponse {
     description: string;
     title: string;
     slug?: string;
-  }
+  };
 }
 
 definePageMeta({
-  middleware: [
-    'auth',
-  ]
+  middleware: ['auth']
 });
 
-ace.config.setModuleUrl("ace/mode/html_worker", modeHTMLWorker);
-ace.config.setModuleUrl("ace/mode/javascript_worker", modeJSWorker);
-ace.config.setModuleUrl("ace/mode/css_worker", modeCSSWorker);
-ace.config.setModuleUrl("ace/mode/php_worker", modePHPWorker);
-ace.config.setModuleUrl("ace/mode/xml_worker", modeXMLWorker);
-ace.config.setModuleUrl("ace/mode/yaml_worker", modeYamlWorker);
-ace.config.setModuleUrl("ace/mode/json_worker", modeJsonWorker);
+ace.config.setModuleUrl('ace/mode/html_worker', modeHTMLWorker);
+ace.config.setModuleUrl('ace/mode/javascript_worker', modeJSWorker);
+ace.config.setModuleUrl('ace/mode/css_worker', modeCSSWorker);
+ace.config.setModuleUrl('ace/mode/php_worker', modePHPWorker);
+ace.config.setModuleUrl('ace/mode/xml_worker', modeXMLWorker);
+ace.config.setModuleUrl('ace/mode/yaml_worker', modeYamlWorker);
+ace.config.setModuleUrl('ace/mode/json_worker', modeJsonWorker);
 
 const aceConfig: AceCodeConfig = {
   languages: {
     plain: {
-      label: "Plain Text",
-      mode: "ace/mode/plain_text",
+      label: 'Plain Text',
+      mode: 'ace/mode/plain_text'
     },
     html: {
-      label: "HTML",
-      mode: "ace/mode/html",
+      label: 'HTML',
+      mode: 'ace/mode/html'
     },
     javascript: {
-      label: "JavaScript",
-      mode: "ace/mode/javascript",
+      label: 'JavaScript',
+      mode: 'ace/mode/javascript'
     },
     css: {
-      label: "CSS",
-      mode: "ace/mode/css",
+      label: 'CSS',
+      mode: 'ace/mode/css'
     },
     php: {
-      label: "PHP",
-      mode: "ace/mode/php",
+      label: 'PHP',
+      mode: 'ace/mode/php'
     },
     jsx: {
-      label: "JSX",
-      mode: "ace/mode/jsx",
+      label: 'JSX',
+      mode: 'ace/mode/jsx'
     },
     tsx: {
-      label: "TSX",
-      mode: "ace/mode/tsx",
+      label: 'TSX',
+      mode: 'ace/mode/tsx'
     },
     typescript: {
-      label: "TypeScript",
-      mode: "ace/mode/typescript",
+      label: 'TypeScript',
+      mode: 'ace/mode/typescript'
     },
     sql: {
-      label: "SQL",
-      mode: "ace/mode/sql",
+      label: 'SQL',
+      mode: 'ace/mode/sql'
     },
     cpp: {
-      label: "C++",
-      mode: "ace/mode/c_cpp",
+      label: 'C++',
+      mode: 'ace/mode/c_cpp'
     },
     csharp: {
-      label: "C#",
-      mode: "ace/mode/csharp",
+      label: 'C#',
+      mode: 'ace/mode/csharp'
     },
     dart: {
-      label: "Dart",
-      mode: "ace/mode/dart",
+      label: 'Dart',
+      mode: 'ace/mode/dart'
     },
     dockerfile: {
-      label: "Docker",
-      mode: "ace/mode/dockerfile",
+      label: 'Docker',
+      mode: 'ace/mode/dockerfile'
     },
     fsharp: {
-      label: "F#",
-      mode: "ace/mode/fsharp",
+      label: 'F#',
+      mode: 'ace/mode/fsharp'
     },
     golang: {
-      label: "Golang",
-      mode: "ace/mode/golang",
+      label: 'Golang',
+      mode: 'ace/mode/golang'
     },
     graphql: {
-      label: "GraphQL",
-      mode: "ace/mode/graphqlschema",
+      label: 'GraphQL',
+      mode: 'ace/mode/graphqlschema'
     },
     haskell: {
-      label: "Haskell",
-      mode: "ace/mode/haskell",
+      label: 'Haskell',
+      mode: 'ace/mode/haskell'
     },
     java: {
-      label: "Java",
-      mode: "ace/mode/java",
+      label: 'Java',
+      mode: 'ace/mode/java'
     },
     json: {
-      label: "Json",
-      mode: "ace/mode/json",
+      label: 'Json',
+      mode: 'ace/mode/json'
     },
     kotlin: {
-      label: "Kotlin",
-      mode: "ace/mode/kotlin",
+      label: 'Kotlin',
+      mode: 'ace/mode/kotlin'
     },
     makefile: {
-      label: "Makefile",
-      mode: "ace/mode/makefile",
+      label: 'Makefile',
+      mode: 'ace/mode/makefile'
     },
     mysql: {
-      label: "MySQL",
-      mode: "ace/mode/mysql",
+      label: 'MySQL',
+      mode: 'ace/mode/mysql'
     },
     nginx: {
-      label: "NginX",
-      mode: "ace/mode/nginx",
+      label: 'NginX',
+      mode: 'ace/mode/nginx'
     },
     objectivec: {
-      label: "Objective C",
-      mode: "ace/mode/objectivec",
+      label: 'Objective C',
+      mode: 'ace/mode/objectivec'
     },
     pascal: {
-      label: "Pascal",
-      mode: "ace/mode/pascal",
+      label: 'Pascal',
+      mode: 'ace/mode/pascal'
     },
     perl: {
-      label: "Perl",
-      mode: "ace/mode/perl",
+      label: 'Perl',
+      mode: 'ace/mode/perl'
     },
     pgsql: {
-      label: "Postgres",
-      mode: "ace/mode/pgsql",
+      label: 'Postgres',
+      mode: 'ace/mode/pgsql'
     },
     laravel: {
-      label: "PHP (Laravel)",
-      mode: "ace/mode/php_laravel_blade",
+      label: 'PHP (Laravel)',
+      mode: 'ace/mode/php_laravel_blade'
     },
     prisma: {
-      label: "Prisma",
-      mode: "ace/mode/prisma",
+      label: 'Prisma',
+      mode: 'ace/mode/prisma'
     },
     python: {
-      label: "Python",
-      mode: "ace/mode/python",
+      label: 'Python',
+      mode: 'ace/mode/python'
     },
     r: {
-      label: "R",
-      mode: "ace/mode/r",
+      label: 'R',
+      mode: 'ace/mode/r'
     },
     ruby: {
-      label: "Ruby",
-      mode: "ace/mode/ruby",
+      label: 'Ruby',
+      mode: 'ace/mode/ruby'
     },
     rust: {
-      label: "Rust",
-      mode: "ace/mode/rust",
+      label: 'Rust',
+      mode: 'ace/mode/rust'
     },
     swift: {
-      label: "Swift",
-      mode: "ace/mode/swift",
+      label: 'Swift',
+      mode: 'ace/mode/swift'
     },
     terraform: {
-      label: "Terraform",
-      mode: "ace/mode/terraform",
+      label: 'Terraform',
+      mode: 'ace/mode/terraform'
     },
     xml: {
-      label: "XML",
-      mode: "ace/mode/xml",
+      label: 'XML',
+      mode: 'ace/mode/xml'
     },
     yaml: {
-      label: "YAML",
-      mode: "ace/mode/yaml",
-    },
+      label: 'YAML',
+      mode: 'ace/mode/yaml'
+    }
   },
   options: {
     fontSize: 16,
     minLines: 4,
-    theme: "ace/theme/monokai",
+    theme: 'ace/theme/monokai',
     enableAutoIndent: true,
     useSoftTabs: true,
     customScrollbar: true
-  },
+  }
 };
 
 const route = useRoute();
 const articleData = ref({
-  title: "",
-  description: "",
+  title: '',
+  description: '',
   tags: [],
-  draftSlug: "",
-})
+  draftSlug: ''
+});
 
 const config = useRuntimeConfig();
 const userStore = useUserStore();
@@ -295,57 +341,59 @@ const editor = new EditorJS({
   tools: {
     header: Header,
     list: List,
-    raw: RawTool,
     quote: Quote,
     image: {
       class: ImageTool,
       config: {
         additionalRequestHeaders: {
-          'authorization': `Bearer ${userStore.userData?.access}`,
+          authorization: `Bearer ${userStore.userData?.access}`
         },
         additionalRequestData: {
-          'draft_slug': articleData.value.draftSlug
+          draft_slug: articleData.value.draftSlug
         },
         endpoints: {
-          byFile: `${config.public.baseURL}api/upload/postimage/`, // Your backend file uploader endpoint
+          byFile: `${config.public.baseURL}api/upload/postimage/` // Your backend file uploader endpoint
           // byUrl: 'http://localhost:8008/fetchUrl', // Your endpoint that provides uploading by Url
         }
       }
     },
-    checklist: {
-      class: Checklist,
-      inlineToolbar: true,
-    },
+    // checklist: {
+    //   class: Checklist,
+    //   inlineToolbar: true,
+    // },
     embed: Embed,
     linkTool: {
       class: LinkTool,
       config: {
         headers: {
-          'authorization': `Bearer ${userStore.userData?.access}`,
+          authorization: `Bearer ${userStore.userData?.access}`
         },
-        endpoint: `${config.public.baseURL}api/fetch-url`, 
+        endpoint: `${config.public.baseURL}api/fetch-url`
       }
     },
-    warning: Warning,
+    // warning: Warning,
     table: Table,
     code: {
       class: AceCodeEditorJS,
-      config: aceConfig,
-    },
+      config: aceConfig
+    }
   },
   onReady: () => {
     new Undo({ editor });
-  },
-})
+  }
+});
 
 editor.isReady
   .then(async () => {
     if (route.query.postSlug) {
-      const { data: postData } = await useAPIFetch<GetPostOrDraftResponse>(`api/posts/${route.query.postSlug}/edit/`, {
-        method: "get",
-      });
+      const { data: postData } = await useAPIFetch<GetPostOrDraftResponse>(
+        `api/posts/${route.query.postSlug}/edit/`,
+        {
+          method: 'get'
+        }
+      );
       if (postData.value) {
-        editor.render(postData.value.success.content)
+        editor.render(postData.value.success.content);
         articleData.value.description = postData.value.success.description;
         articleData.value.title = postData.value.success.title;
         title.value.value = articleData.value.title;
@@ -356,11 +404,14 @@ editor.isReady
       }
     }
     if (route.query.draftSlug) {
-      const { data: postData } = await useAPIFetch<GetPostOrDraftResponse>(`api/drafts/${route.query.draftSlug}/edit/`, {
-        method: "get",
-      });
+      const { data: postData } = await useAPIFetch<GetPostOrDraftResponse>(
+        `api/drafts/${route.query.draftSlug}/edit/`,
+        {
+          method: 'get'
+        }
+      );
       if (postData.value) {
-        editor.render(postData.value.success.content)
+        editor.render(postData.value.success.content);
         articleData.value.description = postData.value.success.description;
         articleData.value.title = postData.value.success.title;
         title.value.value = articleData.value.title;
@@ -372,7 +423,7 @@ editor.isReady
     }
   })
   .catch((reason) => {
-    console.log(`Editor.js initialization failed because of ${reason}`)
+    console.log(`Editor.js initialization failed because of ${reason}`);
   });
 
 const showMetaDialog = ref(false);
@@ -384,7 +435,9 @@ function showMetaPreview() {
 }
 
 async function onSearchChange(val: string) {
-  const { data: tagPosts } = await useAPIFetch<Article[]>(`/api/tags/?search=${val}&limit=20`);
+  const { data: tagPosts } = await useAPIFetch<Article[]>(
+    `/api/tags/?search=${val}&limit=20`
+  );
   if (tagPosts.value) {
     tagsArray.value = tagPosts.value;
   }
@@ -402,32 +455,39 @@ async function initAutosave() {
   }
 }
 
-const router = useRouter()
+const router = useRouter();
 
-watch(() => router.currentRoute.value, () => {
-  if (!route.query.postSlug && !route.query.showDraft && !route.query.draftSlug) {
-    editor.isReady
-      .then(async () => {
-        await saveAsDraft(false);
-      }).then(async () => {
-        await editor.clear()
-        await clearInterval(timer.value);
-        articleData.value = {
-          title: "",
-          description: "",
-          tags: [],
-          draftSlug: "",
-        };
-        timer.value = null
-      })
-      
+watch(
+  () => router.currentRoute.value,
+  () => {
+    if (
+      !route.query.postSlug &&
+      !route.query.showDraft &&
+      !route.query.draftSlug
+    ) {
+      editor.isReady
+        .then(async () => {
+          await saveAsDraft(false);
+        })
+        .then(async () => {
+          await editor.clear();
+          await clearInterval(timer.value);
+          articleData.value = {
+            title: '',
+            description: '',
+            tags: [],
+            draftSlug: ''
+          };
+          timer.value = null;
+        });
+    }
   }
-})
+);
 
 onUnmounted(() => {
   clearInterval(timer.value);
-  timer.value = null
-})
+  timer.value = null;
+});
 
 interface PublishInfo {
   title: string;
@@ -435,89 +495,108 @@ interface PublishInfo {
 }
 
 let publishData: Ref<PublishInfo> = ref({
-  title: "",
-  description: "",
+  title: '',
+  description: ''
 });
 
 const validationSchema = markRaw(
   yup
     .object({
-      title: yup.string().required().min(3).label("Title"),
-      description: yup
-        .string()
-        .required()
-        .min(3)
-        .label("Description"),
+      title: yup.string().required().min(3).label('Title'),
+      description: yup.string().required().min(3).label('Description')
     })
-    .required(),
+    .required()
 );
 
 const { handleSubmit, errors } = useForm({
   validationSchema: validationSchema,
-  initialValues: publishData.value,
+  initialValues: publishData.value
 });
 
-const title = useField("title", validationSchema);
-const description = useField("description", validationSchema);
+const title = useField('title', validationSchema);
+const description = useField('description', validationSchema);
 
 const save = handleSubmit(async (values) => {
-  editor.save().then(async (outputData) => {
-    const bodyData = {
-      "is_draft": "false",
-      "title": values.title,
-      "description": values.description,
-      "content": outputData,
-      "tags": articleData.value.tags
-    }
-    const { data: postData } = await useAPIFetch<PublishResponse>(`api/drafts/${articleData.value.draftSlug}/publish/`, {
-      method: "post",
-      body: articleData.value.draftSlug ? Object.assign(bodyData, { "draft": articleData.value.draftSlug }) : bodyData
+  editor
+    .save()
+    .then(async (outputData) => {
+      const bodyData = {
+        is_draft: 'false',
+        title: values.title,
+        description: values.description,
+        content: outputData,
+        tags: articleData.value.tags
+      };
+      const { data: postData } = await useAPIFetch<PublishResponse>(
+        `api/drafts/${articleData.value.draftSlug}/publish/`,
+        {
+          method: 'post',
+          body: articleData.value.draftSlug
+            ? Object.assign(bodyData, { draft: articleData.value.draftSlug })
+            : bodyData
+        }
+      );
+      if (postData.value) {
+        navigateTo(`/posts/${postData.value.post.slug}`);
+      }
+    })
+    .catch((error) => {
+      console.log('Saving failed: ', error);
     });
-    if (postData.value) {
-      navigateTo(`/posts/${postData.value.post.slug}`)
-    }
-  }).catch((error) => {
-    console.log('Saving failed: ', error)
-  });
-})
+});
 
 async function saveAsDraft(setDraftSlug: boolean = true) {
-  editor.save().then(async (outputData) => {
-    let bodyData = {
-      "title": articleData.value.title,
-      "description": articleData.value.description,
-      "content": outputData,
-      "tags": articleData.value.tags
-    }
-    if (articleData.value.draftSlug) {
-      bodyData = Object.assign(bodyData, {slug: articleData.value.draftSlug}) ;
-    }
-    const { data: draftData } = await useAPIFetch<DraftResponse>(`api/autosave/`, {
-      method: "post",
-      body: articleData.value.draftSlug ? Object.assign(bodyData, { "slug": articleData.value.draftSlug }) : bodyData
+  editor
+    .save()
+    .then(async (outputData) => {
+      let bodyData = {
+        title: articleData.value.title,
+        description: articleData.value.description,
+        content: outputData,
+        tags: articleData.value.tags
+      };
+      if (articleData.value.draftSlug) {
+        bodyData = Object.assign(bodyData, {
+          slug: articleData.value.draftSlug
+        });
+      }
+      const { data: draftData } = await useAPIFetch<DraftResponse>(
+        `api/autosave/`,
+        {
+          method: 'post',
+          body: articleData.value.draftSlug
+            ? Object.assign(bodyData, { slug: articleData.value.draftSlug })
+            : bodyData
+        }
+      );
+      if (draftData.value && setDraftSlug) {
+        articleData.value.draftSlug = draftData.value.slug;
+        editor.configuration.tools.image.config.additionalRequestData.draft_slug =
+          articleData.value.draftSlug;
+        const router = useRouter();
+        await router.replace({
+          query: { showDraft: articleData.value.draftSlug }
+        });
+      }
+    })
+    .catch((error) => {
+      console.log('Saving failed: ', error);
     });
-    if (draftData.value && setDraftSlug) {
-      articleData.value.draftSlug = draftData.value.slug;
-      editor.configuration.tools.image.config.additionalRequestData.draft_slug = articleData.value.draftSlug;
-      const router = useRouter()
-      await router.replace({ query: {showDraft: articleData.value.draftSlug} })
-    }
-  }).catch((error) => {
-    console.log('Saving failed: ', error)
-  });
 }
 
 function redirectToDrafts() {
   navigateTo(`/?showDraft=true`);
 }
-
 </script>
 
 <style lang="less" scoped>
 #editorjs {
   width: 100%;
   max-width: 800px;
-  box-shadow: 0px 2px 1px -1px var(--v-shadow-key-umbra-opacity, rgba(0, 0, 0, 0.2)), 0px 1px 1px 0px var(--v-shadow-key-penumbra-opacity, rgba(0, 0, 0, 0.14)), 0px 1px 3px 0px var(--v-shadow-key-penumbra-opacity, rgba(0, 0, 0, 0.12));
+  box-shadow:
+    0px 2px 1px -1px var(--v-shadow-key-umbra-opacity, rgba(0, 0, 0, 0.2)),
+    0px 1px 1px 0px var(--v-shadow-key-penumbra-opacity, rgba(0, 0, 0, 0.14)),
+    0px 1px 3px 0px var(--v-shadow-key-penumbra-opacity, rgba(0, 0, 0, 0.12));
 }
 
 .container-create {

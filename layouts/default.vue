@@ -8,50 +8,123 @@
             <a href="/">{{ title }}</a>
           </v-app-bar-title>
           <div class="d-flex align-center ml-auto">
-            <ForgotPassword :showDialog="showForgetPassword" @closeDialog="showForgetPassword = false" />
-            <ResendLink :showDialog="showResendLink" @closeDialog="showResendLink = false" />
+            <ForgotPassword
+              :showDialog="showForgetPassword"
+              @closeDialog="showForgetPassword = false"
+            />
+            <ResendLink
+              :showDialog="showResendLink"
+              @closeDialog="showResendLink = false"
+            />
             <v-menu>
               <template v-slot:activator="{ props }">
-                <v-text-field v-bind="props" density="compact" variant="solo" v-if="display.mdAndUp" label="Search"
-                  v-model="search" single-line hide-details append-inner-icon="mdi-magnify" @click="expandedSearch = true"
+                <v-text-field
+                  v-bind="props"
+                  density="compact"
+                  variant="solo"
+                  v-if="display.mdAndUp"
+                  label="Search"
+                  v-model="search"
+                  single-line
+                  hide-details
+                  append-inner-icon="mdi-magnify"
+                  @click="expandedSearch = true"
                   v-click-outside="{
-                    handler: (e: MouseEvent) => expandedSearch = false
-                  }" :class="[expandedSearch ? 'expand_search' : '', 'search mr-md-4']" />
+                    handler: (e: MouseEvent) => (expandedSearch = false)
+                  }"
+                  :class="[
+                    expandedSearch ? 'expand_search' : '',
+                    'search mr-md-4'
+                  ]"
+                />
               </template>
               <v-list v-if="searchedPosts.length">
-                <v-list-item v-for="(item, index) in searchedPosts" :key="index" :value="index"
-                  @click="handleChange(item.slug)">
+                <v-list-item
+                  v-for="(item, index) in searchedPosts"
+                  :key="index"
+                  :value="index"
+                  @click="handleChange(item.slug)"
+                >
                   <v-list-item-title>{{ item.title }}</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
-            <v-switch v-model="darkTheme" hide-details class="ml-3 mr-10"
-              :label="` ${display.mdAndUp ? 'Dark theme' : ''}`" />
-            <Auth :showDialog="showAuth" @closeDialog="showAuth = false; modalStore.removeModal()"
+            <v-switch
+              v-model="darkTheme"
+              hide-details
+              class="ml-3 mr-10"
+              :label="` ${display.mdAndUp ? 'Dark theme' : ''}`"
+            />
+            <Auth
+              :showDialog="showAuth"
+              @closeDialog="
+                showAuth = false;
+                modalStore.removeModal();
+              "
               @showForgetPasswordDialog="showForgetPassword = true"
-              :redirectOnCancel="modalStore.currentModal?.prevRoute" />
-            <v-btn @click="showAuth = true" class="header-button mr-md-4 ml-md-4" v-if="!userStore.userInfo">
+              :redirectOnCancel="modalStore.currentModal?.prevRoute"
+            />
+            <v-btn
+              @click="showAuth = true"
+              class="header-button mr-md-4 ml-md-4"
+              v-if="!userStore.userInfo"
+            >
               Sign in
             </v-btn>
-            <SignUp :showDialog="showSignUp" @closeDialog="showSignUp = false; modalStore.removeModal()"
-              :title="signUpTitle" @showResendLinkDialog="showResendLink = true"
-              @showAuthDialog="showSignUp = false; showAuth = true" />
-            <v-btn class="header-button ml-md-4 mr-md-5" variant="text" @click="showSignUp = true"
-              v-if="!userStore.userInfo">
+            <SignUp
+              :showDialog="showSignUp"
+              @closeDialog="
+                showSignUp = false;
+                modalStore.removeModal();
+              "
+              :title="signUpTitle"
+              @showResendLinkDialog="showResendLink = true"
+              @showAuthDialog="
+                showSignUp = false;
+                showAuth = true;
+              "
+            />
+            <v-btn
+              class="header-button ml-md-4 mr-md-5"
+              variant="text"
+              @click="showSignUp = true"
+              v-if="!userStore.userInfo"
+            >
               Sign up
             </v-btn>
-            <v-btn prepend-icon="mdi-pencil" class="ml-8 mr-md-5 header-button" variant="text" @click="openCreatePage()"
-              v-if="userStore.userInfo">
+            <v-btn
+              prepend-icon="mdi-pencil"
+              class="ml-8 mr-md-5 header-button"
+              variant="text"
+              @click="openCreatePage()"
+              v-if="userStore.userInfo"
+            >
               Write
             </v-btn>
             <v-menu v-if="userStore.userInfo">
               <template v-slot:activator="{ props }">
-                <v-btn size="48" rounded variant="outlined" :ripple="false" class="mr-6 plain-custom-style"
-                  v-bind="props">
+                <v-btn
+                  size="48"
+                  rounded
+                  variant="outlined"
+                  :ripple="false"
+                  class="mr-6 plain-custom-style"
+                  v-bind="props"
+                >
                   <v-avatar size="48">
-                    <v-img v-if="userStore.userInfo.avatar" :src="userStore.userInfo.avatar"
-                      :alt="userStore.userInfo.first_name + ' ' + userStore.userInfo.last_name" />
-                    <span v-else>{{ userStore.userInfo.first_name[0] + userStore.userInfo.last_name[0] }}</span>
+                    <v-img
+                      v-if="userStore.userInfo.avatar"
+                      :src="userStore.userInfo.avatar"
+                      :alt="
+                        userStore.userInfo.first_name +
+                        ' ' +
+                        userStore.userInfo.last_name
+                      "
+                    />
+                    <span v-else>{{
+                      userStore.userInfo.first_name[0] +
+                      userStore.userInfo.last_name[0]
+                    }}</span>
                   </v-avatar>
                 </v-btn>
               </template>
@@ -71,12 +144,24 @@
         <div v-if="!display.mdAndUp" class="additional-search mb-2">
           <v-menu>
             <template v-slot:activator="{ props }">
-              <v-text-field v-bind="props" density="compact" variant="solo" label="Search" v-model="search" single-line
-                hide-details append-inner-icon="mdi-magnify" />
+              <v-text-field
+                v-bind="props"
+                density="compact"
+                variant="solo"
+                label="Search"
+                v-model="search"
+                single-line
+                hide-details
+                append-inner-icon="mdi-magnify"
+              />
             </template>
             <v-list v-if="searchedPosts.length">
-              <v-list-item v-for="(item, index) in searchedPosts" :key="index" :value="index"
-                @click="handleChange(item.slug)">
+              <v-list-item
+                v-for="(item, index) in searchedPosts"
+                :key="index"
+                :value="index"
+                @click="handleChange(item.slug)"
+              >
                 <v-list-item-title>{{ item.title }}</v-list-item-title>
               </v-list-item>
             </v-list>
@@ -93,12 +178,12 @@
 </template>
 
 <script setup lang="ts">
-import { useDisplay, useTheme } from "vuetify";
-import { useModalsStore, useNotificationStore, useUserStore } from "~/store";
-import type { Article, SuccessResponse, ProfileInfo } from "~/types";
+import { useDisplay, useTheme } from 'vuetify';
+import { useModalsStore, useNotificationStore, useUserStore } from '~/store';
+import type { Article, SuccessResponse, ProfileInfo } from '~/types';
 
 const userStore = useUserStore();
-const title: string = "Scihub";
+const title: string = 'Scihub';
 const display = ref(useDisplay() || null);
 let search: Ref<string> = ref('');
 let darkTheme: Ref<boolean> = ref(false);
@@ -118,7 +203,9 @@ watch(darkTheme, () => {
 });
 
 const fetchItems = async () => {
-  const { data, error } = await useAPIFetch<Article[]>(`/api/posts/?search=${search.value}`);
+  const { data, error } = await useAPIFetch<Article[]>(
+    `/api/posts/?search=${search.value}`
+  );
   if (data.value) {
     searchedPosts.value = data.value;
   }
@@ -126,18 +213,22 @@ const fetchItems = async () => {
 
 const modalStore = useModalsStore();
 
-watch(() => modalStore.currentModal, async (val) => {
-  if (val) {
-    if (val.name === 'SignUp') {
-      signUpTitle.value = val.title;
-      showSignUp.value = true;
+watch(
+  () => modalStore.currentModal,
+  async (val) => {
+    if (val) {
+      if (val.name === 'SignUp') {
+        signUpTitle.value = val.title;
+        showSignUp.value = true;
+      }
+      if (val.name === 'Auth') {
+        await new Promise((resolve) => setTimeout(resolve, 1));
+        showAuth.value = true;
+      }
     }
-    if (val.name === 'Auth') {
-      await new Promise(resolve => setTimeout(resolve, 1));
-      showAuth.value = true;
-    }
-  }
-}, { immediate: true })
+  },
+  { immediate: true }
+);
 
 const debouncedFetchItems = useDebounce(fetchItems, 300);
 
@@ -146,11 +237,11 @@ watch(search, () => {
 });
 
 function toggleTheme() {
-  theme.global.name.value = theme.global.current.value.dark ? "light" : "dark";
+  theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark';
 }
 
 async function openCreatePage() {
-  await navigateTo("/posts/create");
+  await navigateTo('/posts/create');
 }
 
 function handleChange(item: string | null) {
@@ -158,43 +249,49 @@ function handleChange(item: string | null) {
   navigateTo(`/posts/${item}`);
 }
 
-const route = useRoute()
+const route = useRoute();
 if (route.query.token && route.name !== 'confirm-password') {
-  const { data, error } = await useAPIFetch<SuccessResponse>(`/api/register/email-confirm/?activate=${route.query.token}`);
+  const { data, error } = await useAPIFetch<SuccessResponse>(
+    `/api/register/email-confirm/?activate=${route.query.token}`
+  );
   if (data.value) {
     if (data.value.success) {
       const notifyStore = useNotificationStore();
       await notifyStore.setNotification({
-        type: "success",
-        message: data.value.success,
+        type: 'success',
+        message: data.value.success
       });
     }
   }
   if (error.value) {
-    console.error(error.value)
+    console.error(error.value);
   }
 }
 
 function logoutAndRedirect() {
-  userStore.logout()
+  userStore.logout();
   const onlyAuthRoutes = ['profile', 'posts-create'];
   if (onlyAuthRoutes.includes(route.name as string)) {
-    navigateTo('/')
+    navigateTo('/');
   }
 }
 
-watch(() => userStore.userInfo, async (val) => {
-  if (val?.access) {
-    const { data } = await useAPIFetch<ProfileInfo>("/api/profile/");
-    if (data.value) {
-      userStore.setUserName(data.value.username)
+watch(
+  () => userStore.userInfo,
+  async (val) => {
+    if (val?.access) {
+      const { data } = await useAPIFetch<ProfileInfo>('/api/profile/');
+      if (data.value) {
+        userStore.setUserName(data.value.username);
+      }
     }
-  }
-}, { immediate: true })
+  },
+  { immediate: true }
+);
 </script>
 
 <style lang="less" scoped>
-@import "../assets/breakpoints.less";
+@import '../assets/breakpoints.less';
 
 .header {
   height: 56px !important;
@@ -267,7 +364,6 @@ watch(() => userStore.userInfo, async (val) => {
 .expand_search {
   width: 440px;
 }
-
 
 .header-button {
   font-weight: 700;

@@ -1,4 +1,4 @@
-import { useModalsStore, useUserStore } from "~/store";
+import { useModalsStore, useUserStore } from '~/store';
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const user = useUserStore();
@@ -7,11 +7,11 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     const modalStore = useModalsStore();
     let returnPath;
     if (to.path === from.path) {
-      returnPath = "/";
+      returnPath = '/';
     } else {
       returnPath = from.path;
     }
-    await modalStore.setModal("Auth", '', returnPath);
+    await modalStore.setModal('Auth', '', returnPath);
     return;
   }
 });

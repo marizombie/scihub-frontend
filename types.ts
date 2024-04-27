@@ -1,5 +1,6 @@
+import type { OutputData } from '@editorjs/editorjs';
+
 export interface Article {
-  content: string;
   html_content: string;
   created_at: string;
   description: string;
@@ -18,6 +19,82 @@ export interface Article {
   is_upvoted_by_current_user: boolean;
   is_author_followed_by_current_user: boolean;
   comments_count: number;
+  content: OutputData;
+}
+
+export interface BlockData {
+  id: string;
+  type:
+    | 'header'
+    | 'paragraph'
+    | 'list'
+    | 'quote'
+    | 'image'
+    | 'checklist'
+    | 'warning'
+    | 'table'
+    | 'code';
+  data:
+    | HeaderBlock
+    | ParagraphBlock
+    | ListBlock
+    | QuoteBlock
+    | ImageBlock
+    | ChecklistBlock
+    | WarningBlock
+    | TableBlock
+    | CodeBlock;
+}
+
+interface HeaderBlock {
+  text: string;
+  level: number;
+}
+
+interface ParagraphBlock {
+  text: string;
+}
+
+interface ListBlock {
+  style: string;
+  items: string[];
+}
+
+interface QuoteBlock {
+  text: string;
+  caption: string;
+  alignment: string;
+}
+
+interface ImageBlock {
+  file: {
+    url: string;
+  };
+  caption: string;
+  withBorder: boolean;
+  stretched: boolean;
+  withBackground: boolean;
+}
+
+interface ChecklistBlock {
+  items: {
+    text: string;
+    checked: boolean;
+  }[];
+}
+
+interface WarningBlock {
+  title: string;
+  message: string;
+}
+
+interface TableBlock {
+  withHeadings: boolean;
+  content: string[][];
+}
+
+interface CodeBlock {
+  code: string;
 }
 
 export interface ImageInfo {

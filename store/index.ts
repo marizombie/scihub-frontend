@@ -12,7 +12,7 @@ export interface TokenInfo {
 
 export interface Notification {
   id?: number;
-  type: "error" | "info" | "success";
+  type: 'error' | 'info' | 'success';
   message: string;
 }
 
@@ -22,128 +22,151 @@ export interface Modal {
   prevRoute: string;
 }
 
-function parseJwt (token: string | undefined) {
+function parseJwt(token: string | undefined) {
   if (!token) {
     return;
   }
   var base64Url = token.split('.')[1];
   var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-  }).join(''));
+  var jsonPayload = decodeURIComponent(
+    window
+      .atob(base64)
+      .split('')
+      .map(function (c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join('')
+  );
 
   return JSON.parse(jsonPayload);
 }
 
-export const useUserStore = defineStore("user", {
+export const useUserStore = defineStore('user', {
   state: () => {
     return {
-      userData: null as null | TokenInfo,
+      userData: null as null | TokenInfo
     };
   },
   getters: {
-    userInfo: (state) => state.userData,
+    userInfo: (state) => state.userData
   },
   actions: {
     async setUserInfo(token: TokenInfo) {
       this.userData = token;
-      localStorage.setItem("token", token.access);
-      localStorage.setItem("refreshToken", token.refresh);
-      localStorage.setItem("user", [token.avatar, token.first_name, token.last_name].join(';'))
+      localStorage.setItem('token', token.access);
+      localStorage.setItem('refreshToken', token.refresh);
+      localStorage.setItem(
+        'user',
+        [token.avatar, token.first_name, token.last_name].join(';')
+      );
     },
     async getUserInfoFromLS() {
-     let token = localStorage.getItem("token");
-     let refreshToken = localStorage.getItem("refreshToken");
-     let user = localStorage.getItem("user")?.split(';');
-     if (token && refreshToken && user) {
-      this.userData = {
-        access: token,
-        refresh: refreshToken,
-        avatar: user[0],
-        first_name: user[1],
-        last_name: user[2]
+      let token = localStorage.getItem('token');
+      let refreshToken = localStorage.getItem('refreshToken');
+      let user = localStorage.getItem('user')?.split(';');
+      if (token && refreshToken && user) {
+        this.userData = {
+          access: token,
+          refresh: refreshToken,
+          avatar: user[0],
+          first_name: user[1],
+          last_name: user[2]
+        };
+        this.rehydrate();
       }
-      this.rehydrate()
-     }
     },
     setUserName(value: string) {
-      if ( this.userData ) {
+      if (this.userData) {
         this.userData.username = value;
       }
     },
     setUserAvatar(value: string) {
-      if ( this.userData ) {
+      if (this.userData) {
         this.userData.avatar = value;
       }
     },
     logout() {
       this.userData = null;
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
     },
     async rehydrate() {
-      let tokenInfo = parseJwt(localStorage.getItem("token") || this.userData?.access);
-      if ( tokenInfo ) {
+      let tokenInfo = parseJwt(
+        localStorage.getItem('token') || this.userData?.access
+      );
+      if (tokenInfo) {
         const expiredTime = tokenInfo.exp * 1000;
         if (expiredTime < new Date().getTime()) {
-          const { data, error } = await useAPIFetch<RefreshInfo>("/api/refresh_token/", {
-            method: "post",
-            body: { refresh: localStorage.getItem("refreshToken") || this.userData?.refresh},
-          });
+          const { data, error } = await useAPIFetch<RefreshInfo>(
+            '/api/refresh_token/',
+            {
+              method: 'post',
+              body: {
+                refresh:
+                  localStorage.getItem('refreshToken') || this.userData?.refresh
+              }
+            }
+          );
           if (error.value) {
             const notifyStore = useNotificationStore();
             await notifyStore.setNotification({
-              type: "error",
-              message: error.value.data.detail + ". Please log in again using your credentials.",
+              type: 'error',
+              message:
+                error.value.data.detail +
+                '. Please log in again using your credentials.'
             });
           }
           if (data.value) {
             this.userData!.access = data.value.access;
-            localStorage.setItem("token", data.value.access);
+            localStorage.setItem('token', data.value.access);
           }
         }
       }
     }
-  },
+  }
 });
 
-export const useNotificationStore = defineStore("notification", {
+export const useNotificationStore = defineStore('notification', {
   state: () => {
     return {
-      notifications: [] as Notification[],
+      notifications: [] as Notification[]
     };
   },
   getters: {
-    notificationsArray: (state) => state.notifications,
+    notificationsArray: (state) => state.notifications
   },
   actions: {
     setNotification(data: Notification) {
       const dataObject = {
         type: data.type,
         message: data.message,
-        id: this.notifications.length && this.notifications[this.notifications.length - 1].id
-          ? this.notifications[this.notifications.length - 1].id! + 1
-          : 0,
-      }
+        id:
+          this.notifications.length &&
+          this.notifications[this.notifications.length - 1].id
+            ? this.notifications[this.notifications.length - 1].id! + 1
+            : 0
+      };
       this.notifications.push(dataObject);
       this.removeNotificationDelayed(dataObject.id, 5000);
     },
     removeNotificationDelayed(id: number, delay: number) {
       setTimeout(() => {
-        this.notifications = this.notifications.filter((item) => item.id !== id);
+        this.notifications = this.notifications.filter(
+          (item) => item.id !== id
+        );
       }, delay);
-    },
-  },
+    }
+  }
 });
 
-export const useModalsStore = defineStore("modal", {
+export const useModalsStore = defineStore('modal', {
   state: () => {
     return {
-      currentModal: null as null | Modal,
+      currentModal: null as null | Modal
     };
   },
   getters: {
-    curModal: (state) => state.currentModal,
+    curModal: (state) => state.currentModal
   },
   actions: {
     setModal(modalName: string, additionalData: any, prevRoute?: string) {
@@ -151,10 +174,10 @@ export const useModalsStore = defineStore("modal", {
         name: modalName,
         title: additionalData || '',
         prevRoute: prevRoute ? prevRoute : ''
-      }
+      };
     },
     removeModal() {
       this.currentModal = null;
-    },
-  },
+    }
+  }
 });

@@ -3,31 +3,74 @@
     <v-card-title>Profile</v-card-title>
     <v-row :class="!display.mdAndUp ? 'flex-column' : ''">
       <v-col cols="4" :class="!display.mdAndUp ? 'flex-unset' : ''">
-        <v-avatar color="grey" class="avatar-preview" :size="display.mdAndUp ? '290' : '100%'"
-          :image="currentFilePreview ? currentFilePreview : `${profile.avatar_url}`">
+        <v-avatar
+          color="grey"
+          class="avatar-preview"
+          :size="display.mdAndUp ? '290' : '100%'"
+          :image="
+            currentFilePreview ? currentFilePreview : `${profile.avatar_url}`
+          "
+        >
         </v-avatar>
-        <v-file-input class="file-input mt-3" label="Change Image" variant="underlined" clearable
-          accept="image/jpeg, image/png, image/gif" v-model="profileImage" :multiple="false" @change="setFile($event)"
-          @click:clear="currentFilePreview = ''"></v-file-input>
+        <v-file-input
+          class="file-input mt-3"
+          label="Change Image"
+          variant="underlined"
+          clearable
+          accept="image/jpeg, image/png, image/gif"
+          v-model="profileImage"
+          :multiple="false"
+          @change="setFile($event)"
+          @click:clear="currentFilePreview = ''"
+        ></v-file-input>
       </v-col>
       <v-col cols="4">
-        <v-text-field label="Name" v-model="profile.first_name" variant="outlined" hide-details class="pb-4" />
-        <v-text-field label="Last name" v-model="profile.last_name" variant="outlined" hide-details class="pb-4" />
+        <v-text-field
+          label="Name"
+          v-model="profile.first_name"
+          variant="outlined"
+          hide-details
+          class="pb-4"
+        />
+        <v-text-field
+          label="Last name"
+          v-model="profile.last_name"
+          variant="outlined"
+          hide-details
+          class="pb-4"
+        />
         <!-- <v-text-field
           label="Email"
           v-model="profile.email"
           outlined
           hide-details
         /> -->
-        <v-text-field label="Username" v-model="profile.username" variant="outlined" hide-details class="pb-4" />
+        <v-text-field
+          label="Username"
+          v-model="profile.username"
+          variant="outlined"
+          hide-details
+          class="pb-4"
+        />
       </v-col>
     </v-row>
 
     <div class="mt-6">
-      <v-textarea label="About" v-model="profile.about" outlined counter="250" />
+      <v-textarea
+        label="About"
+        v-model="profile.about"
+        outlined
+        counter="250"
+      />
       <div class="subtitle">Following</div>
       <v-chip-group>
-        <v-chip v-for=" tag  in  tags " :key="tag" closable @click:close="removeTag(tag)" @click="searchByTag(tag)">
+        <v-chip
+          v-for="tag in tags"
+          :key="tag"
+          closable
+          @click:close="removeTag(tag)"
+          @click="searchByTag(tag)"
+        >
           {{ tag }}
         </v-chip>
       </v-chip-group>
@@ -37,7 +80,12 @@
       <v-btn color="blue darken-1" variant="text" @click="redirectToHomePage()">
         Cancel
       </v-btn>
-      <v-btn color="blue darken-1" variant="text" @click="profileSend()" :loading="sendLoading">
+      <v-btn
+        color="blue darken-1"
+        variant="text"
+        @click="profileSend()"
+        :loading="sendLoading"
+      >
         Save
       </v-btn>
     </v-card-actions>
@@ -45,14 +93,12 @@
 </template>
 
 <script setup lang="ts">
-import { useDisplay } from "vuetify";
-import { useNotificationStore, useUserStore } from "~/store";
-import type { ProfileInfo } from "~/types";
+import { useDisplay } from 'vuetify';
+import { useNotificationStore, useUserStore } from '~/store';
+import type { ProfileInfo } from '~/types';
 
 definePageMeta({
-  middleware: [
-    'auth',
-  ]
+  middleware: ['auth']
 });
 
 interface TagsResponse {
@@ -67,23 +113,23 @@ interface TagInfo {
     id: number;
     name: string;
     slug: string;
-  }
+  };
 }
 
 const display = ref(useDisplay() || null);
 const profileImage: Ref<File[]> = ref([]);
-const currentFilePreview = ref('')
+const currentFilePreview = ref('');
 const profile: Ref<ProfileInfo> = ref({
-  first_name: "",
-  last_name: "",
-  email: "",
-  about: "",
-  username: "",
-  avatar_url: "",
+  first_name: '',
+  last_name: '',
+  email: '',
+  about: '',
+  username: '',
+  avatar_url: '',
   avatar: null,
-  country: "",
+  country: ''
 });
-const tags = ref(["ml", "technologies", "biology", "mathematics"]);
+const tags = ref(['ml', 'technologies', 'biology', 'mathematics']);
 const sendLoading = ref(false);
 
 function setFile(files: File[]) {
@@ -91,20 +137,21 @@ function setFile(files: File[]) {
     currentFilePreview.value = URL.createObjectURL(profileImage.value[0]);
   }
 }
-const { data } = await useAPIFetch<ProfileInfo>("/api/profile/");
+const { data } = await useAPIFetch<ProfileInfo>('/api/profile/');
 if (data.value) {
   profile.value = data.value;
 }
 
-const { data: followedTags } = await useAPIFetch<TagsResponse>("api/followed-tags/");
+const { data: followedTags } =
+  await useAPIFetch<TagsResponse>('api/followed-tags/');
 if (followedTags.value) {
   tags.value = followedTags.value!.results.reduce((acc, value) => {
-    return acc.concat(value.followed_tag.name)
+    return acc.concat(value.followed_tag.name);
   }, [] as string[]);
 }
 
 async function redirectToHomePage() {
-  await navigateTo("/");
+  await navigateTo('/');
 }
 
 async function profileSend() {
@@ -117,24 +164,23 @@ async function profileSend() {
   }
   for (const keyData in profile.value) {
     //@ts-ignore
-    formData.append(keyData, profile.value[keyData])
+    formData.append(keyData, profile.value[keyData]);
   }
-  const { data } = await useAPIFetch<ProfileInfo>("/api/profile/", {
-    method: "PUT",
-    body: formData,
+  const { data } = await useAPIFetch<ProfileInfo>('/api/profile/', {
+    method: 'PUT',
+    body: formData
   });
   sendLoading.value = false;
   if (data.value) {
     const notifyStore = useNotificationStore();
     await notifyStore.setNotification({
-      type: "success",
-      message: "Succesfully saved",
+      type: 'success',
+      message: 'Succesfully saved'
     });
     const userStore = useUserStore();
-    userStore.setUserAvatar(data.value.avatar_url)
+    userStore.setUserAvatar(data.value.avatar_url);
   }
 }
-
 
 function removeTag(tag: string) {
   tags.value = tags.value.filter((item) => item !== tag);
@@ -145,7 +191,7 @@ async function searchByTag(tag: string) {
 </script>
 
 <style lang="less" scoped>
-@import "../assets/breakpoints.less";
+@import '../assets/breakpoints.less';
 
 .profile-card {
   width: 100%;
