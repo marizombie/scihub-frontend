@@ -173,6 +173,7 @@
           <slot />
         </v-container>
       </v-main>
+      <cookie-banner v-if="route.name !== 'privacy-policy'"/>
     </v-theme-provider>
   </v-app>
 </template>

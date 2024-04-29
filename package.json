@@ -8,7 +8,8 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "prettier": "prettier --write \"**/*.{js,ts,vue,json}\""
+    "prettier": "prettier --write \"**/*.{js,ts,vue,json}\"",
+    "clean": "rm yarn.lock && rm -r node_modules"
   },
   "devDependencies": {
     "@mdi/js": "^7.2.96",
