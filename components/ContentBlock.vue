@@ -83,7 +83,7 @@ function ImageParser(block: any) {
   return `
     <figure>
       <img src="${block.data.file.url}" alt="${block.data.caption}">
-      <figcaption>${block.data.caption}.</figcaption>
+      <figcaption>${block.data.caption}</figcaption>
     </figure>
     `;
 }
