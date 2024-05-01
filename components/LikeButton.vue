@@ -12,9 +12,9 @@
         class="Heart"
         d="M17.5 27L15.9775 25.6332C10.57 20.7978 7 17.6087 7 13.6948C7 10.5057 9.541 8 12.775 8C14.602 8 16.3555 8.83869 17.5 10.164C18.6445 8.83869 20.398 8 22.225 8C25.459 8 28 10.5057 28 13.6948C28 17.6087 24.43 20.7978 19.0225 25.6436L17.5 27Z"
         :class="{
-          unfilledHeart: !clicked,
+          unfilledHeart: !props.isClicked,
           heartAnimation: startAnimation,
-          filledHeart: clicked,
+          filledHeart: props.isClicked,
           heartUnfillAnimation: startUnfillAnimation
         }"
       />
@@ -46,11 +46,19 @@ if (props.isClicked) {
 }
 
 watch(
-  () => props.isClicked,
-  () => {
-    clicked.value = props.isClicked;
+  () => props.toggable,
+  (val) => {
+    if (!val) {
+      clicked.value = false;
+    }
   }
 );
+
+watch(() => props.isClicked, (val) => {
+  if (props.toggable && val) {
+    clicked.value = true;
+  }
+})
 
 function clickHeart() {
   if (props.toggable) {
@@ -62,13 +70,11 @@ function clickHeart() {
       setTimeout(() => {
         startAnimation.value = false;
         startRippleAnimation.value = false;
-        clicked.value = !clicked.value;
       }, 600);
     } else {
       startUnfillAnimation.value = true;
       setTimeout(() => {
         startUnfillAnimation.value = false;
-        clicked.value = !clicked.value;
       }, 600);
     }
   }
