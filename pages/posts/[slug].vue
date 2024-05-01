@@ -61,7 +61,7 @@
               }}</span>
             </div>
           </v-col>
-          <v-col cols="2" class="d-flex justify-end align-center">
+          <v-col :cols="!display.mdAndUp ? 6 : 2" class="d-flex justify-end align-center post-top-buttons">
             <v-btn
               variant="plain"
               :ripple="false"
@@ -892,6 +892,15 @@ useSeoMeta({
   span {
     font-size: large;
     font-style: italic;
+  }
+}
+
+.post-top-buttons {
+  button {
+    @media (max-width: @md-min) {
+      padding: 0px;
+      min-width: 36px;
+    }
   }
 }
 </style>
