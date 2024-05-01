@@ -4,7 +4,6 @@
       <div v-for="item in notifications" :key="item.id">
         <v-alert
           class="mb-4"
-          eager
           :text="item.message"
           :type="item.type"
           density="compact"
@@ -28,7 +27,15 @@ let notifications = computed(() => notificationStore.notificationsArray);
 @import '../assets/breakpoints.less';
 .absolute-block {
   position: absolute;
-  width: 400px;
+  width:  100%;
+  @media (min-width: @md-min) {
+    width: 400px;
+  }
+  :deep(.v-alert) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .notification {
@@ -38,6 +45,9 @@ let notifications = computed(() => notificationStore.notificationsArray);
   display: block;
   top: 140px;
   left: 10%;
+  :deep(.v-alert__prepend) {
+    display: none;
+  }
 
   @media (min-width: @md-min) {
     width: 450px;
