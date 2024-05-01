@@ -63,7 +63,7 @@
             inboxes</span
           >
         </div>
-        <div class="meta-block ml-4">
+        <div :class="['meta-block', display.mdAndUp ? 'ml-4' : '']">
           <span>
             Add or change tags so readers will know what your story is about
           </span>
@@ -83,7 +83,7 @@
             variant="outlined"
           >
           </v-autocomplete>
-          <div>
+          <div class="publish-action-buttons">
             <v-btn
               variant="text"
               @click="
@@ -115,7 +115,7 @@ import LinkTool from '@editorjs/link';
 import Undo from 'editorjs-undo';
 import Warning from '@editorjs/warning';
 import Table from '@editorjs/table';
-import { useTheme } from 'vuetify';
+import { useDisplay, useTheme } from 'vuetify';
 
 import AceCodeEditorJS, { type AceCodeConfig } from 'ace-code-editorjs';
 import ace from 'ace-builds';
@@ -333,6 +333,7 @@ const articleData = ref({
   tags: [],
   draftSlug: ''
 });
+const display = ref(useDisplay() || null);
 
 const config = useRuntimeConfig();
 const userStore = useUserStore();
@@ -590,6 +591,7 @@ function redirectToDrafts() {
 </script>
 
 <style lang="less" scoped>
+@import '../../assets/breakpoints.less';
 #editorjs {
   width: 100%;
   max-width: 800px;
@@ -612,19 +614,31 @@ function redirectToDrafts() {
 }
 
 .meta-content {
-  width: 100%;
-  max-width: 1200px;
   display: flex;
-  justify-content: center;
-  align-self: center;
-  height: 100vh;
-  align-items: center;
+  flex-direction: column;
+  @media (min-width: @md-min) {
+    flex-direction: row;
+    width: 100%;
+    max-width: 1200px;
+    justify-content: center;
+    align-self: center;
+    height: 100vh;
+    align-items: center;
+  }
+}
+
+.publish-action-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
 }
 
 .meta-block {
-  max-width: 400px;
   width: 100%;
   padding: 16px;
+  @media (min-width: @md-min) {
+    max-width: 400px;
+  }
 }
 
 .dark-theme {
