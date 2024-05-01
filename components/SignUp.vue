@@ -59,7 +59,7 @@
                   ></v-text-field>
                 </v-col>
               </v-row>
-              <v-row>
+              <v-row class="mb-2 pl-1">
                 <v-col class="pt-0 pb-0">
                   <p
                     class="errorField"

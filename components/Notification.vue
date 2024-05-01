@@ -1,16 +1,20 @@
 <template>
   <div class="notification">
-    <div v-for="item in notifications" :key="item.id">
-      <v-alert
-        class="mb-4"
-        eager
-        :text="item.message"
-        :type="item.type"
-        density="compact"
-        icon="false"
-      ></v-alert>
+    <div class="absolute-block">
+      <div v-for="item in notifications" :key="item.id">
+        <v-alert
+          class="mb-4"
+          eager
+          :text="item.message"
+          :type="item.type"
+          density="compact"
+          icon="false"
+        ></v-alert>
+      </div>
     </div>
-  </div>
+ 
+    
+  </div> 
 </template>
 
 <script setup lang="ts">
@@ -22,6 +26,10 @@ let notifications = computed(() => notificationStore.notificationsArray);
 
 <style lang="less" scoped>
 @import '../assets/breakpoints.less';
+.absolute-block {
+  position: absolute;
+  width: 400px;
+}
 
 .notification {
   position: sticky;
@@ -30,7 +38,6 @@ let notifications = computed(() => notificationStore.notificationsArray);
   display: block;
   top: 140px;
   left: 10%;
-  margin-bottom: 20px;
 
   @media (min-width: @md-min) {
     width: 450px;

@@ -119,7 +119,7 @@ async function selectItem(item: Network) {
       );
       fbElem.setAttribute('target', '_blank');
       document.body.appendChild(fbElem);
-      fbElem.click();
+      await fbElem.click();
       document.body.removeChild(fbElem);
       break;
 
