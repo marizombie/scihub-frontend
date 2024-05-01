@@ -2,7 +2,7 @@
   <v-card :class="[display.mdAndUp ? 'pa-12' : 'pa-2', 'profile-card']">
     <v-card-title>Profile</v-card-title>
     <v-row :class="!display.mdAndUp ? 'flex-column' : ''">
-      <v-col cols="4" :class="!display.mdAndUp ? 'flex-unset' : ''">
+      <v-col :cols="!display.mdAndUp ? '' : 4" :class="!display.mdAndUp ? 'flex-unset' : ''">
         <v-avatar
           color="grey"
           class="avatar-preview"
@@ -24,7 +24,7 @@
           @click:clear="currentFilePreview = ''"
         ></v-file-input>
       </v-col>
-      <v-col cols="4">
+      <v-col :cols="!display.mdAndUp ? '' : 4">
         <v-text-field
           label="Name"
           v-model="profile.first_name"
@@ -63,7 +63,7 @@
         counter="250"
       />
       <div class="subtitle">Following</div>
-      <v-chip-group>
+      <v-chip-group :column="!display.mdAndUp">
         <v-chip
           v-for="tag in tags"
           :key="tag"
