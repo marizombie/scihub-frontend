@@ -11,9 +11,7 @@
         ></v-alert>
       </div>
     </div>
- 
-    
-  </div> 
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -27,7 +25,7 @@ let notifications = computed(() => notificationStore.notificationsArray);
 @import '../assets/breakpoints.less';
 .absolute-block {
   position: absolute;
-  width:  100%;
+  width: 100%;
   @media (min-width: @md-min) {
     width: 400px;
   }

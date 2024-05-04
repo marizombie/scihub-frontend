@@ -5,7 +5,10 @@
     :lines="display.lgAndUp ? 'one' : display.smAndUp ? 'two' : undefined"
   >
     <template v-slot:text>
-      Scihub uses cookies to enable and import the use of the website. Please see our <a href="/privacy-policy" target="_blank">Privacy Policy</a> for more information. By clicking "Accept Cookies" or continuing to use the site, you agree to the use of cookies.
+      Scihub uses cookies to enable and import the use of the website. Please
+      see our <a href="/privacy-policy" target="_blank">Privacy Policy</a> for
+      more information. By clicking "Accept Cookies" or continuing to use the
+      site, you agree to the use of cookies.
     </template>
 
     <template v-slot:actions>
@@ -25,14 +28,22 @@
         <v-card title="Cookie Settings">
           <v-card-text>
             <p class="pb-4">
-              Scihub use cookies to deliver and improve the visitor experience. Learn more about the cookies we use on our Cookie Policy page.
+              Scihub use cookies to deliver and improve the visitor experience.
+              Learn more about the cookies we use on our Cookie Policy page.
             </p>
 
-            <v-list-subheader class="font-weight-black text-high-emphasis">Required Cookies</v-list-subheader>
+            <v-list-subheader class="font-weight-black text-high-emphasis"
+              >Required Cookies</v-list-subheader
+            >
 
-            <p class="mb-4">These cookies are required for the site to function and cannot be turned off.</p>
+            <p class="mb-4">
+              These cookies are required for the site to function and cannot be
+              turned off.
+            </p>
 
-            <v-list-subheader class="font-weight-black text-high-emphasis">Performance Cookies</v-list-subheader>
+            <v-list-subheader class="font-weight-black text-high-emphasis"
+              >Performance Cookies</v-list-subheader
+            >
 
             <v-switch
               v-model="performance"
@@ -44,9 +55,14 @@
               inset
             ></v-switch>
 
-            <p class="mb-4">Counts website visits and clicks to understand where people most engage with links to make the experience better.</p>
+            <p class="mb-4">
+              Counts website visits and clicks to understand where people most
+              engage with links to make the experience better.
+            </p>
 
-            <v-list-subheader class="font-weight-black text-high-emphasis">Advertising Cookies</v-list-subheader>
+            <v-list-subheader class="font-weight-black text-high-emphasis"
+              >Advertising Cookies</v-list-subheader
+            >
 
             <v-switch
               v-model="advertising"
@@ -58,7 +74,12 @@
               inset
             ></v-switch>
 
-            <p class="mb-16">Set by our advertising partners, these cookies are used to build a profile of your interests and show you relevant ads on other sites. They do not store personal information, but are based on uniquely identifying your browser and internet device.</p>
+            <p class="mb-16">
+              Set by our advertising partners, these cookies are used to build a
+              profile of your interests and show you relevant ads on other
+              sites. They do not store personal information, but are based on
+              uniquely identifying your browser and internet device.
+            </p>
           </v-card-text>
 
           <v-divider></v-divider>
@@ -69,7 +90,7 @@
               color="primary"
               rounded="0"
               variant="plain"
-              @click="dialog=false"
+              @click="dialog = false"
             >
               Decline All
             </v-btn>
@@ -79,7 +100,7 @@
               color="primary"
               rounded="0"
               variant="flat"
-              @click="dialog=false"
+              @click="dialog = false"
             >
               Save and Accept
             </v-btn>
@@ -102,20 +123,20 @@
 <script setup lang="ts">
 import { useDisplay } from 'vuetify';
 
-  const dialog = ref(false);
-  const advertising = ref(false); 
-  const performance = ref(false);
-  const display = ref(useDisplay() || null);
+const dialog = ref(false);
+const advertising = ref(false);
+const performance = ref(false);
+const display = ref(useDisplay() || null);
 </script>
 
 <style lang="less">
 @import '../assets/breakpoints.less';
 .cookieBanner {
-  position: sticky!important;
+  position: sticky !important;
   bottom: 0px;
-  background: hsla(0,0%,100%,.4)!important;
-  backdrop-filter: blur(4px)!important;
-  border-top: 1px solid rgba(0, 0, 0, 0.1)!important;
+  background: hsla(0, 0%, 100%, 0.4) !important;
+  backdrop-filter: blur(4px) !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.1) !important;
   z-index: 9999;
   min-height: 190px;
   @media (min-width: @sm-min) {

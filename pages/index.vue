@@ -7,36 +7,36 @@
 </i18n>
 
 <template>
-  <v-row justify="center" v-if="showDeleteDialog">
-    <v-dialog v-model="showDeleteDialog" max-width="600px">
-      <v-card>
-        <v-card-title class="mt-4">
-          <span class="text-h5 pl-6">Are you sure want to delete?</span>
-        </v-card-title>
-        <v-card-text class="pb-0">
-          Deletion is not reversible. After you delete your story, we can't help
-          you to restore it.
-        </v-card-text>
-        <v-card-actions class="mb-4">
-          <v-spacer></v-spacer>
-          <v-btn
-            color="blue darken-1"
-            variant="text"
-            @click="showDeleteDialog = false"
-          >
-            Cancel
-          </v-btn>
-          <v-btn
-            variant="text"
-            class="mr-6 removeClass"
-            @click="onDeletePost()"
-          >
-            Delete
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-row>
+  <v-dialog
+    v-if="showDeleteDialog"
+    class="delete-modal"
+    v-model="showDeleteDialog"
+    max-width="600px"
+    absolute
+  >
+    <v-card>
+      <v-card-title class="mt-4">
+        <span class="text-h5">Are you sure want to delete?</span>
+      </v-card-title>
+      <v-card-text class="pa-0 pl-4">
+        Deletion is not reversible. After you delete your story, we can't help
+        you to restore it.
+      </v-card-text>
+      <v-card-actions class="mb-4">
+        <v-spacer></v-spacer>
+        <v-btn
+          color="blue darken-1"
+          variant="text"
+          @click="showDeleteDialog = false"
+        >
+          Cancel
+        </v-btn>
+        <v-btn variant="text" class="mr-6 removeClass" @click="onDeletePost()">
+          Delete
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
   <v-row justify-md="center">
     <v-col :class="[filterByTags.length ? 'mt-6' : '']" md="7">
       <div>
@@ -722,5 +722,11 @@ let recommendedPosts = recomendations.value;
 
 .full-height {
   min-height: 100vh;
+}
+
+.delete-modal {
+  line-height: 24px;
+  font-size: 16px;
+  font-family: Roboto, sans-serif;
 }
 </style>

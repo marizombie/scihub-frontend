@@ -54,11 +54,14 @@ watch(
   }
 );
 
-watch(() => props.isClicked, (val) => {
-  if (props.toggable && val) {
-    clicked.value = true;
+watch(
+  () => props.isClicked,
+  (val) => {
+    if (props.toggable && val) {
+      clicked.value = true;
+    }
   }
-})
+);
 
 function clickHeart() {
   if (props.toggable) {

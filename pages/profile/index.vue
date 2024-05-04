@@ -2,7 +2,10 @@
   <v-card :class="[display.mdAndUp ? 'pa-12' : 'pa-2', 'profile-card']">
     <v-card-title>Profile</v-card-title>
     <v-row :class="!display.mdAndUp ? 'flex-column' : ''">
-      <v-col :cols="!display.mdAndUp ? '' : 4" :class="!display.mdAndUp ? 'flex-unset' : ''">
+      <v-col
+        :cols="!display.mdAndUp ? '' : 4"
+        :class="!display.mdAndUp ? 'flex-unset' : ''"
+      >
         <v-avatar
           color="grey"
           class="avatar-preview"
@@ -86,7 +89,9 @@
         variant="text"
         @click="profileSend()"
         :loading="sendLoading"
-        :disabled="rules[0](profileImage) === 'Avatar size should be less than 2 MB!'"
+        :disabled="
+          rules[0](profileImage) === 'Avatar size should be less than 2 MB!'
+        "
       >
         Save
       </v-btn>
@@ -133,10 +138,15 @@ const profile: Ref<ProfileInfo> = ref({
 });
 const tags = ref(['ml', 'technologies', 'biology', 'mathematics']);
 const sendLoading = ref(false);
-const  rules = ref([
+const rules = ref([
   (value: any) => {
-    return !value || !value.length || value[0].size < 2000000 || 'Avatar size should be less than 2 MB!'
-  },
+    return (
+      !value ||
+      !value.length ||
+      value[0].size < 2000000 ||
+      'Avatar size should be less than 2 MB!'
+    );
+  }
 ]);
 
 function setFile(files: File[]) {

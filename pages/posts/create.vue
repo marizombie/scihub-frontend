@@ -357,26 +357,29 @@ const editor = new EditorJS({
         //   // byUrl: 'http://localhost:8008/fetchUrl', // Your endpoint that provides uploading by Url
         // },
         uploader: {
-          async uploadByFile(file: File){
+          async uploadByFile(file: File) {
             if (file.size > 3000000) {
               const notifyStore = useNotificationStore();
               await notifyStore.setNotification({
                 type: 'error',
                 message: 'Image size should be less than 3 MB!'
               });
-              editor.blocks.delete()
+              editor.blocks.delete();
               return {
                 success: 0,
                 file: null
-              }
+              };
             }
             const formData = new FormData();
             formData.append('image', file);
             formData.append('draft_slug', articleData.value.draftSlug);
-            const { data, error } = await useAPIFetch<GetPostOrDraftResponse>(`${config.public.baseURL}api/upload/postimage/`, {
-              method: 'POST',
-              body: formData,
-            })
+            const { data, error } = await useAPIFetch<GetPostOrDraftResponse>(
+              `${config.public.baseURL}api/upload/postimage/`,
+              {
+                method: 'POST',
+                body: formData
+              }
+            );
             if (error.value?.data) {
               const notifyStore = useNotificationStore();
               await notifyStore.setNotification({
@@ -385,9 +388,9 @@ const editor = new EditorJS({
               });
             }
             if (data.value) {
-              return data.value
+              return data.value;
             }
-          },
+          }
         }
       }
     },
@@ -661,9 +664,9 @@ function redirectToDrafts() {
 }
 
 .publish-action-buttons {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .meta-block {

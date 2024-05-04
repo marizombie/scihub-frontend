@@ -13,12 +13,13 @@
     v-model="showDeleteDialog"
     max-width="600px"
     v-if="showDeleteDialog"
+    class="delete-modal"
   >
     <v-card>
-      <v-card-title class="mt-4">
-        <span class="text-h5 pl-6">Are you sure want to delete?</span>
+      <v-card-title class="mt-4 pa-0 pl-4 pb-4">
+        <span class="text-h5">Are you sure want to delete?</span>
       </v-card-title>
-      <v-card-text class="pb-0">
+      <v-card-text class="pa-0 pl-4">
         Deletion is not reversible. After you delete your story, we can't help
         you to restore it.
       </v-card-text>
@@ -61,7 +62,10 @@
               }}</span>
             </div>
           </v-col>
-          <v-col :cols="!display.mdAndUp ? 3 : 2" class="d-flex justify-end align-center post-top-buttons">
+          <v-col
+            :cols="!display.mdAndUp ? 3 : 2"
+            class="d-flex justify-end align-center post-top-buttons"
+          >
             <v-btn
               variant="plain"
               :ripple="false"
@@ -902,5 +906,11 @@ useSeoMeta({
       min-width: 36px;
     }
   }
+}
+
+.delete-modal {
+  line-height: 24px;
+  font-size: 16px;
+  font-family: Roboto, sans-serif;
 }
 </style>
