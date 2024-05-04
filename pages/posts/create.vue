@@ -128,7 +128,7 @@ import modePHPWorker from 'ace-builds/src-noconflict/worker-php?url';
 import modeXMLWorker from 'ace-builds/src-noconflict/worker-xml?url';
 import modeYamlWorker from 'ace-builds/src-noconflict/worker-yaml?url';
 import modeJsonWorker from 'ace-builds/src-noconflict/worker-json?url';
-import { useUserStore } from '~/store';
+import { useNotificationStore, useUserStore } from '~/store';
 import type { Article } from '~/types';
 import * as yup from 'yup';
 
@@ -352,9 +352,42 @@ const editor = new EditorJS({
         additionalRequestData: {
           draft_slug: articleData.value.draftSlug
         },
-        endpoints: {
-          byFile: `${config.public.baseURL}api/upload/postimage/` // Your backend file uploader endpoint
-          // byUrl: 'http://localhost:8008/fetchUrl', // Your endpoint that provides uploading by Url
+        // endpoints: {
+        //   byFile: `${config.public.baseURL}api/upload/postimage/` // Your backend file uploader endpoint
+        //   // byUrl: 'http://localhost:8008/fetchUrl', // Your endpoint that provides uploading by Url
+        // },
+        uploader: {
+          async uploadByFile(file: File){
+            if (file.size > 3000000) {
+              const notifyStore = useNotificationStore();
+              await notifyStore.setNotification({
+                type: 'error',
+                message: 'Image size should be less than 3 MB!'
+              });
+              editor.blocks.delete()
+              return {
+                success: 0,
+                file: null
+              }
+            }
+            const formData = new FormData();
+            formData.append('image', file);
+            formData.append('draft_slug', articleData.value.draftSlug);
+            const { data, error } = await useAPIFetch<GetPostOrDraftResponse>(`${config.public.baseURL}api/upload/postimage/`, {
+              method: 'POST',
+              body: formData,
+            })
+            if (error.value?.data) {
+              const notifyStore = useNotificationStore();
+              await notifyStore.setNotification({
+                type: 'error',
+                message: error.value.data.detail
+              });
+            }
+            if (data.value) {
+              return data.value
+            }
+          },
         }
       }
     },
