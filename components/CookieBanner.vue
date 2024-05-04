@@ -139,11 +139,14 @@ const display = ref(useDisplay() || null);
   border-top: 1px solid rgba(0, 0, 0, 0.1) !important;
   z-index: 9999;
   min-height: 190px;
+  max-height: 190px;
   @media (min-width: @sm-min) {
     min-height: 130px;
+    max-height: 130px;
   }
   @media (min-width: @md-max) {
     min-height: 60px;
+    max-height: 60px;
   }
 }
 </style>
