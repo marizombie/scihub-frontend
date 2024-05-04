@@ -1,8 +1,8 @@
 <template>
   <v-banner
-    :stacked="false"
+    :stacked="display.mdAndUp ? false : true"
     class="cookieBanner"
-    lines="one"
+    :lines="display.lgAndUp ? 'one' : display.smAndUp ? 'two' : undefined"
   >
     <template v-slot:text>
       Scihub uses cookies to enable and import the use of the website. Please see our <a href="/privacy-policy" target="_blank">Privacy Policy</a> for more information. By clicking "Accept Cookies" or continuing to use the site, you agree to the use of cookies.
@@ -100,18 +100,29 @@
 </template>
 
 <script setup lang="ts">
+import { useDisplay } from 'vuetify';
+
   const dialog = ref(false);
   const advertising = ref(false); 
   const performance = ref(false);
+  const display = ref(useDisplay() || null);
 </script>
 
 <style lang="less">
+@import '../assets/breakpoints.less';
 .cookieBanner {
   position: sticky!important;
   bottom: 0px;
-  min-height: 60px;
   background: hsla(0,0%,100%,.4)!important;
   backdrop-filter: blur(4px)!important;
   border-top: 1px solid rgba(0, 0, 0, 0.1)!important;
+  z-index: 9999;
+  min-height: 190px;
+  @media (min-width: @sm-min) {
+    min-height: 130px;
+  }
+  @media (min-width: @md-max) {
+    min-height: 60px;
+  }
 }
 </style>
