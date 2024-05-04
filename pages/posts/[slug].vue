@@ -61,7 +61,7 @@
               }}</span>
             </div>
           </v-col>
-          <v-col :cols="!display.mdAndUp ? 6 : 2" class="d-flex justify-end align-center post-top-buttons">
+          <v-col :cols="!display.mdAndUp ? 3 : 2" class="d-flex justify-end align-center post-top-buttons">
             <v-btn
               variant="plain"
               :ripple="false"

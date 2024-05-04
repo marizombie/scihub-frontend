@@ -22,7 +22,7 @@
                   v-bind="props"
                   density="compact"
                   variant="solo"
-                  v-if="display.mdAndUp"
+                  v-if="display.smAndUp"
                   label="Search"
                   v-model="search"
                   single-line
@@ -52,7 +52,7 @@
             <v-switch
               v-model="darkTheme"
               hide-details
-              class="ml-3 mr-10"
+              :class="['ml-3', display.mdAndUp ? 'mr-10' : 'mr-2']"
               :label="` ${display.mdAndUp ? 'Dark theme' : ''}`"
             />
             <Auth
@@ -141,7 +141,7 @@
           </div>
         </div>
 
-        <div v-if="!display.mdAndUp" class="additional-search mb-2">
+        <div v-if="!display.smAndUp" class="additional-search mb-2">
           <v-menu>
             <template v-slot:activator="{ props }">
               <v-text-field
@@ -308,6 +308,7 @@ watch(
       display: flex;
       flex-direction: column;
       padding: 4px;
+      min-height: 100%;
     }
 
     .main-content {
