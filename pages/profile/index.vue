@@ -17,6 +17,7 @@
           label="Change Image"
           variant="underlined"
           clearable
+          :rules="rules"
           accept="image/jpeg, image/png, image/gif"
           v-model="profileImage"
           :multiple="false"
@@ -85,6 +86,7 @@
         variant="text"
         @click="profileSend()"
         :loading="sendLoading"
+        :disabled="rules[0](profileImage) === 'Avatar size should be less than 2 MB!'"
       >
         Save
       </v-btn>
@@ -131,6 +133,11 @@ const profile: Ref<ProfileInfo> = ref({
 });
 const tags = ref(['ml', 'technologies', 'biology', 'mathematics']);
 const sendLoading = ref(false);
+const  rules = ref([
+  (value: any) => {
+    return !value || !value.length || value[0].size < 2000000 || 'Avatar size should be less than 2 MB!'
+  },
+]);
 
 function setFile(files: File[]) {
   if (profileImage.value) {
