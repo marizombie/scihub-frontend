@@ -159,7 +159,7 @@
             <v-tooltip activator="parent" location="bottom"
               >Open comments</v-tooltip
             >
-            <v-icon size="26">mdi-comment-multiple</v-icon>
+            <v-icon size="24">mdi-comment-multiple</v-icon>
             {{ article.comments_count }}
           </v-btn>
         </div>
@@ -278,7 +278,7 @@
           auto-grow
         ></v-textarea>
         <div class="d-flex justify-end mr-4">
-          <v-btn color="primary" @click="sendComment()">Send</v-btn>
+          <v-btn :disabled="!newCommentText.length" color="primary" @click="sendComment()">Send</v-btn>
         </div>
       </div>
       <div v-else>
@@ -295,7 +295,7 @@
       >
         <div :class="[createdCommentId === item.id ? 'created-comment' : '']">
           <div
-            class="author-info author-block d-flex"
+            class="author-info author-block d-flex ml-2"
             @click="goToAuthorPosts(item.author_name)"
           >
             <v-avatar size="48" class="mr-1">
@@ -314,7 +314,7 @@
           <div class="ml-2 mt-2">
             {{ item.text }}
           </div>
-          <div class="ml-2 mt-3 d-flex align-center">
+          <div class="ml-2 mt-2 d-flex align-center">
             <LikeButton
               @click="sendUpvote(item)"
               :toggable="!!userStore.userInfo?.access"
@@ -329,7 +329,7 @@
               class="plain-custom-style"
               :ripple="false"
             >
-              <v-icon size="30"> mdi-message-reply-outline </v-icon>
+              <v-icon size="24"> mdi-message-reply-outline </v-icon>
               {{ item.replies_count }}
               <v-tooltip activator="parent" location="bottom"
                 >Open discussion</v-tooltip
@@ -359,7 +359,7 @@
             auto-grow
           ></v-textarea>
           <div class="d-flex justify-end mr-4">
-            <v-btn color="primary" @click="sendComment(openReplies)"
+            <v-btn :disabled="!openReplies.value.length" color="primary" @click="sendComment(openReplies)"
               >Send</v-btn
             >
           </div>
