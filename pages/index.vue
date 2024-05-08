@@ -377,6 +377,30 @@ async function fetchDefaultPosts() {
   currentShowList.value = posts.value!.results;
 }
 
+const tabsMap = {
+  '': 1,
+  bookmarks: 2,
+  myArticles: 3,
+  drafts: 4,
+  upPosts: 5,
+  upComments: 6
+};
+const router = useRouter();
+watch(
+  () => router,
+  (val) => {
+    if (val.currentRoute.value.query?.tab) {
+      let tabString = val.currentRoute.value.query?.tab as keyof typeof tabsMap;
+      tab.value = tabsMap[tabString];
+    } else {
+      if (tab.value !== 1) {
+        tab.value = tabsMap[''];
+      }
+    }
+  },
+  { deep: true, immediate: true }
+);
+
 watch(
   tab,
   async (val, oldVal) => {
@@ -384,7 +408,6 @@ watch(
       return;
     }
     if (route.query.userName && oldVal === 0) {
-      const router = useRouter();
       router.replace('/');
       filterByUser.value = '';
       userProfile.value = null;
@@ -392,8 +415,10 @@ watch(
 
     switch (val) {
       case 0:
+        router.push('');
         break;
       case 2:
+        router.push('/?tab=bookmarks');
         const { data: bookmarkPosts } = await useAPIFetch<CRUDResponse>(
           `/api/bookmarks/?limit=5&offset=0`
         );
@@ -401,6 +426,7 @@ watch(
         currentShowList.value = bookmarkPosts.value!.results;
         break;
       case 3:
+        router.push('/?tab=myArticles');
         const { data: myArticles } = await useAPIFetch<CRUDResponse>(
           `api/users/${userStore.userInfo?.username}`
         );
@@ -408,6 +434,7 @@ watch(
         currentShowList.value = myArticles.value!.results;
         break;
       case 4:
+        router.push('/?tab=drafts');
         const { data: drafts } = await useAPIFetch<CRUDResponse>(
           `api/drafts/?limit=5&offset=0`,
           {
@@ -418,12 +445,14 @@ watch(
         currentShowList.value = drafts.value!.results;
         break;
       case 5:
+        router.push('/?tab=upPosts');
         const { data: upvotedPosts } =
           await useAPIFetch<CRUDResponse>(`api/upvoted-posts/`);
         currentRequest.value = `api/upvoted-posts/`;
         currentShowList.value = upvotedPosts.value!.results;
         break;
       case 6:
+        router.push('/?tab=upComments');
         const { data: upvotedComments } = await useAPIFetch<CRUDResponse>(
           `api/upvoted-comments/`
         );
@@ -432,6 +461,7 @@ watch(
         break;
       case 1:
       default:
+        router.push('/');
         fetchDefaultPosts();
         break;
     }

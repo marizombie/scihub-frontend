@@ -278,7 +278,12 @@
           auto-grow
         ></v-textarea>
         <div class="d-flex justify-end mr-4">
-          <v-btn :disabled="!newCommentText.length" color="primary" @click="sendComment()">Send</v-btn>
+          <v-btn
+            :disabled="!newCommentText.length"
+            color="primary"
+            @click="sendComment()"
+            >Send</v-btn
+          >
         </div>
       </div>
       <div v-else>
@@ -359,7 +364,10 @@
             auto-grow
           ></v-textarea>
           <div class="d-flex justify-end mr-4">
-            <v-btn :disabled="!openReplies.value.length" color="primary" @click="sendComment(openReplies)"
+            <v-btn
+              :disabled="!openReplies.value.length"
+              color="primary"
+              @click="sendComment(openReplies)"
               >Send</v-btn
             >
           </div>
@@ -469,7 +477,7 @@ if (error.value) {
       statusCode: 404,
       statusMessage: 'Page Not Found',
       fatal: true
-    })
+    });
   }
 }
 article.value = articleData.value;
