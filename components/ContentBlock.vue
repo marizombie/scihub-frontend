@@ -72,6 +72,7 @@ function QuoteParser(block: any) {
 function LinkToolParser(block: any) {
   return `
       <a class="link-tool__content link-tool__content--rendered" target="_blank" rel="nofollow noindex noreferrer" href="${block.data.link}">
+        <div class="link-tool__image" style="background-image: url(${block.data.meta.image.url});"></div>
         <div class="link-tool__title">${block.data.meta.title}</div>
         <p class="link-tool__description">${block.data.meta.description}</p>
         <span class="link-tool__anchor"${block.data.link}</span>
