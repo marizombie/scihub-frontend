@@ -793,7 +793,7 @@ useSeoMeta({
   ogTitle: () => article.value ? article.value.title : '',
   description: () => article.value ? article.value.description : '',
   ogDescription: () => article.value ? article.value.description : '',
-  ogImage: () => article.value ? article.value.preview_image ||  (article.value.images && article.value.images[0].image_url) : '',
+  ogImage: () => article.value && article.value.images[0] ? article.value.images[0].image_url : article.value?.preview_image ? article.value.preview_image : '',
   twitterCard: () => 'summary_large_image',
   ogUrl: () => window.location.href.split('?')[0],
   ogType: 'article',
