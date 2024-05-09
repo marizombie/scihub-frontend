@@ -46,7 +46,7 @@ function TableParser(block: any) {
 
 function QuoteParser(block: any) {
   return `
-    <blockquote style="text-align: ${block.data.alignment}">"${block.data.text}" - <span class="quoteCaption">${block.data.caption}</span></blockquote>
+    <blockquote style="text-align: ${block.data.alignment}">"${block.data.text}" ${block.data.caption ? '-' : ''} <span class="quoteCaption">${block.data.caption}</span></blockquote>
     `;
 }
 
