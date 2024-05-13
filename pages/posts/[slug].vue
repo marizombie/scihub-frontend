@@ -789,14 +789,19 @@ async function showSignUpModal() {
 
 // TODO: Check meta data after deployment. https://nuxt.com/docs/getting-started/seo-meta
 useSeoMeta({
-  title: () => article.value ? article.value.title : '',
-  ogTitle: () => article.value ? article.value.title : '',
-  description: () => article.value ? article.value.description : '',
-  ogDescription: () => article.value ? article.value.description : '',
-  ogImage: () => article.value && article.value.images[0] ? article.value.images[0].image_url : article.value?.preview_image ? article.value.preview_image : '',
+  title: () => (article.value ? article.value.title : ''),
+  ogTitle: () => (article.value ? article.value.title : ''),
+  description: () => (article.value ? article.value.description : ''),
+  ogDescription: () => (article.value ? article.value.description : ''),
+  ogImage: () =>
+    article.value && article.value.images[0]
+      ? article.value.images[0].image_url
+      : article.value?.preview_image
+        ? article.value.preview_image
+        : '',
   twitterCard: () => 'summary_large_image',
   ogUrl: () => window.location.href.split('?')[0],
-  ogType: 'article',
+  ogType: 'article'
 });
 </script>
 

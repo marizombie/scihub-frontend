@@ -89,6 +89,11 @@ function ImageParser(block: any) {
 }
 
 function CodeParser(block: any) {
+  if (block.data.language === 'html') {
+    block.data.code = block.data.code
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
   return `
     <pre>
       <code class="language-${block.data.language}">${block.data.code}</code>
@@ -168,7 +173,7 @@ onMounted(() => {
     text-decoration: none !important;
 
     &::after {
-      content: "";
+      content: '';
       clear: both;
       display: table;
     }
@@ -176,13 +181,13 @@ onMounted(() => {
     &--rendered {
       background: #fff;
       border: 1px solid rgba(201, 201, 204, 0.48);
-      box-shadow: 0 1px 3px rgba(0,0,0, .1);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
       border-radius: 6px;
       will-change: filter;
       animation: link-in 450ms 1 cubic-bezier(0.215, 0.61, 0.355, 1);
 
       &:hover {
-        box-shadow: 0 0 3px rgba(0,0,0, .16);
+        box-shadow: 0 0 3px rgba(0, 0, 0, 0.16);
       }
     }
   }

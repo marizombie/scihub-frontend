@@ -391,7 +391,8 @@ watch(
   (val) => {
     if (val.currentRoute.value.name === 'index') {
       if (val.currentRoute.value.query?.tab) {
-        let tabString = val.currentRoute.value.query?.tab as keyof typeof tabsMap;
+        let tabString = val.currentRoute.value.query
+          ?.tab as keyof typeof tabsMap;
         tab.value = tabsMap[tabString];
       } else {
         if (tab.value !== 1) {
