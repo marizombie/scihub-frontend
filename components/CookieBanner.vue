@@ -12,7 +12,7 @@
     </template>
 
     <template v-slot:actions>
-      <v-dialog v-model="dialog" max-width="500">
+      <v-dialog v-model="dialog" max-width="500" class="dialog-window">
         <template v-slot:activator="{ props }">
           <v-btn
             class="text-none"
@@ -35,6 +35,17 @@
             <v-list-subheader class="font-weight-black text-high-emphasis"
               >Required Cookies</v-list-subheader
             >
+
+            <v-switch
+              :value="true"
+              :label="'On'"
+              color="primary"
+              density="compact"
+              hide-details
+              inline
+              inset
+              disabled
+            ></v-switch>
 
             <p class="mb-4">
               These cookies are required for the site to function and cannot be
@@ -90,7 +101,7 @@
               color="primary"
               rounded="0"
               variant="plain"
-              @click="dialog = false"
+              @click="onDeclineAll()"
             >
               Decline All
             </v-btn>
@@ -100,7 +111,7 @@
               color="primary"
               rounded="0"
               variant="flat"
-              @click="dialog = false"
+              @click="onAccept()"
             >
               Save and Accept
             </v-btn>
@@ -113,6 +124,7 @@
         color="primary"
         rounded="0"
         variant="flat"
+        @click="onAcceptAll()"
       >
         Accept Cookies
       </v-btn>
@@ -122,11 +134,37 @@
 
 <script setup lang="ts">
 import { useDisplay } from 'vuetify';
+import { useCookiesStore } from '~/store';
 
 const dialog = ref(false);
 const advertising = ref(false);
 const performance = ref(false);
 const display = ref(useDisplay() || null);
+const cookiesStore = useCookiesStore();
+
+function onDeclineAll() {
+  cookiesStore.setCurrentAccepts({
+    advertisements: false,
+    performance: false
+  })
+  dialog.value = false;
+}
+
+function onAccept() {
+  cookiesStore.setCurrentAccepts({
+    advertisements: advertising.value,
+    performance: performance.value
+  })
+  dialog.value = false;
+}
+
+function onAcceptAll() {
+  cookiesStore.setCurrentAccepts({
+    advertisements: true,
+    performance: true
+  })
+  dialog.value = false;
+}
 </script>
 
 <style lang="less">
@@ -147,6 +185,18 @@ const display = ref(useDisplay() || null);
   @media (min-width: @md-max) {
     min-height: 60px;
     max-height: 60px;
+  }
+}
+
+.dialog-window {
+  max-height: calc(100% - 240px);
+  margin-top: 60px;
+  @media (min-width: @sm-min) {
+    max-height: calc(100% - 130px);
+  }
+  @media (min-width: @md-max) {
+    max-height: calc(100% - 80px);
+    margin-top: auto;
   }
 }
 </style>

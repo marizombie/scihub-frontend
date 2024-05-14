@@ -303,6 +303,11 @@
           </div>
         </NuxtLink>
       </div>
+      <div class="about-us">
+        <a href="/cookies-info" target="_blank">Cookies info</a>
+        <a href="/privacy-policy" target="_blank">Privacy Policy</a>
+        <a href="/terms-of-service" target="_blank">Terms of Service</a>
+      </div>
     </v-card>
   </v-row>
 </template>
@@ -761,5 +766,16 @@ let recommendedPosts = recomendations.value;
   line-height: 24px;
   font-size: 16px;
   font-family: Roboto, sans-serif;
+}
+
+.about-us {
+  display: flex;
+  flex-direction: row;
+  a {
+    padding-right: 10px;
+    font-size: 14px;
+    opacity: 0.6;
+    text-decoration: none;
+  }
 }
 </style>

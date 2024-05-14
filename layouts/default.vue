@@ -173,17 +173,18 @@
           <slot />
         </v-container>
       </v-main>
-      <cookie-banner v-if="route.name !== 'privacy-policy'" />
+      <cookie-banner v-if="!cookiesStore.getCurrentAccepts" />
     </v-theme-provider>
   </v-app>
 </template>
 
 <script setup lang="ts">
 import { useDisplay, useTheme } from 'vuetify';
-import { useModalsStore, useNotificationStore, useUserStore } from '~/store';
+import { useModalsStore, useNotificationStore, useUserStore, useCookiesStore } from '~/store';
 import type { Article, SuccessResponse, ProfileInfo } from '~/types';
 
 const userStore = useUserStore();
+const cookiesStore = useCookiesStore();
 const title: string = 'Scihub';
 const display = ref(useDisplay() || null);
 let search: Ref<string> = ref('');
@@ -197,6 +198,7 @@ let expandedSearch: Ref<boolean> = ref(false);
 let searchedPosts: Ref<Article[]> = ref([]);
 
 await userStore.getUserInfoFromLS();
+await cookiesStore.rehydrateCurrentAccepts();
 const theme = useTheme();
 
 watch(darkTheme, () => {

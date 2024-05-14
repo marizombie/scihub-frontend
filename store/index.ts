@@ -1,3 +1,5 @@
+import type { CookiesAccepts } from "~/types";
+
 export interface RefreshInfo {
   access: string;
 }
@@ -178,6 +180,31 @@ export const useModalsStore = defineStore('modal', {
     },
     removeModal() {
       this.currentModal = null;
+    }
+  }
+});
+
+export const useCookiesStore = defineStore('cookiesStore', {
+  state: () => {
+    return {
+      currentAccepts: null as null | CookiesAccepts
+    };
+  },
+  getters: {
+    getCurrentAccepts: (state) => state.currentAccepts
+  },
+  actions: {
+    setCurrentAccepts(accepts: CookiesAccepts) {
+      this.currentAccepts = accepts;
+      localStorage.setItem('cookiesAccepts', JSON.stringify(accepts));
+    },
+    rehydrateCurrentAccepts() {
+      const accepts = localStorage.getItem('cookiesAccepts');
+      if (accepts) {
+        this.currentAccepts = JSON.parse(accepts);
+      } else {
+        this.currentAccepts = null;
+      }
     }
   }
 });

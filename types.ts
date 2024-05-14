@@ -164,3 +164,8 @@ export interface Network {
   name: string;
   icon: string;
 }
+
+export interface CookiesAccepts {
+  performance: boolean;
+  advertisements: boolean;
+}
