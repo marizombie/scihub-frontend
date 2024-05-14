@@ -146,7 +146,7 @@ function onDeclineAll() {
   cookiesStore.setCurrentAccepts({
     advertisements: false,
     performance: false
-  })
+  });
   dialog.value = false;
 }
 
@@ -154,7 +154,7 @@ function onAccept() {
   cookiesStore.setCurrentAccepts({
     advertisements: advertising.value,
     performance: performance.value
-  })
+  });
   dialog.value = false;
 }
 
@@ -162,7 +162,7 @@ function onAcceptAll() {
   cookiesStore.setCurrentAccepts({
     advertisements: true,
     performance: true
-  })
+  });
   dialog.value = false;
 }
 </script>

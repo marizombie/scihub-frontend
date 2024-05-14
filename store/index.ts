@@ -1,4 +1,4 @@
-import type { CookiesAccepts } from "~/types";
+import type { CookiesAccepts } from '~/types';
 
 export interface RefreshInfo {
   access: string;

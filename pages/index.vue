@@ -400,7 +400,7 @@ watch(
           ?.tab as keyof typeof tabsMap;
         tab.value = tabsMap[tabString];
       } else {
-        if (tab.value !== 1) {
+        if (tab.value !== 1 && !route.query.userName) {
           tab.value = tabsMap[''];
         }
       }
@@ -412,18 +412,12 @@ watch(
 watch(
   tab,
   async (val, oldVal) => {
-    if (filterByTags.value.length) {
+    if (filterByTags.value.length || route.query.userName) {
       return;
-    }
-    if (route.query.userName && oldVal === 0) {
-      router.replace('/');
-      filterByUser.value = '';
-      userProfile.value = null;
     }
 
     switch (val) {
       case 0:
-        router.push('');
         break;
       case 2:
         router.push('/?tab=bookmarks');
@@ -496,6 +490,10 @@ watch(
   (val) => {
     if (val) {
       showTagList();
+    } else {
+      filterByTags.value = [];
+      currentRequest.value = '';
+      currentShowList.value = [];
     }
   }
 );
@@ -503,21 +501,26 @@ watch(
 watch(
   () => route.query.userName,
   async (val, oldVal) => {
-    if (route.query.userName) {
+    if (val) {
       tab.value = 0;
-      filterByUser.value = route.query.userName.toString();
+      filterByUser.value = val.toString();
       const { data: userPosts } = await useAPIFetch<CRUDResponse>(
-        `/api/users/${route.query.userName}/`
+        `/api/users/${val}/`
       );
-      currentRequest.value = `/api/users/${route.query.userName}/`;
+      currentRequest.value = `/api/users/${val}/`;
       currentShowList.value = userPosts.value!.results;
 
       const { data: profileInfo } = await useAPIFetch<ProfileInfo>(
-        `/api/profile/${route.query.userName}`
+        `/api/profile/${val}`
       );
       if (profileInfo.value) {
         userProfile.value = profileInfo.value;
       }
+    } else {
+      filterByUser.value = '';
+      currentRequest.value = '';
+      currentShowList.value = [];
+      userProfile.value = null;
     }
   },
   { immediate: true }
@@ -525,6 +528,7 @@ watch(
 
 async function showTagList() {
   if (route.query.tag) {
+    tab.value = 0;
     filterByTags.value = Array.isArray(route.query.tag)
       ? (route.query.tag as string[])
       : [route.query.tag];
@@ -546,7 +550,7 @@ async function showTagList() {
 
 async function goToAuthorPosts(username: string) {
   if (username) {
-    await navigateTo(`/?userName=${username}`);
+    await router.push(`/?userName=${username}`);
   }
 }
 
@@ -558,13 +562,13 @@ async function goToComment(commentData: CommentData) {
   }
 }
 
-function removeTag(tag: string) {
+async function removeTag(tag: string) {
   filterByTags.value = filterByTags.value.filter((item) => item !== tag);
-  navigateTo('/');
+  await router.push('/');
 }
 
 async function searchByTag(tag: string) {
-  await navigateTo(`/?tag=${tag.replaceAll(' ', '-')}`);
+  await router.push(`/?tag=${tag.replaceAll(' ', '-')}`);
 }
 
 async function onDeletePost() {

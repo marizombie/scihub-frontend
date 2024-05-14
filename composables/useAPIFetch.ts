@@ -22,7 +22,6 @@ export const useAPIFetch: typeof useFetch = (request, opts?) => {
     ...customOptions,
     onResponse: async ({ response, options }) => {
       if (response.status === 401) {
-        console.log(response);
         if (
           response._data.code === 'token_not_valid' &&
           !response._data.messages
