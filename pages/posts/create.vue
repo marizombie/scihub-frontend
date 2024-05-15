@@ -467,8 +467,21 @@ const showMetaDialog = ref(false);
 const tagsArray: Ref<Article[]> = ref([]);
 
 function showMetaPreview() {
-  title.value.value = articleData.value.title;
-  showMetaDialog.value = true;
+  editor
+    .save()
+    .then(async (outputData) => {
+      const imageData = outputData.blocks.find((item) => item.type === 'image' && item.data.file?.url)
+      if (!imageData) {
+        const notifyStore = useNotificationStore();
+        await notifyStore.setNotification({
+          type: 'error',
+          message: 'Post must contain at least one image'
+        });
+      } else {
+        title.value.value = articleData.value.title;
+        showMetaDialog.value = true;
+      }
+    })
 }
 
 async function onSearchChange(val: string) {
