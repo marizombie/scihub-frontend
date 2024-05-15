@@ -156,6 +156,7 @@ const onSubmit = handleSubmit(async (values) => {
       type: 'info',
       message: (data.value as SuccessResponse).success as string
     });
+    await navigateTo('/');
   }
   isLoading.value = false;
 });
