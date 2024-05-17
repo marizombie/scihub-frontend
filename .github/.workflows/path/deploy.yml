@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=https://json.schemastore.org/yamllint.json
+
+name: Build and Deploy Frontend
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 'v21.5.0'
+
+    - name: Install Dependencies
+      run: yarn
+
+    - name: Build
+      run: ${{ vars.ENVVAR }} yarn build
+
+    - name: Archive Production Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: front-build
+        path: .output/
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/download-artifact@v2
+      with:
+        name: front-build
+
+    - name: Sync artifact
+      run: |
+        ssh -i "${{secrets.DEPLOY_KEY}}" ${{secrets.USER}}@${{secrets.DESTINATION}}:${{vars.FOLDER_DEST}}
