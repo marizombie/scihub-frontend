@@ -23,7 +23,7 @@ jobs:
         node-version: 'v21.5.0'
       
     - name: Clean temp files
-      run: rm yarn.lock && rm -r node_modules
+      run: rm yarn.lock && rm -rf node_modules
 
     - name: Install Dependencies
       run: yarn
