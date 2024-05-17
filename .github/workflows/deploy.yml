@@ -21,6 +21,9 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: 'v21.5.0'
+      
+    - name: Clean temp files
+      run: rm yarn.lock && rm -r node_modules
 
     - name: Install Dependencies
       run: yarn
