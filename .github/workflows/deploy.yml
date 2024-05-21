@@ -47,11 +47,11 @@ jobs:
         name: front-build
         path: ${{vars.FOLDER_DEST}}
     - name: Transfer files via SSH
-      uses: appleboy/scp-action@v0.1.0
+      uses: appleboy/scp-action@v0.1.7
       with:
         host: ${{secrets.DESTINATION}}
         username: ${{secrets.USER}}
         key: ${{ secrets.DEPLOY_KEY }}
-        port: 22
+        port: ${{ secrets.PORT }}
         source: ".output/*"
         target: ${{vars.FOLDER_DEST}}
