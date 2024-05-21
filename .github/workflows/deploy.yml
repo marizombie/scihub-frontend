@@ -35,7 +35,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: front-build
-        path: output/
+        path: ${{vars.FOLDER_DEST}}
 
   deploy:
     needs: build
@@ -45,6 +45,7 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: front-build
+        path: ${{vars.FOLDER_DEST}}
     - name: Transfer files via SSH
       uses: appleboy/scp-action@v0.1.0
       with:
@@ -52,5 +53,5 @@ jobs:
         username: ${{secrets.USER}}
         key: ${{ secrets.DEPLOY_KEY }}
         port: 22
-        source: "output/*"
+        source: ".output/*"
         target: ${{vars.FOLDER_DEST}}
