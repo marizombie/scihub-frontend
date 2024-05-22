@@ -118,8 +118,8 @@
         <v-card-title class="text-wrap pb-0">{{ article.title }}</v-card-title>
 
         <v-img
-          v-if="article.images[0]?.image_url"
-          :src="article.images[0].image_url"
+          v-if="article.preview_image"
+          :src="article.preview_image"
         />
 
         <v-card-text>
@@ -798,12 +798,7 @@ useSeoMeta({
   ogTitle: () => (article.value ? article.value.title : ''),
   description: () => (article.value ? article.value.description : ''),
   ogDescription: () => (article.value ? article.value.description : ''),
-  ogImage: () =>
-    article.value && article.value.images[0]
-      ? article.value.images[0].image_url
-      : article.value?.preview_image
-        ? article.value.preview_image
-        : '',
+  ogImage: () => (article.value ? article.value.preview_image : ''),
   twitterCard: () => 'summary_large_image',
   ogUrl: () => window.location.href.split('?')[0],
   ogType: 'article'
