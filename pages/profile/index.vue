@@ -123,6 +123,10 @@ interface TagInfo {
   };
 }
 
+interface SuccessResponse {
+  success: ProfileInfo;
+}
+
 const display = ref(useDisplay() || null);
 const profileImage: Ref<File[]> = ref([]);
 const currentFilePreview = ref('');
@@ -183,7 +187,7 @@ async function profileSend() {
     //@ts-ignore
     formData.append(keyData, profile.value[keyData]);
   }
-  const { data } = await useAPIFetch<ProfileInfo>('/api/profile/', {
+  const { data } = await useAPIFetch<SuccessResponse>('/api/profile/', {
     method: 'PUT',
     body: formData
   });
@@ -195,7 +199,7 @@ async function profileSend() {
       message: 'Succesfully saved'
     });
     const userStore = useUserStore();
-    userStore.setUserAvatar(data.value.avatar_url);
+    userStore.setUserAvatar(data.value.success.avatar_url);
   }
 }
 
