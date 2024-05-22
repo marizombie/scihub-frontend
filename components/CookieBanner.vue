@@ -5,10 +5,11 @@
     :lines="display.lgAndUp ? 'one' : display.smAndUp ? 'two' : undefined"
   >
     <template v-slot:text>
-      Scihub uses cookies to enable and import the use of the website. Please
-      see our <a href="/privacy-policy" target="_blank">Privacy Policy</a> for
-      more information. By clicking "Accept Cookies" or continuing to use the
-      site, you agree to the use of cookies.
+      Great Things Development uses cookies to enable and import the use of the
+      website. Please see our
+      <a href="/privacy-policy" target="_blank">Privacy Policy</a> for more
+      information. By clicking "Accept Cookies" or continuing to use the site,
+      you agree to the use of cookies.
     </template>
 
     <template v-slot:actions>
@@ -28,8 +29,9 @@
         <v-card title="Cookie Settings">
           <v-card-text>
             <p class="pb-4">
-              Scihub use cookies to deliver and improve the visitor experience.
-              Learn more about the cookies we use on our Cookie Policy page.
+              Great Things Development use cookies to deliver and improve the
+              visitor experience. Learn more about the cookies we use on our
+              Cookie Policy page.
             </p>
 
             <v-list-subheader class="font-weight-black text-high-emphasis"

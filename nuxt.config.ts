@@ -5,7 +5,7 @@ export default defineNuxtConfig({
   ssr: false,
   app: {
     head: {
-      title: 'Scihub'
+      title: 'Great Things Development'
     }
   },
   build: {

@@ -4,8 +4,11 @@
     <v-theme-provider :theme="theme.global.name.value">
       <v-app-bar fixed app class="header d-flex flex-column">
         <div class="main-content">
-          <v-app-bar-title class="ml-4">
-            <a href="/">{{ title }}</a>
+          <v-app-bar-title class="ml-4 title-icon">
+            <a href="/">
+              <v-img src="/favicon.ico" />
+              <span>{{ title }}</span>
+            </a>
           </v-app-bar-title>
           <div class="d-flex align-center ml-auto">
             <ForgotPassword
@@ -50,6 +53,7 @@
               </v-list>
             </v-menu>
             <v-switch
+              v-if="display.mdAndUp"
               v-model="darkTheme"
               hide-details
               :class="['ml-3', display.mdAndUp ? 'mr-10' : 'mr-2']"
@@ -190,8 +194,10 @@ import type { Article, SuccessResponse, ProfileInfo } from '~/types';
 
 const userStore = useUserStore();
 const cookiesStore = useCookiesStore();
-const title: string = 'Scihub';
 const display = ref(useDisplay() || null);
+const title = computed(() =>
+  display.value.smAndDown ? 'Great Things Dev' : 'Great Things Development'
+);
 let search: Ref<string> = ref('');
 let darkTheme: Ref<boolean> = ref(false);
 let showAuth: Ref<boolean> = ref(false);
@@ -385,5 +391,18 @@ watch(
 
 :deep(.v-img__img) {
   object-fit: cover;
+}
+
+.title-icon {
+  a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .v-img {
+    width: 32px;
+    height: 32px;
+    margin-right: 8px;
+  }
 }
 </style>
