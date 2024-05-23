@@ -117,8 +117,6 @@
 
         <v-card-title class="text-wrap pb-0">{{ article.title }}</v-card-title>
 
-        <v-img v-if="article.preview_image" :src="article.preview_image" />
-
         <v-card-text>
           <div class="article-content">
             <ContentBlock :blockData="article.content" />
