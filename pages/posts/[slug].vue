@@ -38,7 +38,7 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
-  <v-row v-if="article" justify-md="center">
+  <v-row v-if="article" justify-md="center" class="main-container">
     <v-col md="8">
       <v-card class="pa-3">
         <v-row>
@@ -945,5 +945,8 @@ useSeoMeta({
     opacity: 0.6;
     text-decoration: none;
   }
+}
+.main-container {
+  max-width: inherit;
 }
 </style>
