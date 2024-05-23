@@ -53,5 +53,5 @@ jobs:
         username: ${{secrets.USER}}
         key: ${{ secrets.DEPLOY_KEY }}
         port: ${{ secrets.PORT }}
-        source: ".output/*"
-        target: ${{vars.FOLDER_DEST}}
+        source: ${{vars.FOLDER_DEST}}
+        target: ${{secrets.MACHINE_DEST_FOLDER}}
