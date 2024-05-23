@@ -2,7 +2,7 @@
   <v-card subtitle="Updated on May 13th, 2024" class="info-block">
     <v-card-title> Terms of Service </v-card-title>
     <v-card-text>
-      <h3>Welcome to my website!</h3>
+      <h3>Welcome to Great Things Development!</h3>
       <p>
         These Terms of Service ("Terms") govern your use of domain (the
         "Website"), currently operated by an individual developer in Poland.
@@ -66,7 +66,8 @@
       <h3 class="mt-2">8. Contact Information</h3>
       <p>
         If you have any questions or concerns about these Terms, please contact
-        us at legal@domain.com.
+        us at
+        <a href="mailto: support@greatthings.dev">support@greatthings.dev</a>.
       </p>
     </v-card-text>
   </v-card>

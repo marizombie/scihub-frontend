@@ -3,17 +3,18 @@
     <v-card-title> Privacy Policy </v-card-title>
     <v-card-text>
       <h3>Introduction</h3>
+      <h4 class="mt-2">Welcome to Great Things Development!</h4>
       <p>
-        Welcome to our website! Your privacy is critically important to us. This
-        Privacy Policy outlines how we collect, use, manage, and protect your
-        personal information when you use our services. We aim to be transparent
-        and help you make informed decisions.
+        Your privacy is critically important to us. This Privacy Policy outlines
+        how we collect, use, manage, and protect your personal information when
+        you use our services. We aim to be transparent and help you make
+        informed decisions.
       </p>
       <h3 class="my-2">What Information We Collect</h3>
       <ul>
         <li>
-          Personal Identification Information: name, last name, email address,
-          username, and avatar.
+          Personal Identification Information: email address, name, last name,
+          country, username and avatar.
         </li>
         <li>
           User-Generated Content: posts, comments, and responses you publish.
@@ -75,7 +76,8 @@
       <h3 class="my-2">Cookies and Tracking Technologies</h3>
       <p>
         For detailed information on how we use cookies and other tracking
-        technologies, please refer to our Cookie Policy.
+        technologies, please refer to our
+        <a href="/cookies-info" target="_blank">Cookie Policy</a>.
       </p>
       <h3 class="my-2">Data Sharing and Disclosure</h3>
       <p>
@@ -121,7 +123,8 @@
       <h3 class="my-2">Contact Us</h3>
       <p>
         If you have any questions about this Privacy Policy, please contact us
-        at privacy@myfuturedomain.com.
+        at
+        <a href="mailto: support@greatthings.dev">support@greatthings.dev</a>.
       </p>
       <h3 class="my-2">Changes to This Policy</h3>
       <p>

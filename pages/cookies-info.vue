@@ -1,18 +1,109 @@
 <template>
+  <v-dialog v-model="dialog" max-width="500" class="dialog-window">
+    <v-card title="Cookie Settings">
+      <v-card-text>
+        <p class="pb-4">
+          Great Things Development use cookies to deliver and improve the
+          visitor experience. Learn more about the cookies we use on our Cookie
+          Policy page.
+        </p>
+
+        <v-list-subheader class="font-weight-black text-high-emphasis"
+          >Required Cookies</v-list-subheader
+        >
+
+        <v-switch
+          :value="true"
+          :label="'On'"
+          color="primary"
+          density="compact"
+          hide-details
+          inline
+          inset
+          disabled
+        ></v-switch>
+
+        <p class="mb-4">
+          These cookies are required for the site to function and cannot be
+          turned off.
+        </p>
+
+        <v-list-subheader class="font-weight-black text-high-emphasis"
+          >Performance Cookies</v-list-subheader
+        >
+
+        <v-switch
+          v-model="performance"
+          :label="performance ? 'On' : 'Off'"
+          color="primary"
+          density="compact"
+          hide-details
+          inline
+          inset
+        ></v-switch>
+
+        <p class="mb-4">
+          Counts website visits and clicks to understand where people most
+          engage with links to make the experience better.
+        </p>
+
+        <v-list-subheader class="font-weight-black text-high-emphasis"
+          >Advertising Cookies</v-list-subheader
+        >
+
+        <v-switch
+          v-model="advertising"
+          :label="advertising ? 'On' : 'Off'"
+          color="primary"
+          density="compact"
+          hide-details
+          inline
+          inset
+        ></v-switch>
+
+        <p class="mb-16">
+          Set by our advertising partners, these cookies are used to build a
+          profile of your interests and show you relevant ads on other sites.
+          They do not store personal information, but are based on uniquely
+          identifying your browser and internet device.
+        </p>
+      </v-card-text>
+
+      <v-divider></v-divider>
+
+      <v-card-actions class="justify-center px-6 py-3">
+        <v-btn
+          class="flex-grow-1 text-none"
+          color="primary"
+          rounded="0"
+          variant="plain"
+          @click="onDeclineAll()"
+        >
+          Decline All
+        </v-btn>
+
+        <v-btn
+          class="text-white flex-grow-1 text-none"
+          color="primary"
+          rounded="0"
+          variant="flat"
+          @click="onAccept()"
+        >
+          Save and Accept
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
   <v-card subtitle="Updated on May 13th, 2024" class="cookies">
     <v-card-title> Cookie Policy </v-card-title>
     <v-card-text>
       <h3>Introduction</h3>
+      <h4 class="mt-2">Welcome to Great Things Development!</h4>
       <p>
-        Welcome to our website! We use cookies to ensure that we give you the
-        best experience on our website, improve performance, enhance
-        functionality, and for advertising purposes. This policy provides
-        detailed information about how we use cookies and how you can manage
-        them.
-      </p>
-      <p>
-        By accessing or using the Website, you agree to be bound by these Terms.
-        If you do not agree with these Terms, please do not use the Website.
+        We use cookies to ensure that we give you the best experience on our
+        website, improve performance, enhance functionality, and for advertising
+        purposes. This policy provides detailed information about how we use
+        cookies and how you can manage them.
       </p>
       <h3 class="my-2">What Are Cookies?</h3>
       <p>
@@ -58,9 +149,10 @@
       <h3 class="my-2">Managing and Deleting Cookies</h3>
       <p>
         If you wish to restrict or block the cookies which are set by our
-        website, you can do this through Cookie Settings or your browser
-        settings. The 'Help' function within your browser should tell you how.
-        Alternatively, you can visit www.aboutcookies.org or
+        website, you can do this through
+        <a href="#" @click.prevent="dialog = true">Cookie Settings</a> or your
+        browser settings. The 'Help' function within your browser should tell
+        you how. Alternatively, you can visit www.aboutcookies.org or
         www.allaboutcookies.org, which offer comprehensive information on how to
         do this on a wide variety of browsers. Please be aware that restricting
         cookies may impact the functionality of our website.
@@ -72,12 +164,38 @@
         choice to accept all cookies, customize your cookie settings to restrict
         some types of cookies, or decline non-essential cookies. You can also
         access this cookie policy to learn more about the cookies we use. Later
-        you can change your consent in Cookie Settings or manage in your
-        browser.
+        you can change your consent in
+        <a href="#" @click.prevent="dialog = true">Cookie Settings</a> or manage
+        in your browser.
       </p>
     </v-card-text>
   </v-card>
 </template>
+
+<script setup lang="ts">
+import { useCookiesStore } from '~/store';
+
+const dialog = ref(false);
+const cookiesStore = useCookiesStore();
+const advertising = ref(!!cookiesStore.currentAccepts?.advertisements);
+const performance = ref(!!cookiesStore.currentAccepts?.performance);
+
+function onDeclineAll() {
+  cookiesStore.setCurrentAccepts({
+    advertisements: false,
+    performance: false
+  });
+  dialog.value = false;
+}
+
+function onAccept() {
+  cookiesStore.setCurrentAccepts({
+    advertisements: advertising.value,
+    performance: performance.value
+  });
+  dialog.value = false;
+}
+</script>
 
 <style lang="less" scoped>
 .cookies {
