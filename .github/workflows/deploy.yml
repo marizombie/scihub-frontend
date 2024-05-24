@@ -56,7 +56,7 @@ jobs:
         source: ${{vars.FOLDER_DEST}}
         target: ${{secrets.MACHINE_DEST_FOLDER}}
     - name: Reload frontend
-      uses: appleboy/scp-action@v0.1.7
+      uses: appleboy/ssh-action@v0.1.7
       with:
         host: ${{secrets.DESTINATION}}
         username: ${{secrets.USER}}
