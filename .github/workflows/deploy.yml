@@ -55,3 +55,13 @@ jobs:
         port: ${{ secrets.PORT }}
         source: ${{vars.FOLDER_DEST}}
         target: ${{secrets.MACHINE_DEST_FOLDER}}
+    - name: Reload frontend
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{secrets.DESTINATION}}
+        username: ${{secrets.USER}}
+        key: ${{ secrets.DEPLOY_KEY }}
+        port: ${{ secrets.PORT }}
+        script: |
+          pm2 reload front --update-env
+    
