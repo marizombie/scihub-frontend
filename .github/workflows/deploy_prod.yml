@@ -1,14 +1,14 @@
 # yaml-language-server: $schema=https://json.schemastore.org/yamllint.json
 
-name: Build and Deploy Frontend
+name: Build and Deploy Frontend PROD
 
 on:
   push:
     branches:
-      - dev
+      - master
   pull_request:
     branches:
-      - dev
+      - master
 
 jobs:
   build:
@@ -29,7 +29,7 @@ jobs:
       run: yarn
 
     - name: Build
-      run: ${{ vars.ENVVAR }} yarn build
+      run: ${{ vars.ENVVAR_PROD }} yarn build
 
     - name: Archive Production Artifact
       uses: actions/upload-artifact@v2
@@ -49,17 +49,17 @@ jobs:
     - name: Transfer files via SSH
       uses: appleboy/scp-action@v0.1.7
       with:
-        host: ${{secrets.DESTINATION}}
-        username: ${{secrets.USER}}
+        host: ${{ secrets.DESTINATION_PROD }}
+        username: ${{ secrets.USER_PROD }}
         key: ${{ secrets.DEPLOY_KEY }}
         port: ${{ secrets.PORT }}
-        source: ${{vars.FOLDER_DEST}}
-        target: ${{secrets.MACHINE_DEST_FOLDER}}
+        source: ${{ vars.FOLDER_DEST }}
+        target: ${{ secrets.MACHINE_DEST_FOLDER }}
     - name: Reload frontend
       uses: appleboy/ssh-action@v0.1.7
       with:
-        host: ${{secrets.DESTINATION}}
-        username: ${{secrets.USER}}
+        host: ${{ secrets.DESTINATION_PROD }}
+        username: ${{ secrets.USER_PROD }}
         key: ${{ secrets.DEPLOY_KEY }}
         port: ${{ secrets.PORT }}
         script: |
