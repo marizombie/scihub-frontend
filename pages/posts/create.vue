@@ -512,7 +512,6 @@ watch(
   () => {
     if (
       !route.query.postSlug &&
-      !route.query.showDraft &&
       !route.query.draftSlug
     ) {
       editor.isReady
@@ -625,7 +624,7 @@ async function saveAsDraft(setDraftSlug: boolean = true) {
           articleData.value.draftSlug;
         const router = useRouter();
         await router.replace({
-          query: { showDraft: articleData.value.draftSlug }
+          query: { draftSlug: articleData.value.draftSlug }
         });
       }
     })
