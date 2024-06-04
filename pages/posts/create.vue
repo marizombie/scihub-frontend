@@ -362,7 +362,7 @@ const editor = new EditorJS({
               const notifyStore = useNotificationStore();
               await notifyStore.setNotification({
                 type: 'error',
-                message: 'Image size should be less than 3 MB!'
+                message: 'Please consider uploading image with size less than 3MB'
               });
               editor.blocks.delete();
               return {
@@ -475,7 +475,7 @@ function showMetaPreview() {
       const notifyStore = useNotificationStore();
       await notifyStore.setNotification({
         type: 'error',
-        message: 'Post must contain at least one image'
+        message: 'Please upload an image to make your post visually appealing'
       });
     } else {
       title.value.value = articleData.value.title;
