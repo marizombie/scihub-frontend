@@ -69,7 +69,7 @@
           </span>
           <v-combobox
             :clear-on-select="true"
-            v-model="articleData.tags"
+            v-model="chosedTags.value.value"
             class="mt-3"
             label="Choose tag(s)"
             :items="tagsArray"
@@ -81,6 +81,7 @@
             chips
             closable-chips
             variant="outlined"
+            :error-messages="chosedTags.errorMessage.value"
           >
           </v-combobox>
           <div class="publish-action-buttons">
@@ -362,7 +363,8 @@ const editor = new EditorJS({
               const notifyStore = useNotificationStore();
               await notifyStore.setNotification({
                 type: 'error',
-                message: 'Please consider uploading image with size less than 3MB'
+                message:
+                  'Please consider uploading image with size less than 3MB'
               });
               editor.blocks.delete();
               return {
@@ -510,10 +512,7 @@ const router = useRouter();
 watch(
   () => router.currentRoute.value,
   () => {
-    if (
-      !route.query.postSlug &&
-      !route.query.draftSlug
-    ) {
+    if (!route.query.postSlug && !route.query.draftSlug) {
       editor.isReady
         .then(async () => {
           await saveAsDraft(false);
@@ -541,18 +540,37 @@ onUnmounted(() => {
 interface PublishInfo {
   title: string;
   description: string;
+  chosedTags: (TagItem | string)[];
 }
 
 let publishData: Ref<PublishInfo> = ref({
   title: '',
-  description: ''
+  description: '',
+  chosedTags: []
 });
 
 const validationSchema = markRaw(
   yup
     .object({
       title: yup.string().required().min(3).label('Title'),
-      description: yup.string().required().min(3).label('Description')
+      description: yup.string().required().min(3).label('Description'),
+      chosedTags: yup
+        .array()
+        .of(
+          yup.lazy((val) =>
+            typeof val === 'string'
+              ? yup.string()
+              : yup.object({
+                  id: yup.number(),
+                  followers_count: yup.number(),
+                  name: yup.string(),
+                  slug: yup.string()
+                })
+          )
+        )
+        .required()
+        .min(1, 'Please, choose at least one tag or create new one.')
+        .label('Tag(s)')
     })
     .required()
 );
@@ -564,6 +582,7 @@ const { handleSubmit, errors } = useForm({
 
 const title = useField('title', validationSchema);
 const description = useField('description', validationSchema);
+const chosedTags = useField('chosedTags', validationSchema);
 
 const save = handleSubmit(async (values) => {
   editor
@@ -574,11 +593,11 @@ const save = handleSubmit(async (values) => {
         title: values.title,
         description: values.description,
         content: outputData,
-        tags: articleData.value.tags.map((item: TagItem | string) => {
+        tags: values.chosedTags.map((item: TagItem | string) => {
           if (typeof item === 'string') {
-            return item
+            return item;
           }
-          return item.name
+          return item.name;
         })
       };
       const { data: postData } = await useAPIFetch<PublishResponse>(
