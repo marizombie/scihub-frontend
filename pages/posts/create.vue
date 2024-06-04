@@ -67,7 +67,7 @@
           <span>
             Add or change tags so readers will know what your story is about
           </span>
-          <v-autocomplete
+          <v-combobox
             :clear-on-select="true"
             v-model="articleData.tags"
             class="mt-3"
@@ -82,7 +82,7 @@
             closable-chips
             variant="outlined"
           >
-          </v-autocomplete>
+          </v-combobox>
           <div class="publish-action-buttons">
             <v-btn
               variant="text"
@@ -129,7 +129,7 @@ import modeXMLWorker from 'ace-builds/src-noconflict/worker-xml?url';
 import modeYamlWorker from 'ace-builds/src-noconflict/worker-yaml?url';
 import modeJsonWorker from 'ace-builds/src-noconflict/worker-json?url';
 import { useNotificationStore, useUserStore } from '~/store';
-import type { Article } from '~/types';
+import type { Article, TagItem } from '~/types';
 import * as yup from 'yup';
 
 interface DraftResponse {
@@ -362,7 +362,7 @@ const editor = new EditorJS({
               const notifyStore = useNotificationStore();
               await notifyStore.setNotification({
                 type: 'error',
-                message: 'Image size should be less than 3 MB!'
+                message: 'Please consider uploading image with size less than 3MB'
               });
               editor.blocks.delete();
               return {
@@ -475,7 +475,7 @@ function showMetaPreview() {
       const notifyStore = useNotificationStore();
       await notifyStore.setNotification({
         type: 'error',
-        message: 'Post must contain at least one image'
+        message: 'Please upload an image to make your post visually appealing'
       });
     } else {
       title.value.value = articleData.value.title;
@@ -512,7 +512,6 @@ watch(
   () => {
     if (
       !route.query.postSlug &&
-      !route.query.showDraft &&
       !route.query.draftSlug
     ) {
       editor.isReady
@@ -575,7 +574,12 @@ const save = handleSubmit(async (values) => {
         title: values.title,
         description: values.description,
         content: outputData,
-        tags: articleData.value.tags
+        tags: articleData.value.tags.map((item: TagItem | string) => {
+          if (typeof item === 'string') {
+            return item
+          }
+          return item.name
+        })
       };
       const { data: postData } = await useAPIFetch<PublishResponse>(
         `api/drafts/${articleData.value.draftSlug}/publish/`,
@@ -625,7 +629,7 @@ async function saveAsDraft(setDraftSlug: boolean = true) {
           articleData.value.draftSlug;
         const router = useRouter();
         await router.replace({
-          query: { showDraft: articleData.value.draftSlug }
+          query: { draftSlug: articleData.value.draftSlug }
         });
       }
     })

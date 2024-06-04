@@ -169,3 +169,10 @@ export interface CookiesAccepts {
   performance: boolean;
   advertisements: boolean;
 }
+
+export interface TagItem {
+  id: number;
+  followers_count: number;
+  name: string;
+  slug: string;
+}
