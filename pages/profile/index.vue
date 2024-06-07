@@ -174,7 +174,10 @@ const { data: followedTags } =
   await useAPIFetch<TagsResponse>('api/followed-tags/');
 if (followedTags.value) {
   tags.value = followedTags.value!.results.reduce((acc, value) => {
-    return acc.concat({text: value.followed_tag.name, slug:  value.followed_tag.slug});
+    return acc.concat({
+      text: value.followed_tag.name,
+      slug: value.followed_tag.slug
+    });
   }, [] as TagItem[]);
 }
 
@@ -228,7 +231,6 @@ async function removeTag(tag: string) {
   } else {
     tags.value = tags.value.filter((item: TagItem) => item.slug !== tag);
   }
-  
 }
 async function searchByTag(tag: string) {
   await navigateTo(`/?tag=${tag}`);
