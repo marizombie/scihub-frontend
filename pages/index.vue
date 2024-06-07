@@ -399,6 +399,21 @@ const tabsMap = {
   upComments: 6
 };
 const router = useRouter();
+
+showTagList();
+
+watch(
+  () => route.query.tag,
+  (val) => {
+    if (val) {
+      showTagList();
+    } else {
+      filterByTags.value = [];
+      currentRequest.value = '';
+      currentShowList.value = [];
+    }
+  }
+);
 watch(
   () => router,
   (val) => {
@@ -408,7 +423,11 @@ watch(
           ?.tab as keyof typeof tabsMap;
         tab.value = tabsMap[tabString];
       } else {
-        if (tab.value !== 1 && !route.query.userName) {
+        if (
+          tab.value !== 1 &&
+          !route.query.userName &&
+          !filterByTags.value.length
+        ) {
           tab.value = tabsMap[''];
         }
       }
@@ -489,21 +508,6 @@ watch(
     }
   },
   { immediate: true }
-);
-
-showTagList();
-
-watch(
-  () => route.query.tag,
-  (val) => {
-    if (val) {
-      showTagList();
-    } else {
-      filterByTags.value = [];
-      currentRequest.value = '';
-      currentShowList.value = [];
-    }
-  }
 );
 
 watch(
