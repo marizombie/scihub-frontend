@@ -297,7 +297,7 @@ watch(
       const { data } = await useAPIFetch<ProfileInfo>('/api/profile/');
       if (data.value) {
         userStore.setUserName(data.value.username);
-        userStore.setUserAvatar(data.value.avatar_url)
+        userStore.setUserAvatar(data.value.avatar_url);
       }
     }
   },

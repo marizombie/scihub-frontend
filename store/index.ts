@@ -81,13 +81,13 @@ export const useUserStore = defineStore('user', {
     setUserName(value: string) {
       if (this.userData) {
         this.userData.username = value;
-        this.setUserInfo(this.userData)
+        this.setUserInfo(this.userData);
       }
     },
     setUserAvatar(value: string) {
       if (this.userData) {
         this.userData.avatar = value;
-        this.setUserInfo(this.userData)
+        this.setUserInfo(this.userData);
       }
     },
     logout() {
