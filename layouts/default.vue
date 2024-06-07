@@ -105,7 +105,7 @@
             >
               Write
             </v-btn>
-            <v-menu v-if="userStore.userInfo">
+            <v-menu v-if="userStore.userInfo && userStore.userAvatar">
               <template v-slot:activator="{ props }">
                 <v-btn
                   size="48"
@@ -117,8 +117,8 @@
                 >
                   <v-avatar size="48">
                     <v-img
-                      v-if="userStore.userInfo.avatar"
-                      :src="userStore.userInfo.avatar"
+                      v-if="userStore.userAvatar"
+                      :src="userStore.userAvatar"
                       :alt="
                         userStore.userInfo.first_name +
                         ' ' +
@@ -297,6 +297,7 @@ watch(
       const { data } = await useAPIFetch<ProfileInfo>('/api/profile/');
       if (data.value) {
         userStore.setUserName(data.value.username);
+        userStore.setUserAvatar(data.value.avatar_url)
       }
     }
   },

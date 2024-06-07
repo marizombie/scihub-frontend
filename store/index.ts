@@ -50,7 +50,8 @@ export const useUserStore = defineStore('user', {
     };
   },
   getters: {
-    userInfo: (state) => state.userData
+    userInfo: (state) => state.userData,
+    userAvatar: (state) => state.userData?.avatar
   },
   actions: {
     async setUserInfo(token: TokenInfo) {
@@ -80,11 +81,13 @@ export const useUserStore = defineStore('user', {
     setUserName(value: string) {
       if (this.userData) {
         this.userData.username = value;
+        this.setUserInfo(this.userData)
       }
     },
     setUserAvatar(value: string) {
       if (this.userData) {
         this.userData.avatar = value;
+        this.setUserInfo(this.userData)
       }
     },
     logout() {
