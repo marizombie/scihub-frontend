@@ -177,9 +177,11 @@
                       <span>{{ tag }}</span>
                     </v-card>
                   </div>
-                  <span class="ma-4"
-                    >Published on {{ article.created_at }}</span
-                  >
+                  <span class="ma-4">{{
+                    tab !== 4
+                      ? 'Published on ' + article.created_at
+                      : 'Last changed ' + article.changed_at
+                  }}</span>
                   <div
                     class="pl-4 pr-4 pt-2"
                     @click.prevent="goToAuthorPosts(article.author_name)"

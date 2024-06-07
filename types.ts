@@ -20,6 +20,7 @@ export interface Article {
   is_author_followed_by_current_user: boolean;
   comments_count: number;
   content: OutputData;
+  changed_at: string;
 }
 
 export interface BlockData {
