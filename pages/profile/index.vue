@@ -66,18 +66,20 @@
         outlined
         counter="250"
       />
-      <div class="subtitle">Following</div>
-      <v-chip-group :column="!display.mdAndUp">
-        <v-chip
-          v-for="tag in tags"
-          :key="tag"
-          closable
-          @click:close="removeTag(tag)"
-          @click="searchByTag(tag)"
-        >
-          {{ tag }}
-        </v-chip>
-      </v-chip-group>
+      <div v-if="tags.length">
+        <div class="subtitle">Following</div>
+        <v-chip-group :column="!display.mdAndUp">
+          <v-chip
+            v-for="tag in tags"
+            :key="tag"
+            closable
+            @click:close="removeTag(tag.slug)"
+            @click="searchByTag(tag.name)"
+          >
+            {{ tag.text }}
+          </v-chip>
+        </v-chip-group>
+      </div>
     </div>
     <v-card-actions>
       <v-spacer></v-spacer>
@@ -102,7 +104,7 @@
 <script setup lang="ts">
 import { useDisplay } from 'vuetify';
 import { useNotificationStore, useUserStore } from '~/store';
-import type { ProfileInfo } from '~/types';
+import type { CommentData, ProfileInfo } from '~/types';
 
 definePageMeta({
   middleware: ['auth']
@@ -127,6 +129,11 @@ interface SuccessResponse {
   success: ProfileInfo;
 }
 
+interface TagItem {
+  text: string;
+  slug: string;
+}
+
 const display = ref(useDisplay() || null);
 const profileImage: Ref<File[]> = ref([]);
 const currentFilePreview = ref('');
@@ -140,7 +147,7 @@ const profile: Ref<ProfileInfo> = ref({
   avatar: null,
   country: ''
 });
-const tags = ref(['ml', 'technologies', 'biology', 'mathematics']);
+const tags = ref();
 const sendLoading = ref(false);
 const rules = ref([
   (value: any) => {
@@ -167,8 +174,8 @@ const { data: followedTags } =
   await useAPIFetch<TagsResponse>('api/followed-tags/');
 if (followedTags.value) {
   tags.value = followedTags.value!.results.reduce((acc, value) => {
-    return acc.concat(value.followed_tag.name);
-  }, [] as string[]);
+    return acc.concat({text: value.followed_tag.name, slug:  value.followed_tag.slug});
+  }, [] as TagItem[]);
 }
 
 async function redirectToHomePage() {
@@ -203,8 +210,25 @@ async function profileSend() {
   }
 }
 
-function removeTag(tag: string) {
-  tags.value = tags.value.filter((item) => item !== tag);
+async function removeTag(tag: string) {
+  const { data, error } = await useAPIFetch<CommentData[]>(
+    `api/toggle-follow/tag/${tag}/`,
+    {
+      method: 'post'
+    }
+  );
+  if (error.value?.data) {
+    if (error.value) {
+      const notifyStore = useNotificationStore();
+      await notifyStore.setNotification({
+        type: 'error',
+        message: error.value.data.detail
+      });
+    }
+  } else {
+    tags.value = tags.value.filter((item: TagItem) => item.slug !== tag);
+  }
+  
 }
 async function searchByTag(tag: string) {
   await navigateTo(`/?tag=${tag}`);
