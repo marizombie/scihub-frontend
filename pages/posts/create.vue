@@ -81,6 +81,7 @@
             chips
             closable-chips
             variant="outlined"
+            :delimiters="[',']"
             :error-messages="chosedTags.errorMessage.value"
           >
           </v-combobox>
