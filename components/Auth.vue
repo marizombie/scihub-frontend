@@ -15,7 +15,7 @@
   <v-row justify="center">
     <v-dialog v-model="dialog" max-width="600px">
       <v-card>
-        <form @submit.prevent="onSubmit">
+        <form @submit.prevent="onSubmit" @keyup.native.enter="onSubmit">
           <v-card-title class="mt-4">
             <span class="text-h5 pl-6">{{ t('auth_title') }}</span>
           </v-card-title>
@@ -24,6 +24,7 @@
               <v-row>
                 <v-col cols="12" class="pb-0">
                   <v-text-field
+                    autofocus
                     density="compact"
                     variant="outlined"
                     :label="t('username')"
@@ -82,6 +83,7 @@
               variant="text"
               class="mr-6"
               :loading="isLoading"
+              type="submit"
               @click="onSubmit"
             >
               {{ t('log_in') }}

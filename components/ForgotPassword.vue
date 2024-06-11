@@ -25,6 +25,7 @@
                     variant="outlined"
                     :label="t('username')"
                     required
+                    autofocus
                     v-model="username.value.value"
                     :error-messages="username.errorMessage.value"
                   ></v-text-field>
@@ -57,6 +58,7 @@
               variant="text"
               class="pr-6"
               :loading="isLoading"
+              type="submit"
               @click="onSubmit"
             >
               {{ t('send') }}

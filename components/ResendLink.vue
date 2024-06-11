@@ -21,6 +21,7 @@
               <v-row>
                 <v-col cols="12" class="pb-0">
                   <v-text-field
+                    autofocus
                     density="compact"
                     variant="outlined"
                     :label="t('username')"
@@ -57,6 +58,7 @@
               variant="text"
               class="pr-6"
               :loading="isLoading"
+              type="submit"
               @click="onSubmit"
             >
               {{ t('send') }}

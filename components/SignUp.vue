@@ -27,6 +27,7 @@
               <v-row>
                 <v-col cols="12" class="pb-0">
                   <v-text-field
+                    autofocus
                     density="compact"
                     :label="t('email')"
                     variant="outlined"
