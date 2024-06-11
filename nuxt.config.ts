@@ -3,12 +3,6 @@ import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   ssr: false,
-  nitro: {
-    static: true,
-  },
-  routeRules: {
-    '/posts/**': { prerender: true },
-  },
   app: {
     head: {
       title: 'Great Things Development'
