@@ -667,7 +667,7 @@ function redirectToDrafts() {
 @import '../../assets/breakpoints.less';
 #editorjs {
   width: 100%;
-  max-width: 800px;
+  max-width: 1200px;
   box-shadow:
     0px 2px 1px -1px var(--v-shadow-key-umbra-opacity, rgba(0, 0, 0, 0.2)),
     0px 1px 1px 0px var(--v-shadow-key-penumbra-opacity, rgba(0, 0, 0, 0.14)),
@@ -676,11 +676,23 @@ function redirectToDrafts() {
   :deep(.ace_gutter) {
     z-index: 0;
   }
+
+  font-size: 20px;
+
+  :deep(.ce-block__content) {
+    width: calc(100% - 150px);
+    max-width: unset;
+  }
+
+  :deep(.ce-toolbar__content) {
+    width: 100%;
+    max-width: calc(100% - 150px);
+  }
 }
 
 .container-create {
   width: 100%;
-  max-width: 800px;
+  max-width: 1200px;
   display: flex;
   align-items: center;
   flex-direction: column;

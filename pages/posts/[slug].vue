@@ -39,7 +39,7 @@
     </v-card>
   </v-dialog>
   <v-row v-if="article" justify-md="center" class="main-container">
-    <v-col md="8">
+    <v-col md="9" class="main-content">
       <v-card class="pa-3">
         <v-row>
           <v-col>
@@ -160,8 +160,8 @@
         </div>
       </v-card>
     </v-col>
-    <v-col>
-      <v-card class="recomendation-block ml-md-8 pa-4 d-md-block">
+    <v-col :md="display.lgAndUp ? 2 : display.mdAndDown ? '' : 3">
+      <v-card class="recomendation-block pa-4 d-md-block">
         <div
           class="d-flex align-center mb-3 author-block"
           @click="goToAuthorPosts(article.author_name)"
@@ -820,7 +820,7 @@ useSeoMeta({
 
 .v-card-title {
   @media (min-width: @md-min) {
-    font-size: 32px;
+    font-size: 36px;
     word-break: break-word;
     padding: 24px;
     line-height: 38px;
@@ -946,5 +946,12 @@ useSeoMeta({
 }
 .main-container {
   max-width: inherit;
+}
+
+.main-content {
+  @media (max-width: @md-max) {
+    width: 100%;
+    min-width: 100%;
+  }
 }
 </style>

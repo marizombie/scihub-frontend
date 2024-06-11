@@ -351,6 +351,7 @@ watch(
   @media (min-width: @md-min) {
     display: flex;
     justify-content: center;
+    max-width: 100%;
   }
 }
 
@@ -362,10 +363,6 @@ watch(
 
 :deep(.v-toolbar-title) {
   flex: unset;
-}
-
-.v-container {
-  max-width: 1400px;
 }
 
 .search {

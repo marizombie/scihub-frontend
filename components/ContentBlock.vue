@@ -116,6 +116,7 @@ onMounted(() => {
 
 <style lang="less" scoped>
 .readonlyBlock {
+  font-size: 20px;
   width: 100%;
   :deep(ol) {
     margin-left: 16px;
