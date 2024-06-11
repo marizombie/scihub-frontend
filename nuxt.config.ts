@@ -6,6 +6,9 @@ export default defineNuxtConfig({
   nitro: {
     static: true,
   },
+  routeRules: {
+    '/posts/**': { prerender: true },
+  },
   app: {
     head: {
       title: 'Great Things Development'
