@@ -423,8 +423,40 @@ const editor = new EditorJS({
   }
 });
 
+function eventHandlerAceCode(val: any) {
+  let target = val.target as HTMLElement;
+  if (
+    target &&
+    (target.innerText === 'Ace Code' ||
+      target.closest('.ce-popover-item')?.dataset.itemName === 'code')
+  ) {
+    val.stopPropagation();
+    editor.save().then((data) => {
+      if (data.blocks.filter((el) => el.type === 'code').length >= 1) {
+        let codeBlocks = data.blocks.filter((el) => el.type === 'code');
+        let lastblock = codeBlocks[codeBlocks.length - 1];
+        editor.blocks.insert('code', {
+          code: '',
+          language: lastblock.data.language
+        });
+      } else {
+        editor.blocks.insert('code', {
+          code: '',
+          language: 'plain'
+        });
+      }
+      const toolbars = document.getElementsByClassName('ce-toolbar');
+      toolbars[0].classList.remove('ce-toolbar--opened');
+    });
+  }
+}
+
 editor.isReady
   .then(async () => {
+    const holder = document.getElementById('editorjs');
+    if (holder) {
+      holder.addEventListener('click', eventHandlerAceCode, true);
+    }
     if (route.query.postSlug) {
       const { data: postData } = await useAPIFetch<GetPostOrDraftResponse>(
         `api/posts/${route.query.postSlug}/edit/`,
@@ -465,6 +497,13 @@ editor.isReady
   .catch((reason) => {
     console.log(`Editor.js initialization failed because of ${reason}`);
   });
+
+onUnmounted(() => {
+  const holder = document.getElementById('editorjs');
+  if (holder) {
+    holder.removeEventListener('click', eventHandlerAceCode, true);
+  }
+});
 
 const showMetaDialog = ref(false);
 const tagsArray: Ref<Article[]> = ref([]);
