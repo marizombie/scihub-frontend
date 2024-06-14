@@ -1,4 +1,33 @@
 <template>
+  <v-dialog
+    v-model="showDeleteProfileDialog"
+    max-width="600px"
+    v-if="showDeleteProfileDialog"
+    class="delete-modal"
+  >
+    <v-card>
+      <v-card-title class="mt-4 pa-0 pl-4 pb-4">
+        <span class="text-h5">Are you sure want to delete your profile?</span>
+      </v-card-title>
+      <v-card-text class="pa-0 pl-4">
+        Deletion is not reversible. After you delete your profile, we can't help
+        you to restore it. All your created data will be deleted together with your profile.
+      </v-card-text>
+      <v-card-actions class="mb-4">
+        <v-spacer></v-spacer>
+        <v-btn
+          color="blue darken-1"
+          variant="text"
+          @click="showDeleteProfileDialog = false"
+        >
+          Cancel
+        </v-btn>
+        <v-btn variant="text" color="error" class="mr-6 removeClass" @click="onDeleteProfile()">
+          Delete
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
   <v-card :class="[display.mdAndUp ? 'pa-12' : 'pa-2', 'profile-card']">
     <v-card-title>Profile</v-card-title>
     <v-row :class="!display.mdAndUp ? 'flex-column' : ''">
@@ -82,6 +111,9 @@
       </div>
     </div>
     <v-card-actions>
+      <v-btn color="error" variant="text" @click="showDeleteProfileDialog = true">
+        Delete profile
+      </v-btn>
       <v-spacer></v-spacer>
       <v-btn color="blue darken-1" variant="text" @click="redirectToHomePage()">
         Cancel
@@ -159,6 +191,7 @@ const rules = ref([
     );
   }
 ]);
+const showDeleteProfileDialog = ref(false);
 
 function setFile(files: File[]) {
   if (profileImage.value) {
@@ -234,6 +267,29 @@ async function removeTag(tag: string) {
 }
 async function searchByTag(tag: string) {
   await navigateTo(`/?tag=${tag}`);
+}
+
+async function onDeleteProfile() {
+  const { data, error } = await useAPIFetch<CommentData[]>(
+    `api/profile/`,
+    {
+      method: 'delete'
+    }
+  );
+  if (error.value?.data) {
+    if (error.value) {
+      const notifyStore = useNotificationStore();
+      await notifyStore.setNotification({
+        type: 'error',
+        message: error.value.data.detail
+      });
+    }
+  } else {
+    const userStore = useUserStore();
+    userStore.logout();
+    await navigateTo(`/`);
+  }
+  
 }
 </script>
 
