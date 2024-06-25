@@ -32,7 +32,8 @@ export default defineNuxtPlugin((app) => {
         }
       }
     },
-    defaults: {}
+    defaults: {},
+    ssr: true
   });
   app.vueApp.use(vuetify);
 });

@@ -19,6 +19,7 @@ export const useAPIFetch: typeof useFetch = (request, opts?) => {
   return useFetch(request, {
     baseURL: config.public.baseURL,
     headers,
+    credentials: 'include',
     ...customOptions,
     onResponse: async ({ response, options }) => {
       if (response.status === 401) {

@@ -1,4 +1,5 @@
 <template>
+  <div id="editorjs" v-show="false"></div>
   <div class="readonlyBlock">
     <div class="my-4" v-for="(item, index) in HTML" :key="index">
       <div v-html="item"></div>
@@ -7,22 +8,36 @@
 </template>
 
 <script setup lang="ts">
-import EditorJS, { type OutputData } from '@editorjs/editorjs';
-import Header from '@editorjs/header';
-import List from '@editorjs/list';
-import Quote from '@editorjs/quote';
-import ImageTool from '@editorjs/image';
-import Table from '@editorjs/table';
 import edjsHTML from 'editorjs-html';
 // import 'highlight.js/styles/stackoverflow-light.css';
 import 'highlight.js/styles/stackoverflow-dark.css';
 import hljs from 'highlight.js';
 
-hljs.highlightAll();
+if (import.meta.client) {
+  onMounted(async () => {
+    const EditorJS = (await import('@editorjs/editorjs')).default;
+    const Header = (await import('@editorjs/header')).default;
+    const List = (await import('@editorjs/list')).default;
+    const Quote = (await import('@editorjs/quote')).default;
+    const ImageTool = (await import('@editorjs/image')).default;
+    const Table = (await import('@editorjs/table')).default;
+    const editor = new EditorJS({
+      holder: 'editorjs',
+      tools: {
+        header: Header,
+        list: List,
+        quote: Quote,
+        image: ImageTool,
+        table: Table
+      }
+    });
+    hljs.highlightAll();
+  });
+}
 
 const props = defineProps({
   blockData: {
-    type: Object as PropType<OutputData>,
+    type: Object as PropType<any>,
     required: true,
     default: () => {}
   }

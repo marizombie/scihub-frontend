@@ -28,19 +28,23 @@ function parseJwt(token: string | undefined) {
   if (!token) {
     return;
   }
-  var base64Url = token.split('.')[1];
-  var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  var jsonPayload = decodeURIComponent(
-    window
-      .atob(base64)
-      .split('')
-      .map(function (c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      })
-      .join('')
-  );
-
-  return JSON.parse(jsonPayload);
+  if (import.meta.server) {
+    return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+  }
+  if (import.meta.client) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(
+      window
+        .atob(base64)
+        .split('')
+        .map(function (c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  }
 }
 
 export const useUserStore = defineStore('user', {
@@ -56,24 +60,24 @@ export const useUserStore = defineStore('user', {
   actions: {
     async setUserInfo(token: TokenInfo) {
       this.userData = token;
-      localStorage.setItem('token', token.access);
-      localStorage.setItem('refreshToken', token.refresh);
-      localStorage.setItem(
-        'user',
-        [token.avatar, token.first_name, token.last_name].join(';')
-      );
     },
     async getUserInfoFromLS() {
-      let token = localStorage.getItem('token');
-      let refreshToken = localStorage.getItem('refreshToken');
-      let user = localStorage.getItem('user')?.split(';');
-      if (token && refreshToken && user) {
+      const csrf = useCookie('csrftoken');
+      const access = useCookie('__Secure-great-base');
+      const refresh = useCookie('__Secure-great-refresh');
+      const avatar = useCookie('avatar');
+      const first_name = useCookie('first_name');
+      const last_name = useCookie('last_name');
+      const username = useCookie('username');
+
+      if (access.value && refresh.value && csrf.value) {
         this.userData = {
-          access: token,
-          refresh: refreshToken,
-          avatar: user[0],
-          first_name: user[1],
-          last_name: user[2]
+          access: access.value,
+          refresh: refresh.value,
+          avatar: avatar.value || '',
+          first_name: first_name.value || '',
+          last_name: last_name.value || '',
+          username: username.value || ''
         };
         this.rehydrate();
       }
@@ -92,13 +96,9 @@ export const useUserStore = defineStore('user', {
     },
     logout() {
       this.userData = null;
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
     },
     async rehydrate() {
-      let tokenInfo = parseJwt(
-        localStorage.getItem('token') || this.userData?.access
-      );
+      let tokenInfo = parseJwt(this.userData?.access);
       if (tokenInfo) {
         const expiredTime = tokenInfo.exp * 1000;
         if (expiredTime < new Date().getTime()) {
@@ -107,8 +107,7 @@ export const useUserStore = defineStore('user', {
             {
               method: 'post',
               body: {
-                refresh:
-                  localStorage.getItem('refreshToken') || this.userData?.refresh
+                refresh: this.userData?.refresh
               }
             }
           );
@@ -123,7 +122,6 @@ export const useUserStore = defineStore('user', {
           }
           if (data.value) {
             this.userData!.access = data.value.access;
-            localStorage.setItem('token', data.value.access);
           }
         }
       }
@@ -199,14 +197,18 @@ export const useCookiesStore = defineStore('cookiesStore', {
   actions: {
     setCurrentAccepts(accepts: CookiesAccepts) {
       this.currentAccepts = accepts;
-      localStorage.setItem('cookiesAccepts', JSON.stringify(accepts));
+      if (import.meta.client) {
+        localStorage.setItem('cookiesAccepts', JSON.stringify(accepts));
+      }
     },
     rehydrateCurrentAccepts() {
-      const accepts = localStorage.getItem('cookiesAccepts');
-      if (accepts) {
-        this.currentAccepts = JSON.parse(accepts);
-      } else {
-        this.currentAccepts = null;
+      if (import.meta.client) {
+        const accepts = localStorage.getItem('cookiesAccepts');
+        if (accepts) {
+          this.currentAccepts = JSON.parse(accepts);
+        } else {
+          this.currentAccepts = null;
+        }
       }
     }
   }

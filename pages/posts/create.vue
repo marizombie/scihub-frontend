@@ -106,17 +106,6 @@
 </template>
 
 <script setup lang="ts">
-import EditorJS, { type OutputData } from '@editorjs/editorjs';
-import Header from '@editorjs/header';
-import List from '@editorjs/list';
-import Quote from '@editorjs/quote';
-import ImageTool from '@editorjs/image';
-import Checklist from '@editorjs/checklist';
-import Embed from '@editorjs/embed';
-import LinkTool from '@editorjs/link';
-import Undo from 'editorjs-undo';
-import Warning from '@editorjs/warning';
-import Table from '@editorjs/table';
 import { useDisplay, useTheme } from 'vuetify';
 
 import AceCodeEditorJS, { type AceCodeConfig } from 'ace-code-editorjs';
@@ -134,6 +123,150 @@ import { useNotificationStore, useUserStore } from '~/store';
 import type { Article, TagItem } from '~/types';
 import * as yup from 'yup';
 
+let editor: any;
+
+onMounted(async () => {
+  const EditorJS = (await import('@editorjs/editorjs')).default;
+  const Header = (await import('@editorjs/header')).default;
+  const List = (await import('@editorjs/list')).default;
+  const Quote = (await import('@editorjs/quote')).default;
+  const ImageTool = (await import('@editorjs/image')).default;
+  const Table = (await import('@editorjs/table')).default;
+  const LinkTool = (await import('@editorjs/link')).default;
+  const Embed = (await import('@editorjs/embed')).default;
+  const Undo = (await import('editorjs-undo')).default;
+  editor = new EditorJS({
+    holder: 'editorjs',
+    tools: {
+      header: Header,
+      list: List,
+      quote: Quote,
+      image: {
+        class: ImageTool,
+        config: {
+          additionalRequestHeaders: {
+            authorization: `Bearer ${userStore.userData?.access}`
+          },
+          additionalRequestData: {
+            draft_slug: articleData.value.draftSlug
+          },
+          // endpoints: {
+          //   byFile: `${config.public.baseURL}api/upload/postimage/` // Your backend file uploader endpoint
+          //   // byUrl: 'http://localhost:8008/fetchUrl', // Your endpoint that provides uploading by Url
+          // },
+          uploader: {
+            async uploadByFile(file: File) {
+              if (file.size > 3000000) {
+                const notifyStore = useNotificationStore();
+                await notifyStore.setNotification({
+                  type: 'error',
+                  message:
+                    'Please consider uploading image with size less than 3MB'
+                });
+                editor.blocks.delete();
+                return {
+                  success: 0,
+                  file: null
+                };
+              }
+              const formData = new FormData();
+              formData.append('image', file);
+              formData.append('draft_slug', articleData.value.draftSlug);
+              const { data, error } = await useAPIFetch<GetPostOrDraftResponse>(
+                `${config.public.baseURL}api/upload/postimage/`,
+                {
+                  method: 'POST',
+                  body: formData
+                }
+              );
+              if (error.value?.data) {
+                const notifyStore = useNotificationStore();
+                await notifyStore.setNotification({
+                  type: 'error',
+                  message: error.value.data.detail
+                });
+              }
+              if (data.value) {
+                return data.value;
+              }
+            }
+          }
+        }
+      },
+      // checklist: {
+      //   class: Checklist,
+      //   inlineToolbar: true,
+      // },
+      embed: Embed,
+      linkTool: {
+        class: LinkTool,
+        config: {
+          headers: {
+            authorization: `Bearer ${userStore.userData?.access}`
+          },
+          endpoint: `${config.public.baseURL}api/fetch-url`
+        }
+      },
+      // warning: Warning,
+      table: Table,
+      code: {
+        class: AceCodeEditorJS,
+        config: aceConfig
+      }
+    },
+    onReady: () => {
+      new Undo({ editor });
+    }
+  });
+
+  editor.isReady
+    .then(async () => {
+      const holder = document.getElementById('editorjs');
+      if (holder) {
+        holder.addEventListener('click', eventHandlerAceCode, true);
+      }
+      if (route.query.postSlug) {
+        const { data: postData } = await useAPIFetch<GetPostOrDraftResponse>(
+          `api/posts/${route.query.postSlug}/edit/`,
+          {
+            method: 'get'
+          }
+        );
+        if (postData.value) {
+          editor.render(postData.value.success.content);
+          articleData.value.description = postData.value.success.description;
+          articleData.value.title = postData.value.success.title;
+          title.value.value = articleData.value.title;
+          description.value.value = articleData.value.description;
+          if (postData.value.success.slug) {
+            articleData.value.draftSlug = postData.value.success.slug;
+          }
+        }
+      }
+      if (route.query.draftSlug) {
+        const { data: postData } = await useAPIFetch<GetPostOrDraftResponse>(
+          `api/drafts/${route.query.draftSlug}/edit/`,
+          {
+            method: 'get'
+          }
+        );
+        if (postData.value) {
+          editor.render(postData.value.success.content);
+          articleData.value.description = postData.value.success.description;
+          articleData.value.title = postData.value.success.title;
+          title.value.value = articleData.value.title;
+          description.value.value = articleData.value.description;
+          if (postData.value.success.slug) {
+            articleData.value.draftSlug = postData.value.success.slug;
+          }
+        }
+      }
+    })
+    .catch((reason: any) => {
+      console.log(`Editor.js initialization failed because of ${reason}`);
+    });
+});
+
 interface DraftResponse {
   success: string;
   slug: string;
@@ -148,7 +281,7 @@ interface PublishResponse {
 
 interface GetPostOrDraftResponse {
   success: {
-    content: OutputData;
+    content: any;
     description: string;
     title: string;
     slug?: string;
@@ -339,89 +472,6 @@ const display = ref(useDisplay() || null);
 
 const config = useRuntimeConfig();
 const userStore = useUserStore();
-const editor = new EditorJS({
-  holder: 'editorjs',
-  tools: {
-    header: Header,
-    list: List,
-    quote: Quote,
-    image: {
-      class: ImageTool,
-      config: {
-        additionalRequestHeaders: {
-          authorization: `Bearer ${userStore.userData?.access}`
-        },
-        additionalRequestData: {
-          draft_slug: articleData.value.draftSlug
-        },
-        // endpoints: {
-        //   byFile: `${config.public.baseURL}api/upload/postimage/` // Your backend file uploader endpoint
-        //   // byUrl: 'http://localhost:8008/fetchUrl', // Your endpoint that provides uploading by Url
-        // },
-        uploader: {
-          async uploadByFile(file: File) {
-            if (file.size > 3000000) {
-              const notifyStore = useNotificationStore();
-              await notifyStore.setNotification({
-                type: 'error',
-                message:
-                  'Please consider uploading image with size less than 3MB'
-              });
-              editor.blocks.delete();
-              return {
-                success: 0,
-                file: null
-              };
-            }
-            const formData = new FormData();
-            formData.append('image', file);
-            formData.append('draft_slug', articleData.value.draftSlug);
-            const { data, error } = await useAPIFetch<GetPostOrDraftResponse>(
-              `${config.public.baseURL}api/upload/postimage/`,
-              {
-                method: 'POST',
-                body: formData
-              }
-            );
-            if (error.value?.data) {
-              const notifyStore = useNotificationStore();
-              await notifyStore.setNotification({
-                type: 'error',
-                message: error.value.data.detail
-              });
-            }
-            if (data.value) {
-              return data.value;
-            }
-          }
-        }
-      }
-    },
-    // checklist: {
-    //   class: Checklist,
-    //   inlineToolbar: true,
-    // },
-    embed: Embed,
-    linkTool: {
-      class: LinkTool,
-      config: {
-        headers: {
-          authorization: `Bearer ${userStore.userData?.access}`
-        },
-        endpoint: `${config.public.baseURL}api/fetch-url`
-      }
-    },
-    // warning: Warning,
-    table: Table,
-    code: {
-      class: AceCodeEditorJS,
-      config: aceConfig
-    }
-  },
-  onReady: () => {
-    new Undo({ editor });
-  }
-});
 
 function eventHandlerAceCode(val: any) {
   let target = val.target as HTMLElement;
@@ -431,9 +481,9 @@ function eventHandlerAceCode(val: any) {
       target.closest('.ce-popover-item')?.dataset.itemName === 'code')
   ) {
     val.stopPropagation();
-    editor.save().then((data) => {
-      if (data.blocks.filter((el) => el.type === 'code').length >= 1) {
-        let codeBlocks = data.blocks.filter((el) => el.type === 'code');
+    editor.save().then((data: any) => {
+      if (data.blocks.filter((el: any) => el.type === 'code').length >= 1) {
+        let codeBlocks = data.blocks.filter((el: any) => el.type === 'code');
         let lastblock = codeBlocks[codeBlocks.length - 1];
         editor.blocks.insert('code', {
           code: '',
@@ -451,53 +501,6 @@ function eventHandlerAceCode(val: any) {
   }
 }
 
-editor.isReady
-  .then(async () => {
-    const holder = document.getElementById('editorjs');
-    if (holder) {
-      holder.addEventListener('click', eventHandlerAceCode, true);
-    }
-    if (route.query.postSlug) {
-      const { data: postData } = await useAPIFetch<GetPostOrDraftResponse>(
-        `api/posts/${route.query.postSlug}/edit/`,
-        {
-          method: 'get'
-        }
-      );
-      if (postData.value) {
-        editor.render(postData.value.success.content);
-        articleData.value.description = postData.value.success.description;
-        articleData.value.title = postData.value.success.title;
-        title.value.value = articleData.value.title;
-        description.value.value = articleData.value.description;
-        if (postData.value.success.slug) {
-          articleData.value.draftSlug = postData.value.success.slug;
-        }
-      }
-    }
-    if (route.query.draftSlug) {
-      const { data: postData } = await useAPIFetch<GetPostOrDraftResponse>(
-        `api/drafts/${route.query.draftSlug}/edit/`,
-        {
-          method: 'get'
-        }
-      );
-      if (postData.value) {
-        editor.render(postData.value.success.content);
-        articleData.value.description = postData.value.success.description;
-        articleData.value.title = postData.value.success.title;
-        title.value.value = articleData.value.title;
-        description.value.value = articleData.value.description;
-        if (postData.value.success.slug) {
-          articleData.value.draftSlug = postData.value.success.slug;
-        }
-      }
-    }
-  })
-  .catch((reason) => {
-    console.log(`Editor.js initialization failed because of ${reason}`);
-  });
-
 onUnmounted(() => {
   const holder = document.getElementById('editorjs');
   if (holder) {
@@ -509,9 +512,9 @@ const showMetaDialog = ref(false);
 const tagsArray: Ref<Article[]> = ref([]);
 
 function showMetaPreview() {
-  editor.save().then(async (outputData) => {
+  editor.save().then(async (outputData: any) => {
     const imageData = outputData.blocks.find(
-      (item) => item.type === 'image' && item.data.file?.url
+      (item: any) => item.type === 'image' && item.data.file?.url
     );
     if (!imageData) {
       const notifyStore = useNotificationStore();
@@ -624,10 +627,10 @@ const title = useField('title', validationSchema);
 const description = useField('description', validationSchema);
 const chosedTags = useField('chosedTags', validationSchema);
 
-const save = handleSubmit(async (values) => {
+const save = handleSubmit(async (values: any) => {
   editor
     .save()
-    .then(async (outputData) => {
+    .then(async (outputData: any) => {
       const bodyData = {
         is_draft: 'false',
         title: values.title,
@@ -653,7 +656,7 @@ const save = handleSubmit(async (values) => {
         navigateTo(`/posts/${postData.value.post.slug}`);
       }
     })
-    .catch((error) => {
+    .catch((error: any) => {
       console.log('Saving failed: ', error);
     });
 });
@@ -661,7 +664,7 @@ const save = handleSubmit(async (values) => {
 async function saveAsDraft(setDraftSlug: boolean = true) {
   editor
     .save()
-    .then(async (outputData) => {
+    .then(async (outputData: any) => {
       let bodyData = {
         title: articleData.value.title,
         description: articleData.value.description,
@@ -692,7 +695,7 @@ async function saveAsDraft(setDraftSlug: boolean = true) {
         });
       }
     })
-    .catch((error) => {
+    .catch((error: any) => {
       console.log('Saving failed: ', error);
     });
 }

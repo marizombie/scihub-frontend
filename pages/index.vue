@@ -40,21 +40,23 @@
   <v-row justify-md="center">
     <v-col :class="[filterByTags.length ? 'mt-6' : '']" md="7">
       <div>
-        <v-tabs
-          mobile-breakpoint="xxl"
-          class="mb-8"
-          v-model="tab"
-          color="deep-purple-accent-4"
-          v-if="userStore.userData?.access && !filterByTags.length"
-        >
-          <v-tab class="pa-0 ma-0" style="min-width: 0px" />
-          <v-tab :value="1">For you</v-tab>
-          <v-tab :value="2">Bookmarks</v-tab>
-          <v-tab :value="3">My posts</v-tab>
-          <v-tab :value="4">Drafts</v-tab>
-          <v-tab :value="5">Upvoted posts</v-tab>
-          <v-tab :value="6">Upvoted comments</v-tab>
-        </v-tabs>
+        <ClientOnly>
+          <v-tabs
+            mobile-breakpoint="xxl"
+            class="mb-8"
+            v-model="tab"
+            color="deep-purple-accent-4"
+            v-if="userStore.userData && !filterByTags.length"
+          >
+            <v-tab class="pa-0 ma-0" style="min-width: 0px" />
+            <v-tab :value="1">For you</v-tab>
+            <v-tab :value="2">Bookmarks</v-tab>
+            <v-tab :value="3">My posts</v-tab>
+            <v-tab :value="4">Drafts</v-tab>
+            <v-tab :value="5">Upvoted posts</v-tab>
+            <v-tab :value="6">Upvoted comments</v-tab>
+          </v-tabs>
+        </ClientOnly>
         <div
           v-if="filterByTags.length"
           class="ml-4 mr-4 tags d-flex flex-wrap align-center"
@@ -152,7 +154,6 @@
                 </v-menu>
               </div>
               <div class="pa-4 d-flex flex-column flex-md-row">
-                <!-- TODO: rewrite src generation to util function -->
                 <img
                   style="width: 100%; max-width: 300px; max-height: 225px"
                   :src="

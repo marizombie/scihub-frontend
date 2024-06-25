@@ -2,7 +2,6 @@ import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  ssr: false,
   app: {
     head: {
       title: 'Great Things Development'
@@ -26,7 +25,7 @@ export default defineNuxtConfig({
   ],
   runtimeConfig: {
     public: {
-      baseURL: process.env.BASE_URL || 'http://127.0.0.1:8000/'
+      baseURL: process.env.BASE_URL || 'http://localhost:8000/'
     }
   },
   vite: {

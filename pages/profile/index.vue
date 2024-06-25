@@ -11,7 +11,8 @@
       </v-card-title>
       <v-card-text class="pa-0 pl-4">
         Deletion is not reversible. After you delete your profile, we can't help
-        you to restore it. All your created data will be deleted together with your profile.
+        you to restore it. All your created data will be deleted together with
+        your profile.
       </v-card-text>
       <v-card-actions class="mb-4">
         <v-spacer></v-spacer>
@@ -22,7 +23,12 @@
         >
           Cancel
         </v-btn>
-        <v-btn variant="text" color="error" class="mr-6 removeClass" @click="onDeleteProfile()">
+        <v-btn
+          variant="text"
+          color="error"
+          class="mr-6 removeClass"
+          @click="onDeleteProfile()"
+        >
           Delete
         </v-btn>
       </v-card-actions>
@@ -111,7 +117,11 @@
       </div>
     </div>
     <v-card-actions>
-      <v-btn color="error" variant="text" @click="showDeleteProfileDialog = true">
+      <v-btn
+        color="error"
+        variant="text"
+        @click="showDeleteProfileDialog = true"
+      >
         Delete profile
       </v-btn>
       <v-spacer></v-spacer>
@@ -270,12 +280,9 @@ async function searchByTag(tag: string) {
 }
 
 async function onDeleteProfile() {
-  const { data, error } = await useAPIFetch<CommentData[]>(
-    `api/profile/`,
-    {
-      method: 'delete'
-    }
-  );
+  const { data, error } = await useAPIFetch<CommentData[]>(`api/profile/`, {
+    method: 'delete'
+  });
   if (error.value?.data) {
     if (error.value) {
       const notifyStore = useNotificationStore();
@@ -289,7 +296,6 @@ async function onDeleteProfile() {
     userStore.logout();
     await navigateTo(`/`);
   }
-  
 }
 </script>
 

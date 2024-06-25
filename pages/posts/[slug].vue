@@ -9,12 +9,7 @@
 </i18n>
 
 <template>
-  <v-dialog
-    v-model="showDeleteDialog"
-    max-width="600px"
-    v-if="showDeleteDialog"
-    class="delete-modal"
-  >
+  <v-dialog v-model="showDeleteDialog" max-width="600px" class="delete-modal">
     <v-card>
       <v-card-title class="mt-4 pa-0 pl-4 pb-4">
         <span class="text-h5">Are you sure want to delete?</span>
@@ -81,9 +76,13 @@
                 mdi-bookmark-check
               </v-icon>
             </v-btn>
-            <SocialShare :share-object="sharing as Share" :networks="networks">
-              <v-tooltip activator="parent" location="bottom">Share</v-tooltip>
-            </SocialShare>
+            <ClientOnly>
+              <SocialShare :share-object="sharing" :networks="networks">
+                <v-tooltip activator="parent" location="bottom"
+                  >Share</v-tooltip
+                >
+              </SocialShare>
+            </ClientOnly>
             <v-menu
               offset-y
               v-if="article.author_name === userStore.userInfo?.username"
@@ -501,7 +500,7 @@ const sharing = computed(() => {
     description: article.value ? article.value.description : '',
     quote: article.value ? article.value.title : '',
     hashtags: article.value ? article.value.tags.join(',') : ['']
-  };
+  } as Share;
 });
 
 async function goToAuthorPosts(username: string) {
@@ -782,11 +781,6 @@ async function showSignUpModal() {
   return;
 }
 
-// TODO: Check upvoted data and show active if user already voted
-// const { data, error } = await useAPIFetch(`/api/upvotes/post/${article.value!.id}`, {
-//   method: "get",
-// });
-
 // TODO: Check meta data after deployment. https://nuxt.com/docs/getting-started/seo-meta
 useSeoMeta({
   title: () => (article.value ? article.value.title : ''),
@@ -795,7 +789,7 @@ useSeoMeta({
   ogDescription: () => (article.value ? article.value.description : ''),
   ogImage: () => (article.value ? article.value.preview_image : ''),
   twitterCard: () => 'summary_large_image',
-  ogUrl: () => window.location.href.split('?')[0],
+  // ogUrl: () => process.env.URL,
   ogType: 'article'
 });
 </script>

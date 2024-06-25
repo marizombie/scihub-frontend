@@ -6,7 +6,7 @@
         <div class="main-content">
           <v-app-bar-title class="ml-4 title-icon">
             <a href="/">
-              <v-img src="/favicon.ico" />
+              <v-img src="~/public/favicon.ico" />
               <span>{{ title }}</span>
             </a>
           </v-app-bar-title>
@@ -105,7 +105,7 @@
             >
               Write
             </v-btn>
-            <v-menu v-if="userStore.userInfo && userStore.userAvatar">
+            <v-menu v-if="userStore.userInfo">
               <template v-slot:activator="{ props }">
                 <v-btn
                   size="48"
@@ -145,39 +145,43 @@
           </div>
         </div>
 
-        <div v-if="!display.smAndUp" class="additional-search mb-2">
-          <v-menu>
-            <template v-slot:activator="{ props }">
-              <v-text-field
-                v-bind="props"
-                density="compact"
-                variant="solo"
-                label="Search"
-                v-model="search"
-                single-line
-                hide-details
-                append-inner-icon="mdi-magnify"
-              />
-            </template>
-            <v-list v-if="searchedPosts.length">
-              <v-list-item
-                v-for="(item, index) in searchedPosts"
-                :key="index"
-                :value="index"
-                @click="handleChange(item.slug)"
-              >
-                <v-list-item-title>{{ item.title }}</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </div>
+        <ClientOnly>
+          <div v-if="!display.smAndUp" class="additional-search mb-2">
+            <v-menu>
+              <template v-slot:activator="{ props }">
+                <v-text-field
+                  v-bind="props"
+                  density="compact"
+                  variant="solo"
+                  label="Search"
+                  v-model="search"
+                  single-line
+                  hide-details
+                  append-inner-icon="mdi-magnify"
+                />
+              </template>
+              <v-list v-if="searchedPosts.length">
+                <v-list-item
+                  v-for="(item, index) in searchedPosts"
+                  :key="index"
+                  :value="index"
+                  @click="handleChange(item.slug)"
+                >
+                  <v-list-item-title>{{ item.title }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </div>
+        </ClientOnly>
       </v-app-bar>
       <v-main>
         <v-container class="custom-container">
           <slot />
         </v-container>
       </v-main>
-      <cookie-banner v-if="!cookiesStore.getCurrentAccepts" />
+      <ClientOnly>
+        <cookie-banner v-if="!cookiesStore.getCurrentAccepts" />
+      </ClientOnly>
     </v-theme-provider>
   </v-app>
 </template>
