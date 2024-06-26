@@ -63,8 +63,8 @@ export const useUserStore = defineStore('user', {
     },
     async getUserInfoFromLS() {
       const csrf = useCookie('csrftoken');
-      const access = useCookie('__Secure-great-base');
-      const refresh = useCookie('__Secure-great-refresh');
+      const access = useCookie(process.env.JWT_AUTH_COOKIE!);
+      const refresh = useCookie(process.env.JWT_AUTH_REFRESH_COOKIE!);
       const avatar = useCookie('avatar');
       const first_name = useCookie('first_name');
       const last_name = useCookie('last_name');

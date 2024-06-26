@@ -13,15 +13,7 @@
       :class="['pa-4', theme.global.current.value.dark ? 'dark-theme' : '']"
     ></div>
     <div class="mt-2 ml-auto buttons-container">
-      <v-btn
-        variant="text"
-        @click="
-          saveAsDraft();
-          redirectToDrafts();
-        "
-      >
-        Save as Draft
-      </v-btn>
+      <v-btn variant="text" @click="onDraftSave()"> Save as Draft </v-btn>
       <v-btn color="primary" class="ml-3" @click="showMetaPreview()">
         Publish
       </v-btn>
@@ -86,15 +78,7 @@
           >
           </v-combobox>
           <div class="publish-action-buttons">
-            <v-btn
-              variant="text"
-              @click="
-                saveAsDraft();
-                redirectToDrafts();
-              "
-            >
-              Save as Draft
-            </v-btn>
+            <v-btn variant="text" @click="onDraftSave()"> Save as Draft </v-btn>
             <v-btn color="primary" class="ml-3" @click="save()">
               Publish
             </v-btn>
@@ -662,14 +646,21 @@ const save = handleSubmit(async (values: any) => {
 });
 
 async function saveAsDraft(setDraftSlug: boolean = true) {
-  editor
+  await editor
     .save()
     .then(async (outputData: any) => {
       let bodyData = {
         title: articleData.value.title,
-        description: articleData.value.description,
+        description: description.value.value,
         content: outputData,
-        tags: articleData.value.tags
+        tags: (chosedTags.value.value as (TagItem | string)[]).map(
+          (item: TagItem | string) => {
+            if (typeof item === 'string') {
+              return item;
+            }
+            return item.name;
+          }
+        )
       };
       if (articleData.value.draftSlug) {
         bodyData = Object.assign(bodyData, {
@@ -689,10 +680,7 @@ async function saveAsDraft(setDraftSlug: boolean = true) {
         articleData.value.draftSlug = draftData.value.slug;
         editor.configuration.tools.image.config.additionalRequestData.draft_slug =
           articleData.value.draftSlug;
-        const router = useRouter();
-        await router.replace({
-          query: { draftSlug: articleData.value.draftSlug }
-        });
+        await navigateTo({ query: { draftSlug: articleData.value.draftSlug } });
       }
     })
     .catch((error: any) => {
@@ -700,8 +688,9 @@ async function saveAsDraft(setDraftSlug: boolean = true) {
     });
 }
 
-function redirectToDrafts() {
-  navigateTo(`/?showDraft=true`);
+async function onDraftSave() {
+  await saveAsDraft();
+  await navigateTo(`/?tab=drafts`);
 }
 </script>
 

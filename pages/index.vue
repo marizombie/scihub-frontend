@@ -383,14 +383,18 @@ async function loadData() {
   const { data: posts } = await useAPIFetch<CRUDResponse>(
     currentRequest.value + `?limit=5&offset=${currentShowList.value.length}`
   );
-  currentShowList.value = currentShowList.value.concat(posts.value!.results);
+  if (posts.value?.results) {
+    currentShowList.value = currentShowList.value.concat(posts.value!.results);
+  }
 }
 
 async function fetchDefaultPosts() {
   tab.value = 1;
   const { data: posts } = await useAPIFetch<CRUDResponse>('/api/posts/');
   currentRequest.value = '/api/posts/';
-  currentShowList.value = posts.value!.results;
+  if (posts.value?.results) {
+    currentShowList.value = posts.value!.results;
+  }
 }
 
 const tabsMap = {
@@ -496,18 +500,6 @@ watch(
         router.push('/');
         fetchDefaultPosts();
         break;
-    }
-  },
-  { immediate: true }
-);
-
-watch(
-  () => route.query.showDraft,
-  (val) => {
-    if (val) {
-      const router = useRouter();
-      tab.value = 4;
-      router.replace('/');
     }
   },
   { immediate: true }
