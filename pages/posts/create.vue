@@ -40,6 +40,8 @@
             v-model.sync="title.value.value"
             variant="underlined"
             class="pb-4"
+            counter="100"
+            :persistent-counter="true"
             :error-messages="title.errorMessage.value"
           />
           <v-text-field
@@ -47,6 +49,8 @@
             v-model="description.value.value"
             variant="underlined"
             class="pb-4"
+            counter="200"
+            :persistent-counter="true"
             :error-messages="description.errorMessage.value"
           />
           <span
@@ -579,8 +583,8 @@ let publishData: Ref<PublishInfo> = ref({
 const validationSchema = markRaw(
   yup
     .object({
-      title: yup.string().required().min(3).label('Title'),
-      description: yup.string().required().min(3).label('Description'),
+      title: yup.string().required().min(3).max(100).label('Title'),
+      description: yup.string().required().min(3).max(200).label('Description'),
       chosedTags: yup
         .array()
         .of(
