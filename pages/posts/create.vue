@@ -132,9 +132,6 @@ onMounted(async () => {
       image: {
         class: ImageTool,
         config: {
-          additionalRequestHeaders: {
-            authorization: `Bearer ${userStore.userData?.access}`
-          },
           additionalRequestData: {
             draft_slug: articleData.value.draftSlug
           },
@@ -189,9 +186,6 @@ onMounted(async () => {
       linkTool: {
         class: LinkTool,
         config: {
-          headers: {
-            authorization: `Bearer ${userStore.userData?.access}`
-          },
           endpoint: `${config.public.baseURL}api/fetch-url`
         }
       },

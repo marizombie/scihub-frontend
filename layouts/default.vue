@@ -297,7 +297,7 @@ function logoutAndRedirect() {
 watch(
   () => userStore.userInfo,
   async (val) => {
-    if (val?.access) {
+    if (val) {
       const { data } = await useAPIFetch<ProfileInfo>('/api/profile/');
       if (data.value) {
         userStore.setUserName(data.value.username);

@@ -4,8 +4,6 @@ export interface RefreshInfo {
   access: string;
 }
 export interface TokenInfo {
-  access: string;
-  refresh: string;
   avatar: string;
   first_name: string;
   last_name: string;
@@ -24,7 +22,7 @@ export interface Modal {
   prevRoute: string;
 }
 
-function parseJwt(token: string | undefined) {
+function parseJwt(token: string | undefined | null) {
   if (!token) {
     return;
   }
@@ -63,23 +61,20 @@ export const useUserStore = defineStore('user', {
     },
     async getUserInfoFromLS() {
       const csrf = useCookie('csrftoken');
-      const access = useCookie(process.env.JWT_AUTH_COOKIE!);
-      const refresh = useCookie(process.env.JWT_AUTH_REFRESH_COOKIE!);
+      const access = useCookie('Secure-great-base');
+      const refresh = useCookie('Secure-great-refresh');
       const avatar = useCookie('avatar');
       const first_name = useCookie('first_name');
       const last_name = useCookie('last_name');
       const username = useCookie('username');
-
       if (access.value && refresh.value && csrf.value) {
         this.userData = {
-          access: access.value,
-          refresh: refresh.value,
           avatar: avatar.value || '',
           first_name: first_name.value || '',
           last_name: last_name.value || '',
           username: username.value || ''
         };
-        this.rehydrate();
+        await this.rehydrate();
       }
     },
     setUserName(value: string) {
@@ -94,12 +89,44 @@ export const useUserStore = defineStore('user', {
         this.setUserInfo(this.userData);
       }
     },
-    logout() {
+    async logout() {
+      // rewrite to request below WITHOUT USING USEAPIFETCH after https://great-things.atlassian.net/browse/CNS-365
+      // and remove useCookies from here
+
+      // const { error } = await useAPIFetch<RefreshInfo>(
+      //   '/api/logout/',
+      //   {
+      //     method: 'post',
+      //   }
+      // );
+      // if (error.value) {
+      //   const notifyStore = useNotificationStore();
+      //   await notifyStore.setNotification({
+      //     type: 'error',
+      //     message:error.value.toString()
+      //   });
+      // }
       this.userData = null;
+      const csrf = useCookie('csrftoken');
+      const access = useCookie('Secure-great-base');
+      const refresh = useCookie('Secure-great-refresh');
+      const avatar = useCookie('avatar');
+      const first_name = useCookie('first_name');
+      const last_name = useCookie('last_name');
+      const username = useCookie('username');
+      csrf.value = '';
+      access.value = '';
+      refresh.value = '';
+      avatar.value = '';
+      first_name.value = '';
+      last_name.value = '';
+      username.value = '';
     },
     async rehydrate() {
-      let tokenInfo = parseJwt(this.userData?.access);
-      if (tokenInfo) {
+      const accessToken = useCookie('Secure-great-base');
+      const refresh = useCookie('Secure-great-refresh');
+      let tokenInfo = parseJwt(accessToken.value);
+      if (tokenInfo && refresh.value) {
         const expiredTime = tokenInfo.exp * 1000;
         if (expiredTime < new Date().getTime()) {
           const { data, error } = await useAPIFetch<RefreshInfo>(
@@ -107,21 +134,20 @@ export const useUserStore = defineStore('user', {
             {
               method: 'post',
               body: {
-                refresh: this.userData?.refresh
+                refresh: refresh.value
               }
             }
           );
-          if (error.value) {
+          if (error.value && import.meta.server) {
             const notifyStore = useNotificationStore();
             await notifyStore.setNotification({
               type: 'error',
-              message:
-                error.value.data.detail +
-                '. Please log in again using your credentials.'
+              message: 'Please sign in again to continue your session'
             });
+            this.logout();
           }
           if (data.value) {
-            this.userData!.access = data.value.access;
+            accessToken.value = data.value.access;
           }
         }
       }

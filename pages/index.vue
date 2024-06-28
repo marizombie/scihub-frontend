@@ -613,7 +613,7 @@ const { t } = useI18n({
 async function followTag(tags: string[]) {
   followLoading.value = true;
   for (const tag of tags) {
-    if (userStore.userInfo?.access) {
+    if (userStore.userInfo) {
       const { data, error } = await useAPIFetch<CommentData[]>(
         `api/toggle-follow/tag/${tag}/`,
         {
@@ -640,7 +640,7 @@ async function followTag(tags: string[]) {
 }
 
 async function followAuthor(name: string) {
-  if (!userStore.userInfo?.access) {
+  if (!userStore.userInfo) {
     const modalStore = useModalsStore();
     await modalStore.setModal('SignUp', t('followTitle'));
     return;

@@ -6,8 +6,7 @@ export const useAPIFetch: typeof useFetch = (request, opts?) => {
   const store = useUserStore();
   const notifyStore = useNotificationStore();
   const headers = {
-    ...opts?.headers,
-    authorization: store.userInfo ? `Bearer ${store.userInfo.access}` : ''
+    ...opts?.headers
   };
   const customOptions = {
     ...opts,
@@ -25,18 +24,19 @@ export const useAPIFetch: typeof useFetch = (request, opts?) => {
       if (response.status === 401) {
         if (
           response._data.code === 'token_not_valid' &&
-          !response._data.messages
+          response._data.detail ===
+            'No valid token found in refresh token cookie'
         ) {
           await store.logout();
-        }
-        try {
-          await store.rehydrate();
-          if (store.userInfo?.access) {
-            headers.authorization = `Bearer ${store.userInfo.access}`;
-            useAPIFetch(request, customOptions);
+        } else {
+          try {
+            await store.rehydrate();
+            if (store.userInfo) {
+              useAPIFetch(request, customOptions);
+            }
+          } catch (error) {
+            console.error('Token refresh failed:', error);
           }
-        } catch (error) {
-          console.error('Token refresh failed:', error);
         }
       }
     }

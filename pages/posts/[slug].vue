@@ -65,7 +65,7 @@
               variant="plain"
               :ripple="false"
               class="plain-custom-style"
-              v-if="userStore.userInfo?.access"
+              v-if="userStore.userInfo"
               @click="addBookmark()"
             >
               <v-tooltip activator="parent" location="bottom"
@@ -136,7 +136,7 @@
         <div class="pa-4 pt-0 d-flex align-center">
           <LikeButton
             @click="sendUpvote(article)"
-            :toggable="!!userStore.userInfo?.access"
+            :toggable="!!userStore.userInfo"
             :is-clicked="
               !!userStore.userInfo && article?.is_upvoted_by_current_user
             "
@@ -321,7 +321,7 @@
           <div class="ml-2 mt-2 d-flex align-center">
             <LikeButton
               @click="sendUpvote(item)"
-              :toggable="!!userStore.userInfo?.access"
+              :toggable="!!userStore.userInfo"
               :is-clicked="
                 !!userStore.userInfo && item.is_upvoted_by_current_user
               "
@@ -407,7 +407,7 @@
             <div class="ml-2 mt-3 d-flex align-center">
               <LikeButton
                 @click="sendUpvote(childItem)"
-                :toggable="!!userStore.userInfo?.access"
+                :toggable="!!userStore.userInfo"
                 :is-clicked="
                   !!userStore.userInfo && childItem.is_upvoted_by_current_user
                 "
@@ -519,11 +519,11 @@ function isComment(object: Article | CommentData): object is CommentData {
 }
 
 async function sendUpvote(item: Article | CommentData) {
-  if (!userStore.userInfo?.access) {
+  if (!userStore.userInfo) {
     const modalStore = useModalsStore();
     await modalStore.setModal('SignUp', t('upvoteTitle'));
   }
-  if (userStore.userInfo?.access) {
+  if (userStore.userInfo) {
     const { data, error } = await useAPIFetch('/api/toggle-upvote/', {
       method: 'post',
       body: {
@@ -560,7 +560,7 @@ async function searchByTag(tag: string) {
 }
 
 async function followAuthor(name: string) {
-  if (!userStore.userInfo?.access) {
+  if (!userStore.userInfo) {
     const modalStore = useModalsStore();
     await modalStore.setModal('SignUp', t('followTitle'));
     return;
