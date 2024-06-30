@@ -35,8 +35,18 @@
       <div class="meta-content">
         <div class="meta-block">
           <h3>Article preview</h3>
+          <v-img
+            class="my-2"
+            :alt="firstImage.alt"
+            :width="300"
+            rounded
+            :heigh="225"
+            :src="firstImage.url"
+            aspect-ratio="4/3"
+          >
+          </v-img>
           <v-text-field
-            label="Fill preview title"
+            label="Title"
             v-model.sync="title.value.value"
             variant="underlined"
             class="pb-4"
@@ -45,7 +55,7 @@
             :error-messages="title.errorMessage.value"
           />
           <v-text-field
-            label="Fill preview description"
+            label="Description"
             v-model="description.value.value"
             variant="underlined"
             class="pb-4"
@@ -53,11 +63,6 @@
             :persistent-counter="true"
             :error-messages="description.errorMessage.value"
           />
-          <span
-            >Note: Changes here will affect how your story appears in public
-            places like homepage, during sharing and in subscribers’
-            inboxes</span
-          >
         </div>
         <div :class="['meta-block', display.mdAndUp ? 'ml-4' : '']">
           <span>
@@ -66,7 +71,7 @@
           <v-combobox
             :clear-on-select="true"
             v-model="chosedTags.value.value"
-            class="mt-3"
+            class="mt-3 mb-3"
             label="Choose tag(s)"
             :items="tagsArray"
             multiple
@@ -79,9 +84,34 @@
             variant="outlined"
             :delimiters="[',']"
             :error-messages="chosedTags.errorMessage.value"
+            hide-details
           >
           </v-combobox>
-          <div class="publish-action-buttons">
+          <v-checkbox
+            v-model="articleData.containsAI"
+            label="Contains AI generated content"
+            density="compact"
+            hide-details
+          ></v-checkbox>
+          <div class="d-flex align-center">
+            <v-checkbox
+              v-model="articleData.containsAffiliate"
+              label="Contains affiliate content"
+              density="compact"
+              hide-details
+            ></v-checkbox>
+            <v-tooltip text="Affiliate links, promotions, your youtube or instagram channel">
+              <template v-slot:activator="{ props }">
+                <v-btn icon v-bind="props" size="x-small" variant="plain">
+                  <v-icon class="plain-custom-style">
+                    mdi-information-outline
+                  </v-icon>
+                </v-btn>
+              </template>
+            </v-tooltip>
+          </div>
+
+          <div class="publish-action-buttons mt-3">
             <v-btn variant="text" @click="onDraftSave()"> Save as Draft </v-btn>
             <v-btn color="primary" class="ml-3" @click="save()">
               Publish
@@ -448,12 +478,13 @@ const articleData = ref({
   title: '',
   description: '',
   tags: [],
-  draftSlug: ''
+  draftSlug: '',
+  containsAI: false,
+  containsAffiliate: false
 });
 const display = ref(useDisplay() || null);
 
 const config = useRuntimeConfig();
-const userStore = useUserStore();
 
 function eventHandlerAceCode(val: any) {
   let target = val.target as HTMLElement;
@@ -492,6 +523,10 @@ onUnmounted(() => {
 
 const showMetaDialog = ref(false);
 const tagsArray: Ref<Article[]> = ref([]);
+const firstImage = ref({
+  url: '',
+  alt: ''
+});
 
 function showMetaPreview() {
   editor.save().then(async (outputData: any) => {
@@ -505,6 +540,8 @@ function showMetaPreview() {
         message: 'Please upload an image to make your post visually appealing'
       });
     } else {
+      firstImage.value.url = imageData.data.file.url;
+      firstImage.value.alt = imageData.data.caption;
       title.value.value = articleData.value.title;
       showMetaDialog.value = true;
     }
@@ -549,6 +586,8 @@ watch(
             title: '',
             description: '',
             tags: [],
+            containsAI: false,
+            containsAffiliate: false,
             draftSlug: ''
           };
           timer.value = null;
@@ -618,6 +657,8 @@ const save = handleSubmit(async (values: any) => {
         title: values.title,
         description: values.description,
         content: outputData,
+        contains_ai_generated: articleData.value.containsAI,
+        contains_affiliate: articleData.value.containsAffiliate,
         tags: values.chosedTags.map((item: TagItem | string) => {
           if (typeof item === 'string') {
             return item;
@@ -651,6 +692,8 @@ async function saveAsDraft(setDraftSlug: boolean = true) {
         title: articleData.value.title,
         description: description.value.value,
         content: outputData,
+        contains_ai_generated: articleData.value.containsAI,
+        contains_affiliate: articleData.value.containsAffiliate,
         tags: (chosedTags.value.value as (TagItem | string)[]).map(
           (item: TagItem | string) => {
             if (typeof item === 'string') {
@@ -783,5 +826,10 @@ async function onDraftSave() {
   :deep(.v-field-label:not(.v-field-label--floating)) {
     font-size: xx-large;
   }
+}
+
+.plain-custom-style {
+  opacity: 1;
+  text-transform: unset;
 }
 </style>
