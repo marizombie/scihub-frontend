@@ -106,7 +106,6 @@ export const useUserStore = defineStore('user', {
       //     message:error.value.toString()
       //   });
       // }
-      this.userData = null;
       const csrf = useCookie('csrftoken');
       const access = useCookie('Secure-great-base');
       const refresh = useCookie('Secure-great-refresh');
@@ -114,13 +113,15 @@ export const useUserStore = defineStore('user', {
       const first_name = useCookie('first_name');
       const last_name = useCookie('last_name');
       const username = useCookie('username');
-      csrf.value = '';
-      access.value = '';
-      refresh.value = '';
-      avatar.value = '';
-      first_name.value = '';
-      last_name.value = '';
-      username.value = '';
+      csrf.value = null;
+      access.value = null;
+      refresh.value = null;
+      avatar.value = null;
+      first_name.value = null;
+      last_name.value = null;
+      username.value = null;
+      this.userData = null;
+      
     },
     async rehydrate() {
       const accessToken = useCookie('Secure-great-base');

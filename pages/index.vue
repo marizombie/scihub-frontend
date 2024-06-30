@@ -533,6 +533,12 @@ watch(
   { immediate: true }
 );
 
+watch(() => userStore.userInfo, (val, oldVal) => {
+  if (oldVal && !val) {
+    router.push('/');
+  }
+})
+
 async function showTagList() {
   if (route.query.tag) {
     tab.value = 0;
