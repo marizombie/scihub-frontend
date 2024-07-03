@@ -16,6 +16,7 @@ export default defineNuxtConfig({
     '@vee-validate/nuxt',
     'nuxt-lodash',
     '@vueuse/nuxt',
+    '@nuxt/image',
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
         // @ts-expect-error

@@ -431,7 +431,6 @@
 
 <script setup lang="ts">
 import { useDisplay } from 'vuetify';
-import SocialShare from '@/components/SocialShare.vue';
 import { useModalsStore, useNotificationStore, useUserStore } from '~/store';
 import type {
   Article,

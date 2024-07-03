@@ -6,7 +6,7 @@
         <div class="main-content">
           <v-app-bar-title class="ml-4 title-icon">
             <a href="/">
-              <v-img src="~/public/favicon.ico" />
+              <v-img src="~/public/favicon.ico" alt="site logo"/>
               <span>{{ title }}</span>
             </a>
           </v-app-bar-title>

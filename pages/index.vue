@@ -154,14 +154,16 @@
                 </v-menu>
               </div>
               <div class="pa-4 d-flex flex-column flex-md-row">
-                <img
+                <NuxtImg
+                loading="lazy"
+                aspect-ratio="4/3"
                   style="width: 100%; max-width: 300px; max-height: 225px"
                   :src="
                     article.preview_image
                       ? article.preview_image
                       : `${$config.public.baseURL}/media/posts_images/default.jpeg`
                   "
-                  alt="demo picture"
+                  :alt="article.description"
                 />
                 <div>
                   <v-card-text class="article-description">
@@ -674,6 +676,10 @@ async function followAuthor(name: string) {
 
 let recentlyWrittenPosts = recentlyWritten.value;
 let recommendedPosts = recomendations.value;
+useSeoMeta({
+  description: 'Your best articles in one place',
+  ogDescription: 'Your best articles in one place',
+});
 </script>
 
 <style lang="less" scoped>

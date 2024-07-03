@@ -12,8 +12,10 @@ useHead({
       href: 'https://fonts.googleapis.com'
     },
     {
-      rel: 'stylesheet',
+      rel: 'preload',
       href: 'https://fonts.googleapis.com/css2?family=Roboto&display=swap',
+      as: 'style',
+      onload: "this.onload=null;this.rel='stylesheet'",
       crossorigin: ''
     }
   ]
