@@ -121,7 +121,6 @@ export const useUserStore = defineStore('user', {
       last_name.value = null;
       username.value = null;
       this.userData = null;
-      
     },
     async rehydrate() {
       const accessToken = useCookie('Secure-great-base');

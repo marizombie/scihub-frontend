@@ -100,7 +100,9 @@
               density="compact"
               hide-details
             ></v-checkbox>
-            <v-tooltip text="Affiliate links, promotions, your youtube or instagram channel">
+            <v-tooltip
+              text="Affiliate links, promotions, your youtube or instagram channel"
+            >
               <template v-slot:activator="{ props }">
                 <v-btn icon v-bind="props" size="x-small" variant="plain">
                   <v-icon class="plain-custom-style">

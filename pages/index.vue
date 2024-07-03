@@ -155,8 +155,8 @@
               </div>
               <div class="pa-4 d-flex flex-column flex-md-row">
                 <NuxtImg
-                loading="lazy"
-                aspect-ratio="4/3"
+                  loading="lazy"
+                  aspect-ratio="4/3"
                   style="width: 100%; max-width: 300px; max-height: 225px"
                   :src="
                     article.preview_image
@@ -535,11 +535,14 @@ watch(
   { immediate: true }
 );
 
-watch(() => userStore.userInfo, (val, oldVal) => {
-  if (oldVal && !val) {
-    router.push('/');
+watch(
+  () => userStore.userInfo,
+  (val, oldVal) => {
+    if (oldVal && !val) {
+      router.push('/');
+    }
   }
-})
+);
 
 async function showTagList() {
   if (route.query.tag) {
@@ -678,7 +681,7 @@ let recentlyWrittenPosts = recentlyWritten.value;
 let recommendedPosts = recomendations.value;
 useSeoMeta({
   description: 'Your best articles in one place',
-  ogDescription: 'Your best articles in one place',
+  ogDescription: 'Your best articles in one place'
 });
 </script>
 
