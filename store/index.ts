@@ -60,9 +60,14 @@ export const useUserStore = defineStore('user', {
       this.userData = token;
     },
     async getUserInfoFromLS() {
+      const config = useRuntimeConfig();
+      if (!config.public.authToken || !config.public.refreshToken) {
+        console.error('env variables are missing');
+        return;
+      }
       const csrf = useCookie('csrftoken');
-      const access = useCookie('Secure-great-base');
-      const refresh = useCookie('Secure-great-refresh');
+      const access = useCookie(config.public.authToken);
+      const refresh = useCookie(config.public.refreshToken);
       const avatar = useCookie('avatar');
       const first_name = useCookie('first_name');
       const last_name = useCookie('last_name');
@@ -106,9 +111,14 @@ export const useUserStore = defineStore('user', {
       //     message:error.value.toString()
       //   });
       // }
+      const config = useRuntimeConfig();
+      if (!config.public.authToken || !config.public.refreshToken) {
+        console.error('env variables are missing');
+        return;
+      }
       const csrf = useCookie('csrftoken');
-      const access = useCookie('Secure-great-base');
-      const refresh = useCookie('Secure-great-refresh');
+      const access = useCookie(config.public.authToken);
+      const refresh = useCookie(config.public.refreshToken);
       const avatar = useCookie('avatar');
       const first_name = useCookie('first_name');
       const last_name = useCookie('last_name');
@@ -123,13 +133,18 @@ export const useUserStore = defineStore('user', {
       this.userData = null;
     },
     async rehydrate() {
-      const accessToken = useCookie('Secure-great-base');
-      const refresh = useCookie('Secure-great-refresh');
+      const config = useRuntimeConfig();
+      if (!config.public.authToken || !config.public.refreshToken) {
+        console.error('env variables are missing');
+        return;
+      }
+      const accessToken = useCookie(config.public.authToken);
+      const refresh = useCookie(config.public.refreshToken);
       let tokenInfo = parseJwt(accessToken.value);
-      if (tokenInfo && refresh.value) {
+      if (tokenInfo && accessToken.value && refresh.value) {
         const expiredTime = tokenInfo.exp * 1000;
         if (expiredTime < new Date().getTime()) {
-          const { data, error } = await useAPIFetch<RefreshInfo>(
+          const { data, error } = await useFetch<RefreshInfo>(
             '/api/refresh_token/',
             {
               method: 'post',
@@ -144,7 +159,7 @@ export const useUserStore = defineStore('user', {
               type: 'error',
               message: 'Please sign in again to continue your session'
             });
-            this.logout();
+            await this.logout();
           }
           if (data.value) {
             accessToken.value = data.value.access;

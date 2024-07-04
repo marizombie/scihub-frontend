@@ -27,7 +27,9 @@ export default defineNuxtConfig({
   ],
   runtimeConfig: {
     public: {
-      baseURL: process.env.BASE_URL || 'http://localhost:8000/'
+      baseURL: process.env.BASE_URL || 'http://localhost:8000/',
+      authToken: process.env.JWT_AUTH_COOKIE || undefined,
+      refreshToken: process.env.JWT_AUTH_REFRESH_COOKIE || undefined
     }
   },
   vite: {
@@ -39,5 +41,7 @@ export default defineNuxtConfig({
   },
   pinia: {
     autoImports: ['defineStore', ['defineStore', 'definePiniaStore']]
-  }
+  },
+
+  compatibilityDate: '2024-07-04'
 });

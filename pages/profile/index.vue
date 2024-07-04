@@ -106,10 +106,10 @@
         <v-chip-group :column="!display.mdAndUp">
           <v-chip
             v-for="tag in tags"
-            :key="tag"
+            :key="tag.slug"
             closable
             @click:close="removeTag(tag.slug)"
-            @click="searchByTag(tag.name)"
+            @click="searchByTag(tag.text)"
           >
             {{ tag.text }}
           </v-chip>
@@ -189,7 +189,7 @@ const profile: Ref<ProfileInfo> = ref({
   avatar: null,
   country: ''
 });
-const tags = ref();
+const tags: Ref<TagItem[]> = ref([]);
 const sendLoading = ref(false);
 const rules = ref([
   (value: any) => {
@@ -208,21 +208,24 @@ function setFile(files: File[]) {
     currentFilePreview.value = URL.createObjectURL(profileImage.value[0]);
   }
 }
-const { data } = await useAPIFetch<ProfileInfo>('/api/profile/');
-if (data.value) {
-  profile.value = data.value;
-}
 
-const { data: followedTags } =
-  await useAPIFetch<TagsResponse>('api/followed-tags/');
-if (followedTags.value) {
-  tags.value = followedTags.value!.results.reduce((acc, value) => {
-    return acc.concat({
-      text: value.followed_tag.name,
-      slug: value.followed_tag.slug
-    });
-  }, [] as TagItem[]);
-}
+onMounted(async () => {
+  const { data } = await useAPIFetch<ProfileInfo>('/api/profile/');
+  if (data.value) {
+    profile.value = data.value;
+  }
+
+  const { data: followedTags } =
+    await useAPIFetch<TagsResponse>('api/followed-tags/');
+  if (followedTags.value) {
+    tags.value = followedTags.value!.results.reduce((acc, value) => {
+      return acc.concat({
+        text: value.followed_tag.name,
+        slug: value.followed_tag.slug
+      });
+    }, [] as TagItem[]);
+  }
+});
 
 async function redirectToHomePage() {
   await navigateTo('/');
