@@ -15,7 +15,7 @@ export const useAPIFetch: typeof useLazyFetch = (request, opts?) => {
       notifyStore.setNotification({ type: 'error', message: error.message });
     }
   };
-  return useLazyFetch(request, {
+  return useFetch(request, {
     baseURL: config.public.baseURL,
     headers,
     credentials: 'include',
@@ -39,8 +39,6 @@ export const useAPIFetch: typeof useLazyFetch = (request, opts?) => {
           }
         }
       }
-    },
-    immediate: true,
-    server: false
+    }
   });
 };
