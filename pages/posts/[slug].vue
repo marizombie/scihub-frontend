@@ -481,7 +481,11 @@ if (error.value) {
 article.value = articleData.value;
 const { data: recentlyWrittenData } =
   await useAPIFetch<Article[]>('/api/last-posts/');
-recentlyWrittenPosts.value = recentlyWrittenData.value!.slice(0, 3);
+watch(recentlyWrittenData, (val) => {
+  if (val) {
+    recentlyWrittenPosts.value = recentlyWrittenData.value!.slice(0, 3);
+  }
+})
 const bookmarked = ref(false);
 if (article.value) {
   bookmarked.value = article.value.is_bookmarked_by_current_user;

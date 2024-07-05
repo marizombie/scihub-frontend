@@ -1,7 +1,7 @@
-import { useFetch } from '#app';
+// import { useFetch } from '#app';
 import { useNotificationStore, useUserStore } from '~/store';
 
-export const useAPIFetch: typeof useFetch = (request, opts?) => {
+export const useAPIFetch: typeof useLazyFetch = (request, opts?) => {
   const config = useRuntimeConfig();
   const store = useUserStore();
   const notifyStore = useNotificationStore();
@@ -15,7 +15,7 @@ export const useAPIFetch: typeof useFetch = (request, opts?) => {
       notifyStore.setNotification({ type: 'error', message: error.message });
     }
   };
-  return useFetch(request, {
+  return useLazyFetch(request, {
     baseURL: config.public.baseURL,
     headers,
     credentials: 'include',
