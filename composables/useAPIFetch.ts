@@ -40,6 +40,7 @@ export const useAPIFetch: typeof useFetch = (request, opts?) => {
         }
       }
     },
-    immediate: true
+    immediate: true,
+    server: false
   });
 };
