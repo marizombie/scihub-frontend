@@ -20,7 +20,7 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: 'v21.5.0'
+        node-version: 'v22.3.0'
       
     - name: Clean temp files
       run: rm yarn.lock && rm -rf node_modules
