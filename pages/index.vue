@@ -409,13 +409,13 @@ const tabsMap = {
 };
 const router = useRouter();
 
-showTagList();
+await showTagList();
 
 watch(
   () => route.query.tag,
-  (val) => {
+  async (val) => {
     if (val) {
-      showTagList();
+      await showTagList();
     } else {
       filterByTags.value = [];
       currentRequest.value = '';
@@ -500,7 +500,7 @@ watch(
       case 1:
       default:
         router.push('/');
-        fetchDefaultPosts();
+        await fetchDefaultPosts();
         break;
     }
   },
