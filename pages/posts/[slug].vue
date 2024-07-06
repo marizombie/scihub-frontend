@@ -466,18 +466,18 @@ const networks: Ref<Network[]> = ref([
 ]);
 const article: Ref<Article | null> = ref(null);
 const recentlyWrittenPosts: Ref<Article[] | null> = ref(null);
-const { data: articleData, error } = await useAPIFetch<Article>(
+const { data: articleData } = await useAPIFetch<Article>(
   `/api/posts/${route.params.slug}`
 );
-if (error.value) {
-  if (error.value.statusCode === 404) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: 'Page Not Found',
-      fatal: true
-    });
-  }
-}
+// if (error.value) {
+//   if (error.value.statusCode === 404) {
+//     throw createError({
+//       statusCode: 404,
+//       statusMessage: 'Page Not Found',
+//       fatal: true
+//     });
+//   }
+// }
 article.value = articleData.value;
 const { data: recentlyWrittenData } =
   await useAPIFetch<Article[]>('/api/last-posts/');
