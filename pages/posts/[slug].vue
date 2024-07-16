@@ -793,6 +793,7 @@ useSeoMeta({
   ogImage: () => (article.value ? article.value.preview_image : ''),
   twitterCard: () => 'summary_large_image',
   // ogUrl: () => process.env.URL,
+  ogUrl: () => (route.fullPath ? route.fullPath : ''),
   ogType: 'article'
 });
 </script>

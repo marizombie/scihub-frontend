@@ -21,9 +21,6 @@ export const useAPIFetch: typeof useLazyFetch = (request, opts?) => {
     credentials: 'include',
     ...customOptions,
     onResponse: async ({ response, options }) => {
-      console.log(request)
-      console.log(response)
-      console.log(response._data)
       if (response.status === 401) {
         if (
           response._data.code === 'token_not_valid' &&
