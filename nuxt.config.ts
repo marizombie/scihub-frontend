@@ -31,7 +31,9 @@ export default defineNuxtConfig({
     public: {
       baseURL: process.env.BASE_URL || 'http://localhost:8000/',
       authToken: process.env.JWT_AUTH_COOKIE || undefined,
-      refreshToken: process.env.JWT_AUTH_REFRESH_COOKIE || undefined
+      refreshToken: process.env.JWT_AUTH_REFRESH_COOKIE || undefined,
+      apiKey: process.env.API_KEY || undefined,
+      apiClientName: process.env.API_CLIENT_NAME || undefined,
     }
   },
   vite: {
