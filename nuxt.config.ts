@@ -21,6 +21,7 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@nuxtjs/critters',
     '@nuxtjs/seo',
+    'nuxt-security',
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
         // @ts-expect-error
@@ -53,6 +54,12 @@ export default defineNuxtConfig({
   robots: {
     enabled: true,
     disallow: ['/posts/create', '/profile']
+  },
+  security: {
+    headers: {
+      referrerPolicy: 'same-origin',
+      contentSecurityPolicy: false,
+    }
   },
   compatibilityDate: '2024-07-04'
 });

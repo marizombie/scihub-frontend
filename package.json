@@ -30,6 +30,7 @@
     "less": "^4.2.0",
     "nuxt": "^3.12.2",
     "nuxt-lodash": "^2.5.3",
+    "nuxt-security": "^2.0.0-rc.9",
     "prettier": "^3.0.3",
     "sass": "^1.68.0",
     "typescript": "^5.5.3",

@@ -8,7 +8,8 @@ export const useAPIFetch: typeof useLazyFetch = (request, opts?) => {
   const headers = {
     ...opts?.headers,
     apikey: config.public.apiKey || '',
-    api_client_name: config.public.apiClientName || ''
+    api_client_name: config.public.apiClientName || '',
+    referrer:  config.public.baseURL
   };
   const customOptions = {
     ...opts,
