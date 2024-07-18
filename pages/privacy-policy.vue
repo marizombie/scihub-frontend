@@ -77,7 +77,7 @@
       <p>
         For detailed information on how we use cookies and other tracking
         technologies, please refer to our
-        <a href="/cookies-info" target="_blank">Cookie Policy</a>.
+        <a href="/cookies-info/" target="_blank">Cookie Policy</a>.
       </p>
       <h3 class="my-2">Data Sharing and Disclosure</h3>
       <p>

@@ -17,6 +17,7 @@
     "@nuxt/image": "^1.7.0",
     "@nuxtjs/critters": "^0.7.1",
     "@nuxtjs/i18n": "^8.0.0-rc.5",
+    "@nuxtjs/seo": "^2.0.0-rc.15",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
     "@typescript-eslint/parser": "^6.7.4",
     "@vue/eslint-config-typescript": "^12.0.0",
@@ -31,6 +32,7 @@
     "nuxt-lodash": "^2.5.3",
     "prettier": "^3.0.3",
     "sass": "^1.68.0",
+    "typescript": "^5.5.3",
     "vite-plugin-vuetify": "^2.0.1",
     "vue-eslint-parser": "^9.3.1",
     "vuetify": "^3.5.2"
@@ -47,7 +49,6 @@
     "@editorjs/table": "^2.3.0",
     "@editorjs/warning": "^1.4.0",
     "@mdi/font": "^7.2.96",
-    "@nuxtjs/robots": "^4.0.1",
     "@pinia/nuxt": "^0.4.11",
     "@vee-validate/nuxt": "^4.11.8",
     "ace-builds": "^1.32.1",

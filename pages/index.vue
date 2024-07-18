@@ -112,7 +112,7 @@
                 navigateTo(
                   currentRequest === `api/drafts/`
                     ? `/posts/create?draftSlug=${article.slug}`
-                    : `/posts/${article.slug}`
+                    : `/posts/${article.slug}/`
                 )
               "
               :ripple="false"
@@ -123,7 +123,7 @@
                   offset-y
                   v-if="
                     currentRequest ===
-                      `api/users/${userStore.userInfo?.username}` ||
+                      `api/users/${userStore.userInfo?.username}/` ||
                     currentRequest === `api/drafts/`
                   "
                 >
@@ -266,11 +266,11 @@
         </div>
 
         <h3 class="mb-5">Recommendations:</h3>
-        <NuxtLink
+        <SiteLink
           v-for="(item, index) in recommendedPosts"
           :key="index"
           class="text-subtitle mb-5"
-          :to="`/posts/${item.slug}`"
+          :to="`/posts/${item.slug}/`"
         >
           <span class="title">{{ item.title }}</span>
           <div
@@ -288,15 +288,15 @@
             </v-avatar>
             <span>{{ item.author_name ? item.author_name : 'Anonymous' }}</span>
           </div>
-        </NuxtLink>
+        </SiteLink>
       </div>
       <div class="d-flex flex-column mt-12" v-if="!filterByUser">
         <h3 class="mb-5">Recently written:</h3>
-        <NuxtLink
+        <SiteLink
           v-for="(item, index) in recentlyWrittenPosts"
           :key="index"
           class="text-subtitle mb-5"
-          :to="`/posts/${item.slug}`"
+          :to="`/posts/${item.slug}/`"
         >
           <span class="title">{{ item.title }}</span>
           <div
@@ -314,12 +314,12 @@
             </v-avatar>
             <span>{{ item.author_name ? item.author_name : 'Anonymous' }}</span>
           </div>
-        </NuxtLink>
+        </SiteLink>
       </div>
       <div class="about-us">
-        <a href="/cookies-info" target="_blank">Cookies info</a>
-        <a href="/privacy-policy" target="_blank">Privacy Policy</a>
-        <a href="/terms-of-service" target="_blank">Terms of Service</a>
+        <a href="/cookies-info/" target="_blank">Cookies info</a>
+        <a href="/privacy-policy/" target="_blank">Privacy Policy</a>
+        <a href="/terms-of-service/" target="_blank">Terms of Service</a>
       </div>
     </v-card>
   </v-row>
@@ -359,9 +359,9 @@ const postActions = ref([
   {
     name: 'Edit',
     action: (post: Article) =>
-      currentRequest.value === `api/users/${userStore.userInfo?.username}`
-        ? navigateTo(`/posts/create?postSlug=${post.slug}`)
-        : navigateTo(`/posts/create?draftSlug=${post.slug}`)
+      currentRequest.value === `api/users/${userStore.userInfo?.username}/`
+        ? navigateTo(`/posts/create?postSlug=${post.slug}/`)
+        : navigateTo(`/posts/create?draftSlug=${post.slug}/`)
   },
   {
     name: 'Remove',
@@ -369,7 +369,7 @@ const postActions = ref([
     action: (post: Article) => {
       showDeleteDialog.value = true;
       if (
-        currentRequest.value === `api/users/${userStore.userInfo?.username}`
+        currentRequest.value === `api/users/${userStore.userInfo?.username}/`
       ) {
         deletePostSlug.value = post.slug;
       } else {
@@ -383,7 +383,7 @@ useInfiniteScroll(document, loadData, { distance: 200 });
 
 async function loadData() {
   const { data: posts } = await useAPIFetch<CRUDResponse>(
-    currentRequest.value + `?limit=5&offset=${currentShowList.value.length}`
+    currentRequest.value + `?limit=5&offset=${currentShowList.value.length}/`
   );
   if (posts.value?.results) {
     currentShowList.value = currentShowList.value.concat(posts.value!.results);
@@ -468,7 +468,7 @@ watch(
         const { data: myArticles } = await useAPIFetch<CRUDResponse>(
           `api/users/${userStore.userInfo?.username}`
         );
-        currentRequest.value = `api/users/${userStore.userInfo?.username}`;
+        currentRequest.value = `api/users/${userStore.userInfo?.username}/`;
         currentShowList.value = myArticles.value!.results;
         break;
       case 4:

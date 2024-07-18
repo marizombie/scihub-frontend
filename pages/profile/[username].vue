@@ -83,7 +83,7 @@ const tags = ref(['ml', 'technologies', 'biology', 'mathematics']);
 const route = useRoute();
 
 const { data } = await useAPIFetch<ProfileInfo>(
-  `/api/profile/${route.params.username}`
+  `/api/profile/${route.params.username}/`
 );
 if (data.value) {
   profile.value = data.value;

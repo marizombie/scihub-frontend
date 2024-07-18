@@ -216,11 +216,11 @@
 
         <div class="d-flex flex-column mt-16">
           <h3>What else to read:</h3>
-          <NuxtLink
+          <SiteLink
             v-for="(item, index) in recentlyWrittenPosts"
             :key="index"
             class="text-subtitle"
-            :to="`/posts/${item.slug}`"
+            :to="`/posts/${item.slug}/`"
           >
             <span class="title">{{ item.title }}</span>
             <div class="author-info">
@@ -237,12 +237,12 @@
                 article.author_name ? article.author_name : 'Anonymous'
               }}</span>
             </div>
-          </NuxtLink>
+          </SiteLink>
         </div>
         <div class="about-us pt-3">
-          <a href="/cookies-info" target="_blank">Cookies info</a>
-          <a href="/privacy-policy" target="_blank">Privacy Policy</a>
-          <a href="/terms-of-service" target="_blank">Terms of Service</a>
+          <a href="/cookies-info/" target="_blank">Cookies info</a>
+          <a href="/privacy-policy/" target="_blank">Privacy Policy</a>
+          <a href="/terms-of-service/" target="_blank">Terms of Service</a>
         </div>
       </v-card>
     </v-col>
@@ -595,7 +595,7 @@ watch(
     if (val) {
       commentsDialog.value.loading = true;
       const { data, error } = await useAPIFetch<CommentData[]>(
-        `/api/comments/${article.value!.slug}`,
+        `/api/comments/${article.value!.slug}/`,
         {
           method: 'get'
         }
@@ -627,7 +627,7 @@ watch(
   async (val) => {
     if (val && !wasLoaded.value) {
       const { data: articleData } = await useAPIFetch<Article>(
-        `/api/posts/${route.params.slug}`
+        `/api/posts/${route.params.slug}/`
       );
       article.value = articleData.value;
       wasLoaded.value = true;

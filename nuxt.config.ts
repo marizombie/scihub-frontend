@@ -20,7 +20,7 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@nuxt/image',
     '@nuxtjs/critters',
-    ['@nuxtjs/robots', { disallow: ['/posts/create', '/profile'] }],
+    '@nuxtjs/seo',
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
         // @ts-expect-error
@@ -46,6 +46,13 @@ export default defineNuxtConfig({
   },
   pinia: {
     autoImports: ['defineStore', ['defineStore', 'definePiniaStore']]
+  },
+  site: {
+    trailingSlash: true
+  },
+  robots: {
+    enabled: true,
+    disallow: ['/posts/create', '/profile']
   },
   compatibilityDate: '2024-07-04'
 });

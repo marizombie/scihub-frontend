@@ -7,7 +7,7 @@
     <template v-slot:text>
       Great Things Development uses cookies to enable and improve the use of the
       website. Please see our
-      <a href="/privacy-policy" target="_blank">Privacy Policy</a> for more
+      <a href="/privacy-policy/" target="_blank">Privacy Policy</a> for more
       information. By clicking "Accept Cookies" or continuing to use the site,
       you agree to the use of cookies.
     </template>

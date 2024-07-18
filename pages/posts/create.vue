@@ -22,7 +22,7 @@
   <v-dialog
     v-model="showMetaDialog"
     :fullscreen="true"
-    transition="'dialog-bottom-transition'"
+    transition="dialog-bottom-transition"
     class="comments-dialog"
     scrollable
   >
@@ -218,7 +218,7 @@ onMounted(async () => {
       linkTool: {
         class: LinkTool,
         config: {
-          endpoint: `${config.public.baseURL}api/fetch-url`
+          endpoint: `${config.public.baseURL}api/fetch-url/`
         }
       },
       // warning: Warning,
@@ -678,7 +678,7 @@ const save = handleSubmit(async (values: any) => {
         }
       );
       if (postData.value) {
-        navigateTo(`/posts/${postData.value.post.slug}`);
+        navigateTo(`/posts/${postData.value.post.slug}/`);
       }
     })
     .catch((error: any) => {
