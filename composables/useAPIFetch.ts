@@ -7,8 +7,8 @@ export const useAPIFetch: typeof useLazyFetch = (request, opts?) => {
   const notifyStore = useNotificationStore();
   const headers = {
     ...opts?.headers,
-    "apikey": config.public.apiKey || '',
-    "api_client_name": config.public.apiClientName || ''
+    apikey: config.public.apiKey || '',
+    api_client_name: config.public.apiClientName || ''
   };
   const customOptions = {
     ...opts,

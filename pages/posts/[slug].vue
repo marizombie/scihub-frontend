@@ -485,7 +485,7 @@ watch(recentlyWrittenData, (val) => {
   if (val) {
     recentlyWrittenPosts.value = recentlyWrittenData.value!.slice(0, 3);
   }
-})
+});
 const bookmarked = ref(false);
 if (article.value) {
   bookmarked.value = article.value.is_bookmarked_by_current_user;

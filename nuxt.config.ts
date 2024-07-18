@@ -20,6 +20,7 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@nuxt/image',
     '@nuxtjs/critters',
+    ['@nuxtjs/robots', { disallow: ['/posts/create', '/profile'] }],
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
         // @ts-expect-error
@@ -33,7 +34,7 @@ export default defineNuxtConfig({
       authToken: process.env.JWT_AUTH_COOKIE || undefined,
       refreshToken: process.env.JWT_AUTH_REFRESH_COOKIE || undefined,
       apiKey: process.env.API_KEY || undefined,
-      apiClientName: process.env.API_CLIENT_NAME || undefined,
+      apiClientName: process.env.API_CLIENT_NAME || undefined
     }
   },
   vite: {
