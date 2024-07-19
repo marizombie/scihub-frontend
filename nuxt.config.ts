@@ -58,7 +58,7 @@ export default defineNuxtConfig({
   security: {
     headers: {
       referrerPolicy: 'same-origin',
-      contentSecurityPolicy: false,
+      contentSecurityPolicy: false
     }
   },
   compatibilityDate: '2024-07-04'

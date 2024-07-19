@@ -1,6 +1,13 @@
 <template>
   <v-app>
     <Notification />
+    <SubscriptionModal
+      :dialog="subscriptionModalOpen"
+      @closeDialog="
+        subscriptionModalOpen = false;
+        openCreatePage();
+      "
+    />
     <v-theme-provider :theme="theme.global.name.value">
       <v-app-bar fixed app class="header d-flex flex-column">
         <div class="main-content">
@@ -100,7 +107,7 @@
               prepend-icon="mdi-pencil"
               class="ml-8 mr-md-5 header-button"
               variant="text"
-              @click="openCreatePage()"
+              @click="openSubscriptionModal()"
               v-if="userStore.userInfo"
             >
               Write
@@ -211,6 +218,7 @@ let showForgetPassword: Ref<boolean> = ref(false);
 let showResendLink: Ref<boolean> = ref(false);
 let expandedSearch: Ref<boolean> = ref(false);
 let searchedPosts: Ref<Article[]> = ref([]);
+let subscriptionModalOpen: Ref<boolean> = ref(false);
 
 await userStore.getUserInfoFromLS();
 await cookiesStore.rehydrateCurrentAccepts();
@@ -258,8 +266,12 @@ function toggleTheme() {
   theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark';
 }
 
+async function openSubscriptionModal() {
+  subscriptionModalOpen.value = true;
+}
+
 async function openCreatePage() {
-  await navigateTo('/posts/create');
+  await navigateTo('/posts/create/');
 }
 
 function handleChange(item: string | null) {
