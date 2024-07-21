@@ -122,17 +122,17 @@ const props = defineProps({
   }
 });
 
-const fetchItems = async () => {
-  console.log('fetchItems');
-  const { data, error } = await useAPIFetch(`api/subscription-types/`);
-  console.log(error);
-  if (data.value) {
-    // searchedPosts.value = data.value;
-    console.log(data.value);
-  }
-};
+// const fetchItems = async () => {
+//   console.log('fetchItems');
+//   const { data, error } = await useAPIFetch(`api/subscription-types/`);
+//   console.log(error);
+//   if (data.value) {
+//     // searchedPosts.value = data.value;
+//     console.log(data.value);
+//   }
+// };
 
-await fetchItems();
+// await fetchItems();
 </script>
 
 <style scoped>

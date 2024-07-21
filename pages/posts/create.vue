@@ -12,11 +12,14 @@
       id="editorjs"
       :class="['pa-4', theme.global.current.value.dark ? 'dark-theme' : '']"
     ></div>
-    <div class="mt-2 ml-auto buttons-container">
-      <v-btn variant="text" @click="onDraftSave()"> Save as Draft </v-btn>
-      <v-btn color="primary" class="ml-3" @click="showMetaPreview()">
-        Publish
-      </v-btn>
+    <div class="mt-2 buttons-container">
+        <a target="_blank" class="mr-auto guideLink" href="/guidelines/">
+        Guidelines
+        </a>
+        <v-btn class="ml-auto" variant="text" @click="onDraftSave()"> Save as Draft </v-btn>
+        <v-btn color="primary" class="ml-3" @click="showMetaPreview()">
+          Publish
+        </v-btn>      
     </div>
   </div>
   <v-dialog
@@ -750,6 +753,7 @@ async function onDraftSave() {
   :deep(.ace_gutter) {
     z-index: 0;
   }
+  min-height: 60vh;
 
   font-size: 20px;
 
@@ -768,12 +772,11 @@ async function onDraftSave() {
   width: 100%;
   max-width: 1200px;
   display: flex;
-  align-items: center;
   flex-direction: column;
 }
 
 .buttons-container {
-  max-width: 800px;
+  display: flex;
 }
 
 .meta-content {
@@ -833,5 +836,11 @@ async function onDraftSave() {
 .plain-custom-style {
   opacity: 1;
   text-transform: unset;
+}
+
+.guideLink {
+  font-size: 18px;
+  text-decoration: none;
+  color: unset;
 }
 </style>

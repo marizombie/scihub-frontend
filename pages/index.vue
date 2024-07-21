@@ -321,6 +321,11 @@
         <a href="/privacy-policy/" target="_blank">Privacy Policy</a>
         <a href="/terms-of-service/" target="_blank">Terms of Service</a>
       </div>
+      <div class="addition-info">
+        <a target="_blank" class="mr-auto guideLink" href="/guidelines/">
+        Guidelines
+        </a>
+      </div>
     </v-card>
   </v-row>
 </template>
@@ -795,6 +800,17 @@ useSeoMeta({
 }
 
 .about-us {
+  display: flex;
+  flex-direction: row;
+  a {
+    padding-right: 10px;
+    font-size: 14px;
+    opacity: 0.6;
+    text-decoration: none;
+  }
+}
+
+.addition-info {
   display: flex;
   flex-direction: row;
   a {
