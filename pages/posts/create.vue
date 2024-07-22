@@ -13,13 +13,15 @@
       :class="['pa-4', theme.global.current.value.dark ? 'dark-theme' : '']"
     ></div>
     <div class="mt-2 buttons-container">
-        <a target="_blank" class="mr-auto guideLink" href="/guidelines/">
+      <a target="_blank" class="mr-auto guideLink" href="/guidelines/">
         Guidelines
-        </a>
-        <v-btn class="ml-auto" variant="text" @click="onDraftSave()"> Save as Draft </v-btn>
-        <v-btn color="primary" class="ml-3" @click="showMetaPreview()">
-          Publish
-        </v-btn>      
+      </a>
+      <v-btn class="ml-auto" variant="text" @click="onDraftSave()">
+        Save as Draft
+      </v-btn>
+      <v-btn color="primary" class="ml-3" @click="showMetaPreview()">
+        Publish
+      </v-btn>
     </div>
   </div>
   <v-dialog

@@ -22,6 +22,15 @@ export default defineNuxtConfig({
     '@nuxtjs/critters',
     '@nuxtjs/seo',
     'nuxt-security',
+    [
+      '@nuxtjs/google-fonts',
+      {
+        families: {
+          Roboto: true,
+          Inter: true
+        }
+      }
+    ],
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
         // @ts-expect-error

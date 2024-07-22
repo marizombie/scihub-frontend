@@ -323,7 +323,7 @@
       </div>
       <div class="addition-info">
         <a target="_blank" class="mr-auto guideLink" href="/guidelines/">
-        Guidelines
+          Guidelines
         </a>
       </div>
     </v-card>

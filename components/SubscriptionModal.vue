@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-dialog v-model="props.dialog" max-width="800px">
+    <v-dialog class="dialog" v-model="props.dialog" max-width="900px">
       <v-card class="pa-8">
         <v-row justify="center">
           <v-col cols="12" class="text-center">
@@ -14,21 +14,23 @@
               mandatory
               rounded="xl"
             >
-              <v-btn value="monthly">monthly</v-btn>
-              <v-btn value="yearly">yearly</v-btn>
+              <v-btn value="monthly"><b>monthly</b></v-btn>
+              <v-btn value="yearly"><b>yearly</b></v-btn>
             </v-btn-toggle>
           </v-col>
           <v-col cols="12" md="4" class="d-flex justify-center">
             <v-hover v-slot:default="{ isHovering, props }">
               <v-card
                 outlined
-                class="py-5 px-3 price-card border-primary d-flex flex-column"
+                class="py-5 px-3 price-card border-primary pt-1 d-flex flex-column"
                 :class="{ 'hovered-card': isHovering }"
                 v-bind="props"
               >
-                <v-card-title class="text-center">Free user</v-card-title>
-                <span class="text-center">0 €</span>
-                <v-card-text class="text-body-1">
+                <v-card-title class="py-0 text-center"
+                  ><b class="subscription-name">Free user</b></v-card-title
+                >
+                <span class="text-center price"><b>0€</b></span>
+                <v-card-text class="price-desc">
                   <ul class="list-unstyled">
                     <li>read unlim</li>
                     <li>
@@ -46,7 +48,13 @@
               </v-card>
             </v-hover>
           </v-col>
-          <v-col cols="12" md="4" class="d-flex justify-center">
+          <v-col
+            cols="12"
+            md="4"
+            class="d-flex justify-center"
+            v-for="(item, index) in subscriptions"
+            :key="index"
+          >
             <v-hover v-slot:default="{ isHovering, props }">
               <v-card
                 outlined
@@ -54,20 +62,26 @@
                 :class="{ 'hovered-card': isHovering }"
                 v-bind="props"
               >
-                <v-chip
+                <!-- <v-chip
                   color="primary"
                   density="compact"
                   style="width: fit-content"
                   >popular</v-chip
-                >
-                <v-card-title class="py-0 text-center"
+                > -->
+                <!-- <v-card-title class="py-0 text-center"
                   >Affiliate marketer</v-card-title
+                > -->
+                <v-card-title class="py-0 text-center"
+                  ><b class="subscription-name">{{
+                    item.name
+                  }}</b></v-card-title
                 >
-                <span class="subTitle">for 1 person businesses</span>
+                <!-- <span class="subTitle">for 1 person businesses</span> -->
+                <!-- <s>108 €</s> -->
                 <span class="text-center"
-                  ><b class="text-h5">80 €</b> <s>108 €</s></span
-                >
-                <v-card-text class="text-body-1">
+                  ><b class="price">{{ item.price.price }}€</b>
+                </span>
+                <!-- <v-card-text class="text-body-1">
                   <ul class="list-unstyled">
                     <li>read unlim</li>
                     <li>
@@ -75,31 +89,16 @@
                       referral links (incl. own youtube)
                     </li>
                   </ul>
-                </v-card-text>
-                <v-btn color="primary" class="buy-button">Buy</v-btn>
-              </v-card>
-            </v-hover>
-          </v-col>
-          <v-col cols="12" md="4" class="d-flex justify-center">
-            <v-hover v-slot:default="{ isHovering, props }">
-              <v-card
-                outlined
-                class="py-5 px-3 price-card border-primary d-flex flex-column"
-                :class="{ 'hovered-card': isHovering }"
-                v-bind="props"
-              >
-                <v-card-title class="pb-0 text-center"
-                  >Business user</v-card-title
-                >
-                <span class="subTitle">for companies</span>
-                <span class="text-center"
-                  ><b class="text-h5">160 €</b> <s>228 €</s></span
-                >
-                <v-card-text class="text-body-1">
-                  <ul class="list-unstyled">
-                    <li>all Affiliate marketer has +</li>
-                    <li>posts can include company promotions</li>
-                  </ul>
+                </v-card-text> -->
+                <v-card-text class="price-desc">
+                  {{ item.description }}
+                  <!-- <ul class="list-unstyled">
+                    <li>read unlim</li>
+                    <li>
+                      writing unlim, posts can contain affiliate & other
+                      referral links (incl. own youtube)
+                    </li>
+                  </ul> -->
                 </v-card-text>
                 <v-btn color="primary" class="buy-button">Buy</v-btn>
               </v-card>
@@ -122,20 +121,34 @@ const props = defineProps({
   }
 });
 
-// const fetchItems = async () => {
-//   console.log('fetchItems');
-//   const { data, error } = await useAPIFetch(`api/subscription-types/`);
-//   console.log(error);
-//   if (data.value) {
-//     // searchedPosts.value = data.value;
-//     console.log(data.value);
-//   }
-// };
+const subscriptions = ref([]);
 
-// await fetchItems();
+const fetchItems = async () => {
+  console.log('fetchItems');
+  const { data, error } = await useAPIFetch(`api/subscription-types/`);
+  console.log(error);
+  if (data.value) {
+    subscriptions.value = data.value;
+  }
+  if (error.value) {
+    const notifyStore = useNotificationStore();
+    await notifyStore.setNotification({
+      type: 'error',
+      message: error.value.data?.detail
+        ? error.value.data?.detail
+        : error.value.data.toString()
+    });
+  }
+};
+
+await fetchItems();
 </script>
 
 <style scoped>
+.dialog {
+  font-family: 'Inter';
+}
+
 .price-card {
   max-width: 260px;
 }
@@ -151,8 +164,14 @@ const props = defineProps({
 }
 
 .buy-button {
+  width: 75%;
+  height: 54px;
   min-width: 50%;
   align-self: center;
+  font-size: 20px;
+  font-weight: bold;
+  text-transform: unset;
+  border-radius: 10px;
 }
 
 .subTitle {
@@ -163,8 +182,20 @@ const props = defineProps({
   margin-top: -10px;
 }
 
+.price {
+  font-size: 36px !important;
+}
+
+.subscription-name {
+  font-size: 28px;
+}
+
+.price-desc {
+  font-size: 17px;
+}
+
 .hovered-card {
-  transform: scale(1.15);
+  transform: scale(1.1);
   transition-duration: 150ms;
   z-index: 10;
   transition-property:
