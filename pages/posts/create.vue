@@ -13,9 +13,7 @@
       :class="['pa-4', theme.global.current.value.dark ? 'dark-theme' : '']"
     ></div>
     <div class="mt-2 buttons-container">
-      <a target="_blank" class="mr-auto guideLink" href="/guidelines/">
-        Guidelines
-      </a>
+      <v-btn variant="text" @click="openGuidelines()"> Guidelines </v-btn>
       <v-btn class="ml-auto" variant="text" @click="onDraftSave()">
         Save as Draft
       </v-btn>
@@ -739,6 +737,10 @@ async function saveAsDraft(setDraftSlug: boolean = true) {
 async function onDraftSave() {
   await saveAsDraft();
   await navigateTo(`/?tab=drafts`);
+}
+
+function openGuidelines() {
+  window.open('/guidelines/', '_blank');
 }
 </script>
 

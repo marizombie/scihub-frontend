@@ -1,5 +1,6 @@
 // import this after install `@mdi/font` package
 import '@mdi/font/css/materialdesignicons.css';
+import '@/assets/scss/main.scss';
 
 import 'vuetify/styles';
 import { createVuetify } from 'vuetify';
@@ -27,7 +28,8 @@ export default defineNuxtPlugin((app) => {
             primary: '#5D42F5',
             secondary: '#757575',
             accent: '#000000',
-            error: '#FF1744'
+            error: '#FF1744',
+            noAccent: '#D0C7C7'
           }
         }
       }

@@ -2,6 +2,7 @@
   <v-app>
     <Notification />
     <SubscriptionModal
+      v-if="subscriptionModalOpen"
       :dialog="subscriptionModalOpen"
       @closeDialog="
         subscriptionModalOpen = false;
